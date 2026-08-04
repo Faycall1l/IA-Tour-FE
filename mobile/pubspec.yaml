@@ -1,0 +1,30 @@
+name: athar_mobile
+description: ATHAR — agentic travel guide for Algeria. Flutter mobile app.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  # API + state
+  dio: ^5.7.0
+  flutter_riverpod: ^2.6.1
+  # Navigation
+  go_router: ^14.6.0
+  # Maps
+  flutter_map: ^8.1.0
+  latlong2: ^0.9.1
+  # Auth/session
+  flutter_secure_storage: ^9.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
