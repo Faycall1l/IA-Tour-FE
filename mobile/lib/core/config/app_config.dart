@@ -9,11 +9,13 @@ class AppConfig {
 
   /// Base URL of the ATHAR REST API (`/api/v1`).
   ///
-  /// Override at build time with `--dart-define=API_BASE_URL=...` for staging
-  /// or production environments.
+  /// Override at build time with `--dart-define=API_BASE_URL=...`:
+  /// - web demo:   http://localhost:8001/api/v1
+  /// - iOS sim:    http://localhost:8001/api/v1
+  /// - Android emu:http://10.0.2.2:8001/api/v1
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api/v1',
+    defaultValue: 'http://localhost:8000/api/v1',
   );
 
   static const Duration apiTimeout = Duration(seconds: 30);
