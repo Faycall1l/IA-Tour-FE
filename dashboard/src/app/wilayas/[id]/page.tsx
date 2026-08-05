@@ -260,19 +260,61 @@ export default function WilayaDetailPage() {
                 {detail.stays.slice(0, 9).map((s) => (
                   <article
                     key={s.id}
-                    className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
+                    className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
                   >
-                    <h3 className="font-medium text-zinc-900">{s.name}</h3>
-                    <p className="text-sm capitalize text-zinc-500">
-                      {s.property_type}
-                    </p>
-                    <p className="mt-2 font-semibold text-emerald-700">
-                      {s.price_per_night_dzd?.toLocaleString("en-US")} DZD
-                      <span className="text-xs font-normal text-zinc-500">
-                        {" "}
-                        /night
-                      </span>
-                    </p>
+                    {s.photos && s.photos.length > 0 ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={s.photos[0]}
+                        alt={s.name ?? "stay"}
+                        className="h-32 w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="flex h-32 w-full items-center justify-center bg-gradient-to-br from-emerald-100 to-teal-100 text-4xl">
+                        🛏
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h3 className="font-medium text-zinc-900">{s.name}</h3>
+                      <p className="text-sm capitalize text-zinc-500">
+                        {s.property_type}
+                      </p>
+                      <p className="mt-2 font-semibold text-emerald-700">
+                        {s.price_per_night_dzd?.toLocaleString("en-US")} DZD
+                        <span className="text-xs font-normal text-zinc-500">
+                          {" "}
+                          /night
+                        </span>
+                      </p>
+                      {s.max_guests && (
+                        <p className="mt-1 text-xs text-zinc-500">
+                          {s.max_guests} guests max
+                        </p>
+                      )}
+                      {s.provider_name && (
+                        <p className="mt-1 truncate text-xs text-zinc-400">
+                          via {s.provider_name}
+                        </p>
+                      )}
+                      {s.amenities && s.amenities.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {s.amenities.slice(0, 4).map((a) => (
+                            <span
+                              key={a}
+                              className="rounded bg-zinc-100 px-1.5 py-0.5 text-[11px] text-zinc-600"
+                            >
+                              {a}
+                            </span>
+                          ))}
+                          {s.amenities.length > 4 && (
+                            <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[11px] text-zinc-400">
+                              +{s.amenities.length - 4}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </article>
                 ))}
               </div>

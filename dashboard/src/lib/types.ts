@@ -56,8 +56,12 @@ export interface StaySummary {
   description?: string | null;
   price_per_night_dzd?: number | null;
   photos?: string[] | null;
+  amenities?: string[] | null;
   provider_name?: string | null;
+  provider_avatar?: string | null;
   max_guests?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface ExperienceSummary {
