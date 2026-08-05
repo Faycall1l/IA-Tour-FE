@@ -18,6 +18,7 @@ export default function WilayaDetailPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   const [category, setCategory] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
+  const [sort, setSort] = useState<"default" | "name" | "free">("default");
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
@@ -54,6 +55,22 @@ export default function WilayaDetailPage() {
     query.length === 0
       ? pois
       : pois.filter((p) => (p.name ?? p.category).toLowerCase().includes(query));
+  const poisSorted = [...poisFiltered].sort((a, b) => {
+    if (sort === "name") return (a.name ?? "").localeCompare(b.name ?? "");
+    if (sort === "free") {
+      const feeA = a.entry_fee_dzd ?? 0;
+      const feeB = b.entry_fee_dzd ?? 0;
+      return feeA - feeB;
+    }
+    return 0;
+  });
+  const poisView = poisSorted.slice(0, POI_LIMIT);
+  const categoryCounts = detail
+    ? detail.pois.reduce<Record<string, number>>((acc, p) => {
+        acc[p.category] = (acc[p.category] ?? 0) + 1;
+        return acc;
+      }, {})
+    : {};
 
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-8">
@@ -103,7 +120,10 @@ export default function WilayaDetailPage() {
                   : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-100"
               }`}
             >
-              All
+              All{" "}
+              <span className="ml-1 rounded-full bg-black/10 px-1.5 text-xs">
+                {detail?.pois.length ?? 0}
+              </span>
             </button>
             {categories.map((c) => (
               <button
@@ -115,13 +135,20 @@ export default function WilayaDetailPage() {
                     : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-100"
                 }`}
               >
-                {c}
+                {c}{" "}
+                <span
+                  className={`ml-1 rounded-full px-1.5 text-xs ${
+                    category === c ? "bg-white/20" : "bg-black/10"
+                  }`}
+                >
+                  {categoryCounts[c] ?? 0}
+                </span>
               </button>
             ))}
           </div>
 
-          {/* Name search */}
-          <div className="mb-6">
+          {/* Name search + sort */}
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
             <input
               type="search"
               value={search}
@@ -129,6 +156,25 @@ export default function WilayaDetailPage() {
               placeholder={`Search ${pois.length} POIs by name…`}
               className="w-full max-w-md rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
             />
+            <select
+              value={sort}
+              onChange={(e) =>
+                setSort(e.target.value as "default" | "name" | "free")
+              }
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            >
+              <option value="default">Default order</option>
+              <option value="name">Name (A–Z)</option>
+              <option value="free">Cheapest first</option>
+            </select>
+            {search.trim().length > 0 && (
+              <button
+                onClick={() => setSearch("")}
+                className="text-sm font-medium text-emerald-700 hover:underline"
+              >
+                Clear search
+              </button>
+            )}
           </div>
 
           {/* POIs grid */}
@@ -150,7 +196,7 @@ export default function WilayaDetailPage() {
               </p>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {poisFiltered.slice(0, POI_LIMIT).map((p) => (
+                {poisView.map((p) => (
                   <article
                     key={p.id}
                     className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
