@@ -8,6 +8,7 @@ import 'package:athar_mobile/core/models/wilaya.dart';
 import 'package:athar_mobile/core/models/wilaya_detail.dart';
 import 'package:athar_mobile/features/chat/presentation/agent_chat_screen.dart';
 import 'package:athar_mobile/features/poi/presentation/poi_detail_screen.dart';
+import 'package:athar_mobile/features/search/presentation/search_screen.dart';
 import 'package:athar_mobile/features/wilaya/presentation/wilaya_detail_screen.dart';
 
 class _FakeApiClient extends ApiClient {
@@ -19,7 +20,8 @@ class _FakeApiClient extends ApiClient {
       ];
 
   @override
-  Future<WilayaDetail> getWilayaDetail(int wilayaId) async => const WilayaDetail(
+  Future<WilayaDetail> getWilayaDetail(int wilayaId) async =>
+      const WilayaDetail(
         wilayaId: 16,
         wilayaName: 'Algiers',
         pois: [
@@ -41,19 +43,54 @@ class _FakeApiClient extends ApiClient {
       );
 
   @override
-  Future<PoiDetail> getPoiDetail(String poiId) async => const PoiDetail(
-        id: 'p1',
-        name: 'Casbah',
+  Future<PoiDetail> getPoiDetail(String poiId) async {
+    if (poiId == 's1') {
+      return const PoiDetail(
+        id: 's1',
+        name: 'Timgad',
         category: 'historical',
-        description: 'A UNESCO-listed old town.',
-        funFact: 'The Casbah has over 700 years of history.',
-        entryFeeDzd: 100,
-        suggestedDurationMin: 40,
-        isFeatured: true,
+        wilayaId: 43,
+        description: 'A UNESCO-listed Roman city.',
+        funFact: 'Founded by Trajan in AD 100.',
+        entryFeeDzd: 300,
+        suggestedDurationMin: 60,
       );
+    }
+    return const PoiDetail(
+      id: 'p1',
+      name: 'Casbah',
+      category: 'historical',
+      description: 'A UNESCO-listed old town.',
+      funFact: 'The Casbah has over 700 years of history.',
+      entryFeeDzd: 100,
+      suggestedDurationMin: 40,
+      isFeatured: true,
+    );
+  }
 
   @override
   Future<String> verifyOtp(String phone, String code) async => 'fake-token';
+
+  @override
+  Future<List<PoiDetail>> searchPois(String query, {int limit = 24}) async {
+    return const [
+      PoiDetail(
+        id: 's1',
+        name: 'Timgad',
+        category: 'historical',
+        wilayaId: 43,
+        description: 'A UNESCO-listed Roman city.',
+        entryFeeDzd: 300,
+        funFact: 'Founded by Trajan in AD 100.',
+      ),
+      PoiDetail(
+        id: 's2',
+        name: 'Beach of El Djedid',
+        category: 'beach',
+        wilayaId: 16,
+      ),
+    ];
+  }
 
   @override
   Future<AgentChatReply> chat(
@@ -123,7 +160,7 @@ void main() {
     expect(find.text('Could not load this wilaya'), findsOneWidget);
     expect(find.text('Retry'), findsOneWidget);
   });
-testWidgets('POI detail screen shows fun fact, fee, and duration',
+  testWidgets('POI detail screen shows fun fact, fee, and duration',
       (tester) async {
     final api = _FakeApiClient();
     await tester.pumpWidget(
@@ -154,7 +191,54 @@ testWidgets('POI detail screen shows fun fact, fee, and duration',
 
     expect(find.text('DID YOU KNOW?'), findsOneWidget);
   });
-testWidgets('agent chat signs in with debug OTP and sends a message',
+  testWidgets('search screen returns results and filters by category',
+      (tester) async {
+    final api = _FakeApiClient();
+    await tester.pumpWidget(
+      MaterialApp(home: SearchScreen(api: api)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Try "roman ruins", "beaches in Oran"…'),
+      'roman ruins',
+    );
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Timgad'), findsOneWidget);
+    expect(find.text('Beach of El Djedid'), findsOneWidget);
+
+    // Filter to HISTORICAL only.
+    await tester.tap(find.text('HISTORICAL'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Timgad'), findsOneWidget);
+    expect(find.text('Beach of El Djedid'), findsNothing);
+  });
+
+  testWidgets('search result navigates to POI detail on tap', (tester) async {
+    final api = _FakeApiClient();
+    await tester.pumpWidget(
+      MaterialApp(home: SearchScreen(api: api)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Try "roman ruins", "beaches in Oran"…'),
+      'roman ruins',
+    );
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Timgad'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('DID YOU KNOW?'), findsOneWidget);
+    expect(find.textContaining('Trajan'), findsOneWidget);
+  });
+
+  testWidgets('agent chat signs in with debug OTP and sends a message',
       (tester) async {
     final api = _FakeApiClient();
     await tester.pumpWidget(
@@ -185,7 +269,8 @@ testWidgets('agent chat signs in with debug OTP and sends a message',
     await tester.tap(find.byIcon(Icons.send));
     await tester.pumpAndSettle();
 
-    expect(find.text('Here are the top things to do in Algiers…'), findsOneWidget);
+    expect(
+        find.text('Here are the top things to do in Algiers…'), findsOneWidget);
     expect(find.text('What to do in Oran?'), findsOneWidget);
   });
 }

@@ -25,9 +25,7 @@ class ApiClient {
     if (data is! List) {
       throw ApiException('Unexpected response shape');
     }
-    return data
-        .map((e) => Wilaya.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return data.map((e) => Wilaya.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<WilayaDetail> getWilayaDetail(int wilayaId) async {
@@ -46,6 +44,24 @@ class ApiClient {
       throw ApiException('Unexpected response shape');
     }
     return PoiDetail.fromJson(data);
+  }
+
+  Future<List<PoiDetail>> searchPois(String query, {int limit = 24}) async {
+    final res = await _dio.get<dynamic>('/pois/search', queryParameters: {
+      'q': query,
+      'limit': limit,
+    });
+    final data = res.data;
+    if (data is! Map<String, dynamic>) {
+      throw ApiException('Unexpected response shape');
+    }
+    final items = data['items'];
+    if (items is! List) {
+      throw ApiException('Unexpected response shape');
+    }
+    return items
+        .map((e) => PoiDetail.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> sendOtp(String phone) async {

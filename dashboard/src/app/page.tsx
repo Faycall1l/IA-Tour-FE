@@ -41,11 +41,34 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10">
       <header className="mx-auto mb-8 max-w-6xl">
-        <h1 className="text-3xl font-bold text-zinc-900">ATHAR</h1>
-        <p className="mt-1 text-zinc-600">
-          Agentic travel guide for Algeria — explore all 58 wilayas (and the new
-          southern ones).
-        </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-zinc-900">ATHAR</h1>
+            <p className="mt-1 text-zinc-600">
+              Agentic travel guide for Algeria — explore all 58 wilayas (and the
+              new southern ones).
+            </p>
+          </div>
+          <a
+            href="/search"
+            className="group flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm text-zinc-500 shadow-sm transition hover:border-emerald-500 hover:text-emerald-700"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+              />
+            </svg>
+            <span>Search all of Algeria</span>
+          </a>
+        </div>
       </header>
 
       {state.status === "loading" && (
