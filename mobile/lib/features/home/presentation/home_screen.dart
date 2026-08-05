@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/models/wilaya.dart';
+import '../../wilaya/presentation/wilaya_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.api});
@@ -55,50 +56,63 @@ class _HomeScreenState extends State<HomeScreen> {
               final w = wilayas[index];
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 6),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            w.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => WilayaDetailScreen(
+                          wilaya: w,
+                          api: widget.api,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              w.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'wilaya ${w.id}',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 12,
+                            const SizedBox(width: 8),
+                            Text(
+                              'wilaya ${w.id}',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12,
+                              ),
                             ),
+                          ],
+                        ),
+                        if (w.highlightPoi != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            w.highlightPoi!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Colors.grey.shade700),
                           ),
                         ],
-                      ),
-                      if (w.highlightPoi != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          w.highlightPoi!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.grey.shade700),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            _StatChip(label: '${w.totalPois} POIs'),
+                            _StatChip(label: '${w.totalStays} stays'),
+                            _StatChip(label: '${w.totalExperiences} exp'),
+                            _StatChip(label: '${w.totalArtisans} artisans'),
+                          ],
                         ),
                       ],
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        children: [
-                          _StatChip(label: '${w.totalPois} POIs'),
-                          _StatChip(label: '${w.totalStays} stays'),
-                          _StatChip(label: '${w.totalExperiences} exp'),
-                          _StatChip(label: '${w.totalArtisans} artisans'),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               );

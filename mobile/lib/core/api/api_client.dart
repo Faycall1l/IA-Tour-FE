@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../config/app_config.dart';
 import '../models/wilaya.dart';
+import '../models/wilaya_detail.dart';
 
 /// Thin dio client for the ATHAR REST API (`/api/v1`).
 class ApiClient {
@@ -26,6 +27,15 @@ class ApiClient {
     return data
         .map((e) => Wilaya.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<WilayaDetail> getWilayaDetail(int wilayaId) async {
+    final res = await _dio.get<dynamic>('/discover/wilayas/$wilayaId');
+    final data = res.data;
+    if (data is! Map<String, dynamic>) {
+      throw ApiException('Unexpected response shape');
+    }
+    return WilayaDetail.fromJson(data);
   }
 }
 
