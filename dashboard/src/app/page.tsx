@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { client, unwrap } from "@/lib/client";
 import type { WilayaSummary } from "@/lib/types";
 import AgentChat from "@/components/AgentChat";
 
@@ -17,10 +17,10 @@ export default function Home() {
   useEffect(() => {
     let cancelled = false;
     setState({ status: "loading" });
-    api
-      .get<WilayaSummary[]>("/discover/wilayas")
-      .then((wilayas) => {
-        if (!cancelled) setState({ status: "ready", wilayas });
+    client
+      .GET("/api/v1/discover/wilayas")
+      .then((res) => {
+        if (!cancelled) setState({ status: "ready", wilayas: unwrap(res) });
       })
       .catch((err: unknown) => {
         if (!cancelled) {

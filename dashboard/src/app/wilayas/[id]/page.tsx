@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
-import type { PoiSummary, WilayaDetail } from "@/lib/types";
+import { client, unwrap } from "@/lib/client";
+import type { WilayaDetail } from "@/lib/types";
 
 type LoadState =
   | { status: "loading" }
@@ -24,10 +24,12 @@ export default function WilayaDetailPage() {
   useEffect(() => {
     let cancelled = false;
     setState({ status: "loading" });
-    api
-      .get<WilayaDetail>(`/discover/wilayas/${id}`)
-      .then((detail) => {
-        if (!cancelled) setState({ status: "ready", detail });
+    client
+      .GET("/api/v1/discover/wilayas/{wilaya_id}", {
+        params: { path: { wilaya_id: id } },
+      })
+      .then((res) => {
+        if (!cancelled) setState({ status: "ready", detail: unwrap(res) });
       })
       .catch((err: unknown) => {
         if (!cancelled) {

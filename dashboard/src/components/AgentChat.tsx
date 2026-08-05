@@ -1,19 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api } from "@/lib/api";
+import { client, unwrap } from "@/lib/client";
 
 interface ChatMessage {
   role: "user" | "assistant";
   text: string;
   degraded?: boolean;
-}
-
-interface AgentChatResponse {
-  reply: string;
-  session_id: string | null;
-  sources?: unknown[];
-  degraded: boolean;
 }
 
 const TOKEN_KEY = "athar_access_token";
@@ -33,7 +26,9 @@ function AuthGate({
     setBusy(true);
     setError(null);
     try {
-      await api.post("/auth/send-otp", { phone });
+      await unwrap(
+        await client.POST("/api/v1/auth/send-otp", { body: { phone } }),
+      );
       setStep("code");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send OTP");
@@ -46,9 +41,10 @@ function AuthGate({
     setBusy(true);
     setError(null);
     try {
-      const res = await api.post<{ access_token: string }>(
-        "/auth/verify-otp",
-        { phone, code },
+      const res = await unwrap(
+        await client.POST("/api/v1/auth/verify-otp", {
+          body: { phone, code },
+        }),
       );
       onAuthed(res.access_token);
     } catch (err) {
@@ -126,12 +122,12 @@ export default function AgentChat() {
     setMessages((m) => [...m, { role: "user", text }]);
     setBusy(true);
     try {
-      const res = await api.post<AgentChatResponse>(
-        "/agent/chat",
-        { message: text, session_id: sessionId },
-        token,
+      const res = await unwrap(
+        await client.POST("/api/v1/agent/chat", {
+          body: { message: text, session_id: sessionId },
+        }),
       );
-      setSessionId(res.session_id);
+      setSessionId(res.session_id ?? null);
       setMessages((m) => [
         ...m,
         { role: "assistant", text: res.reply, degraded: res.degraded },

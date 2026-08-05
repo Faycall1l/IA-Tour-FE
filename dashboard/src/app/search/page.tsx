@@ -1,28 +1,9 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { api } from "@/lib/api";
-
-interface SearchHit {
-  id: string;
-  name?: string | null;
-  name_ar?: string | null;
-  category: string;
-  subtype?: string | null;
-  wilaya_id?: number | null;
-  description?: string | null;
-  photo_url?: string | null;
-  entry_fee_dzd?: number | null;
-  price_level?: string | null;
-  fun_fact?: string | null;
-  is_featured?: boolean | null;
-}
-
-interface SearchFeed {
-  items: SearchHit[];
-  total: number;
-}
+import { client, unwrap } from "@/lib/client";
+import type { PoiFeed } from "@/lib/types";
 
 const LIMIT = 24;
 
@@ -37,7 +18,7 @@ function SearchPageInner() {
     | { status: "idle" }
     | { status: "loading" }
     | { status: "error"; message: string }
-    | { status: "ready"; feed: SearchFeed }
+    | { status: "ready"; feed: PoiFeed }
   >({ status: "idle" });
 
   useEffect(() => {
@@ -58,10 +39,12 @@ function SearchPageInner() {
     }
     let cancelled = false;
     setState({ status: "loading" });
-    api
-      .get<SearchFeed>(`/pois/search?q=${encodeURIComponent(q)}&limit=${LIMIT}`)
-      .then((feed) => {
-        if (!cancelled) setState({ status: "ready", feed });
+    client
+      .GET("/api/v1/pois/search", {
+        params: { query: { q, limit: LIMIT } },
+      })
+      .then((res) => {
+        if (!cancelled) setState({ status: "ready", feed: unwrap(res) });
       })
       .catch((err: unknown) => {
         if (!cancelled) {

@@ -1,96 +1,20 @@
 /**
- * Shared API response types (mirrors the ATHAR backend OpenAPI schemas).
+ * Shared API response types.
+ *
+ * These are re-exported from the OpenAPI-generated contract (src/lib/api-types.ts),
+ * which is derived from the backend's docs/specs/openapi.json via
+ * `npm run generate:api`. Do NOT hand-write API shapes here — regenerate instead.
  */
+import type { components } from "./api-types";
 
-export interface WilayaSummary {
-  id: number;
-  name: string;
-  description?: string | null;
-  total_pois: number;
-  total_featured: number;
-  total_experiences: number;
-  total_stays: number;
-  total_artisans: number;
-  top_categories?: string[];
-  highlight_poi?: string | null;
-  highlight_poi_photo?: string | null;
-  highlight_category?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-}
-
-export interface Pois {
-  id: string;
-  name?: string | null;
-  category: string;
-  subtype?: string | null;
-  description?: string | null;
-  price_level?: string | null;
-  entry_fee_dzd?: number | null;
-  suggested_duration_min?: number | null;
-  photo_url?: string | null;
-  is_featured?: boolean | null;
-  wilaya_id: number;
-}
-
-export interface HealthStatus {
-  status: string;
-  services?: Record<string, unknown>;
-}
-
-export interface PoiSummary {
-  id: string;
-  name?: string | null;
-  category: string;
-  description?: string | null;
-  photo_url?: string | null;
-  entry_fee_dzd?: number | null;
-  latitude?: number | null;
-  longitude?: number | null;
-}
-
-export interface StaySummary {
-  id: string;
-  name?: string | null;
-  property_type?: string | null;
-  description?: string | null;
-  price_per_night_dzd?: number | null;
-  photos?: string[] | null;
-  amenities?: string[] | null;
-  provider_name?: string | null;
-  provider_avatar?: string | null;
-  max_guests?: number | null;
-  latitude?: number | null;
-  longitude?: number | null;
-}
-
-export interface ExperienceSummary {
-  id: string;
-  title?: string | null;
-  category?: string | null;
-  description?: string | null;
-  price_dzd?: number | null;
-  duration_hours?: number | null;
-  provider_name?: string | null;
-  meeting_point?: string | null;
-  photos?: string[] | null;
-}
-
-export interface WilayaDetail {
-  wilaya_id: number;
-  wilaya_name: string;
-  description?: string | null;
-  pois: PoiSummary[];
-  experiences: ExperienceSummary[];
-  stays: StaySummary[];
-  artisans?: unknown[];
-}
-
-export interface AgentChatResponse {
-  reply: string;
-  session_id: string | null;
-  degraded: boolean;
-}
+export type WilayaSummary = components["schemas"]["WilayaSummary"];
+export type PoiSummary = components["schemas"]["DiscoverPOI"];
+export type StaySummary = components["schemas"]["DiscoverStay"];
+export type ExperienceSummary = components["schemas"]["DiscoverExperience"];
+export type WilayaDetail = components["schemas"]["DiscoverResponse"];
+export type PoiRead = components["schemas"]["POIRead"];
+export type PoiFeed = components["schemas"]["POIFeed"];
+export type AgentChatResponse = components["schemas"]["AgentChatResponse"];
 
 export interface ApiErrorDetail {
   detail?: string | unknown;

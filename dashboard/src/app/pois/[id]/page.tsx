@@ -2,41 +2,13 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
-
-interface PoiDetail {
-  id: string;
-  name: string | null;
-  name_ar?: string | null;
-  name_en?: string | null;
-  category: string;
-  subtype?: string | null;
-  wilaya_id: number;
-  latitude: number | null;
-  longitude: number | null;
-  description: string | null;
-  photo_url: string | null;
-  photo_urls?: string[] | null;
-  entry_fee_dzd: number | null;
-  price_level?: string | null;
-  opening_hours?: string | null;
-  cuisine?: string | null;
-  has_parking?: boolean;
-  has_accessibility?: boolean;
-  is_featured?: boolean;
-  ranking_position?: number | null;
-  ranking_total?: number | null;
-  suggested_duration_min?: number | null;
-  fun_fact?: string | null;
-  website?: string | null;
-  phone?: string | null;
-  operator?: string | null;
-}
+import { client, unwrap } from "@/lib/client";
+import type { PoiRead } from "@/lib/types";
 
 type LoadState =
   | { status: "loading" }
   | { status: "error"; message: string }
-  | { status: "ready"; poi: PoiDetail };
+  | { status: "ready"; poi: PoiRead };
 
 const CATEGORY_STYLES: Record<string, string> = {
   historical: "bg-amber-100 text-amber-800",
@@ -62,10 +34,10 @@ export default function PoiDetailPage() {
   useEffect(() => {
     let cancelled = false;
     setState({ status: "loading" });
-    api
-      .get<PoiDetail>(`/pois/${id}`)
-      .then((poi) => {
-        if (!cancelled) setState({ status: "ready", poi });
+    client
+      .GET("/api/v1/pois/{poi_id}", { params: { path: { poi_id: id } } })
+      .then((res) => {
+        if (!cancelled) setState({ status: "ready", poi: unwrap(res) });
       })
       .catch((err: unknown) => {
         if (!cancelled) {
