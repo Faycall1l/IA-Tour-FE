@@ -75,8 +75,9 @@ export default function Home() {
       {state.status === "ready" && (
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {state.wilayas.map((w) => (
-            <article
+            <a
               key={w.id}
+              href={`/wilayas/${w.id}`}
               className="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md"
             >
               {w.highlight_poi_photo ? (
@@ -120,7 +121,7 @@ export default function Home() {
                   </span>
                 </div>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       )}

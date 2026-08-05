@@ -1,0 +1,249 @@
+"use client";
+
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import type { PoiSummary, WilayaDetail } from "@/lib/types";
+
+type LoadState =
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | { status: "ready"; detail: WilayaDetail };
+
+const POI_LIMIT = 60;
+
+export default function WilayaDetailPage() {
+  const params = useParams();
+  const id = Number(params.id);
+  const [state, setState] = useState<LoadState>({ status: "loading" });
+  const [category, setCategory] = useState<string>("all");
+  const [retry, setRetry] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    setState({ status: "loading" });
+    api
+      .get<WilayaDetail>(`/discover/wilayas/${id}`)
+      .then((detail) => {
+        if (!cancelled) setState({ status: "ready", detail });
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setState({
+            status: "error",
+            message: err instanceof Error ? err.message : "Unknown error",
+          });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, retry]);
+
+  const detail = state.status === "ready" ? state.detail : null;
+  const categories = detail
+    ? [...new Set(detail.pois.map((p) => p.category))].sort()
+    : [];
+  const pois =
+    detail && category !== "all"
+      ? detail.pois.filter((p) => p.category === category)
+      : (detail?.pois ?? []);
+
+  return (
+    <main className="min-h-screen bg-zinc-50 px-6 py-8">
+      <a
+        href="/"
+        className="mb-6 inline-block text-sm font-medium text-emerald-700 hover:underline"
+      >
+        ← All wilayas
+      </a>
+
+      {state.status === "loading" && (
+        <p className="mx-auto max-w-6xl text-zinc-500">Loading wilaya…</p>
+      )}
+
+      {state.status === "error" && (
+        <div className="mx-auto max-w-6xl rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+          <p className="font-medium">Could not load wilaya {id}</p>
+          <p className="mt-1 text-sm">{state.message}</p>
+          <button
+            onClick={() => setRetry((n) => n + 1)}
+            className="mt-3 rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {detail && (
+        <div className="mx-auto max-w-6xl">
+          <header className="mb-6">
+            <h1 className="text-3xl font-bold text-zinc-900">
+              {detail.wilaya_name}
+            </h1>
+            <p className="mt-1 text-zinc-600">
+              {detail.pois.length} POIs · {detail.stays.length} stays ·{" "}
+              {detail.experiences.length} experiences
+            </p>
+          </header>
+
+          {/* Category filter */}
+          <div className="mb-6 flex flex-wrap gap-2">
+            <button
+              onClick={() => setCategory("all")}
+              className={`rounded-full px-3 py-1.5 text-sm font-medium ${
+                category === "all"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-100"
+              }`}
+            >
+              All
+            </button>
+            {categories.map((c) => (
+              <button
+                key={c}
+                onClick={() => setCategory(c)}
+                className={`rounded-full px-3 py-1.5 text-sm font-medium capitalize ${
+                  category === c
+                    ? "bg-emerald-600 text-white"
+                    : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-100"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+
+          {/* POIs grid */}
+          <section className="mb-10">
+            <h2 className="mb-4 text-xl font-semibold text-zinc-900">
+              Points of interest
+              {category !== "all" && (
+                <span className="ml-2 text-sm font-normal text-zinc-500">
+                  ({category})
+                </span>
+              )}
+            </h2>
+            {pois.length === 0 ? (
+              <p className="text-zinc-500">No POIs in this category.</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {pois.slice(0, POI_LIMIT).map((p) => (
+                  <article
+                    key={p.id}
+                    className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
+                  >
+                    {p.photo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={p.photo_url}
+                        alt={p.name ?? p.category}
+                        className="h-32 w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="flex h-32 w-full items-center justify-center bg-zinc-100 text-2xl">
+                        {p.category.slice(0, 1).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="p-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-medium text-zinc-900">
+                          {p.name || `Unnamed ${p.category}`}
+                        </h3>
+                        <span className="shrink-0 rounded bg-zinc-100 px-2 py-0.5 text-xs capitalize text-zinc-600">
+                          {p.category}
+                        </span>
+                      </div>
+                      {p.description && (
+                        <p className="mt-1 line-clamp-2 text-sm text-zinc-600">
+                          {p.description}
+                        </p>
+                      )}
+                      <p className="mt-2 text-xs font-medium text-emerald-700">
+                        {p.entry_fee_dzd
+                          ? `${p.entry_fee_dzd} DZD`
+                          : "Free"}
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+            {pois.length > POI_LIMIT && (
+              <p className="mt-3 text-sm text-zinc-500">
+                Showing {POI_LIMIT} of {pois.length} — use the{" "}
+                <code className="rounded bg-zinc-100 px-1 py-0.5">
+                  GET /pois
+                </code>{" "}
+                API for pagination.
+              </p>
+            )}
+          </section>
+
+          {/* Stays */}
+          {detail.stays.length > 0 && (
+            <section className="mb-10">
+              <h2 className="mb-4 text-xl font-semibold text-zinc-900">
+                Where to stay
+              </h2>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {detail.stays.slice(0, 9).map((s) => (
+                  <article
+                    key={s.id}
+                    className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
+                  >
+                    <h3 className="font-medium text-zinc-900">{s.name}</h3>
+                    <p className="text-sm capitalize text-zinc-500">
+                      {s.property_type}
+                    </p>
+                    <p className="mt-2 font-semibold text-emerald-700">
+                      {s.price_per_night_dzd?.toLocaleString("en-US")} DZD
+                      <span className="text-xs font-normal text-zinc-500">
+                        {" "}
+                        /night
+                      </span>
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Experiences */}
+          {detail.experiences.length > 0 && (
+            <section className="mb-10">
+              <h2 className="mb-4 text-xl font-semibold text-zinc-900">
+                Experiences & tours
+              </h2>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {detail.experiences.slice(0, 9).map((e) => (
+                  <article
+                    key={e.id}
+                    className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
+                  >
+                    <h3 className="font-medium text-zinc-900">{e.title}</h3>
+                    <p className="text-sm capitalize text-zinc-500">
+                      {e.category}
+                      {e.duration_hours ? ` · ${e.duration_hours}h` : ""}
+                    </p>
+                    {e.description && (
+                      <p className="mt-1 line-clamp-2 text-sm text-zinc-600">
+                        {e.description}
+                      </p>
+                    )}
+                    <p className="mt-2 font-semibold text-amber-700">
+                      {e.price_dzd
+                        ? `${e.price_dzd.toLocaleString("en-US")} DZD`
+                        : "Free"}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+    </main>
+  );
+}

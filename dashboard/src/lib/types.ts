@@ -38,6 +38,50 @@ export interface HealthStatus {
   services?: Record<string, unknown>;
 }
 
+export interface PoiSummary {
+  id: string;
+  name?: string | null;
+  category: string;
+  description?: string | null;
+  photo_url?: string | null;
+  entry_fee_dzd?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
+}
+
+export interface StaySummary {
+  id: string;
+  name?: string | null;
+  property_type?: string | null;
+  description?: string | null;
+  price_per_night_dzd?: number | null;
+  photos?: string[] | null;
+  provider_name?: string | null;
+  max_guests?: number | null;
+}
+
+export interface ExperienceSummary {
+  id: string;
+  title?: string | null;
+  category?: string | null;
+  description?: string | null;
+  price_dzd?: number | null;
+  duration_hours?: number | null;
+  provider_name?: string | null;
+  meeting_point?: string | null;
+  photos?: string[] | null;
+}
+
+export interface WilayaDetail {
+  wilaya_id: number;
+  wilaya_name: string;
+  description?: string | null;
+  pois: PoiSummary[];
+  experiences: ExperienceSummary[];
+  stays: StaySummary[];
+  artisans?: unknown[];
+}
+
 export interface AgentChatResponse {
   reply: string;
   session_id: string | null;
