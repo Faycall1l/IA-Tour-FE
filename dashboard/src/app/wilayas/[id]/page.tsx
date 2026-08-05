@@ -17,6 +17,7 @@ export default function WilayaDetailPage() {
   const id = Number(params.id);
   const [state, setState] = useState<LoadState>({ status: "loading" });
   const [category, setCategory] = useState<string>("all");
+  const [search, setSearch] = useState<string>("");
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
@@ -48,6 +49,11 @@ export default function WilayaDetailPage() {
     detail && category !== "all"
       ? detail.pois.filter((p) => p.category === category)
       : (detail?.pois ?? []);
+  const query = search.trim().toLowerCase();
+  const poisFiltered =
+    query.length === 0
+      ? pois
+      : pois.filter((p) => (p.name ?? p.category).toLowerCase().includes(query));
 
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-8">
@@ -88,7 +94,7 @@ export default function WilayaDetailPage() {
           </header>
 
           {/* Category filter */}
-          <div className="mb-6 flex flex-wrap gap-2">
+          <div className="mb-4 flex flex-wrap gap-2">
             <button
               onClick={() => setCategory("all")}
               className={`rounded-full px-3 py-1.5 text-sm font-medium ${
@@ -114,6 +120,17 @@ export default function WilayaDetailPage() {
             ))}
           </div>
 
+          {/* Name search */}
+          <div className="mb-6">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={`Search ${pois.length} POIs by name…`}
+              className="w-full max-w-md rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            />
+          </div>
+
           {/* POIs grid */}
           <section className="mb-10">
             <h2 className="mb-4 text-xl font-semibold text-zinc-900">
@@ -124,11 +141,16 @@ export default function WilayaDetailPage() {
                 </span>
               )}
             </h2>
-            {pois.length === 0 ? (
-              <p className="text-zinc-500">No POIs in this category.</p>
+            {poisFiltered.length === 0 ? (
+              <p className="text-zinc-500">
+                No POIs match{" "}
+                {category !== "all" || search.trim().length > 0
+                  ? "this filter."
+                  : "this category."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {pois.slice(0, POI_LIMIT).map((p) => (
+                {poisFiltered.slice(0, POI_LIMIT).map((p) => (
                   <article
                     key={p.id}
                     className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
@@ -170,9 +192,9 @@ export default function WilayaDetailPage() {
                 ))}
               </div>
             )}
-            {pois.length > POI_LIMIT && (
+            {poisFiltered.length > POI_LIMIT && (
               <p className="mt-3 text-sm text-zinc-500">
-                Showing {POI_LIMIT} of {pois.length} — use the{" "}
+                Showing {POI_LIMIT} of {poisFiltered.length} — use the{" "}
                 <code className="rounded bg-zinc-100 px-1 py-0.5">
                   GET /pois
                 </code>{" "}
