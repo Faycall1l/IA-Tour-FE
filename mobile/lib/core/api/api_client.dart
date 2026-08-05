@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 
 import '../config/app_config.dart';
+import '../models/poi_detail.dart';
 import '../models/wilaya.dart';
 import '../models/wilaya_detail.dart';
 
@@ -36,6 +37,15 @@ class ApiClient {
       throw ApiException('Unexpected response shape');
     }
     return WilayaDetail.fromJson(data);
+  }
+
+  Future<PoiDetail> getPoiDetail(String poiId) async {
+    final res = await _dio.get<dynamic>('/pois/$poiId');
+    final data = res.data;
+    if (data is! Map<String, dynamic>) {
+      throw ApiException('Unexpected response shape');
+    }
+    return PoiDetail.fromJson(data);
   }
 }
 

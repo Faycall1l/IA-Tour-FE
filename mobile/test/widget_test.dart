@@ -3,8 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:athar_mobile/app.dart';
 import 'package:athar_mobile/core/api/api_client.dart';
+import 'package:athar_mobile/core/models/poi_detail.dart';
 import 'package:athar_mobile/core/models/wilaya.dart';
 import 'package:athar_mobile/core/models/wilaya_detail.dart';
+import 'package:athar_mobile/features/poi/presentation/poi_detail_screen.dart';
 import 'package:athar_mobile/features/wilaya/presentation/wilaya_detail_screen.dart';
 
 class _FakeApiClient extends ApiClient {
@@ -35,6 +37,18 @@ class _FakeApiClient extends ApiClient {
         experiences: [
           ExperienceSummary(id: 'e1', title: 'Casbah walking tour'),
         ],
+      );
+
+  @override
+  Future<PoiDetail> getPoiDetail(String poiId) async => const PoiDetail(
+        id: 'p1',
+        name: 'Casbah',
+        category: 'historical',
+        description: 'A UNESCO-listed old town.',
+        funFact: 'The Casbah has over 700 years of history.',
+        entryFeeDzd: 100,
+        suggestedDurationMin: 40,
+        isFeatured: true,
       );
 }
 
@@ -91,6 +105,37 @@ void main() {
 
     expect(find.text('Could not load this wilaya'), findsOneWidget);
     expect(find.text('Retry'), findsOneWidget);
+  });
+testWidgets('POI detail screen shows fun fact, fee, and duration',
+      (tester) async {
+    final api = _FakeApiClient();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PoiDetailScreen(poiId: 'p1', api: api),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Casbah'), findsOneWidget);
+    expect(find.textContaining('UNESCO'), findsOneWidget);
+    expect(find.text('DID YOU KNOW?'), findsOneWidget);
+    expect(find.text('100 DZD'), findsOneWidget);
+    expect(find.text('40 min'), findsOneWidget);
+  });
+
+  testWidgets('wilaya detail navigates to POI detail on card tap',
+      (tester) async {
+    final api = _FakeApiClient();
+    await tester.pumpWidget(AtharApp(api: api));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Algiers'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Casbah'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('DID YOU KNOW?'), findsOneWidget);
   });
 }
 

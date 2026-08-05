@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/models/wilaya.dart';
 import '../../../core/models/wilaya_detail.dart';
+import '../../poi/presentation/poi_detail_screen.dart';
 
 class WilayaDetailScreen extends StatefulWidget {
   const WilayaDetailScreen({
@@ -128,7 +129,10 @@ class _WilayaDetailScreenState extends State<WilayaDetailScreen> {
                 (context, index) {
                   final pois = _filtered(detail);
                   if (index >= pois.length) return null;
-                  return _PoiCard(poi: pois[index]);
+                  return _PoiCard(
+                    poi: pois[index],
+                    api: _api,
+                  );
                 },
                 childCount: _filtered(detail).length,
               ),
@@ -210,17 +214,26 @@ class _CategoryDropdown extends StatelessWidget {
 }
 
 class _PoiCard extends StatelessWidget {
-  const _PoiCard({required this.poi});
+  const _PoiCard({required this.poi, required this.api});
 
   final PoiSummary poi;
+  final ApiClient api;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => PoiDetailScreen(poiId: poi.id, api: api),
+            ),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Expanded(
             child: SizedBox(
               width: double.infinity,
@@ -267,8 +280,9 @@ class _PoiCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
+        ),
+        ),
+      );
   }
 }
 
