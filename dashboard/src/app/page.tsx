@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { WilayaSummary } from "@/lib/types";
+import AgentChat from "@/components/AgentChat";
 
 type LoadState =
   | { status: "loading" }
@@ -73,8 +74,9 @@ export default function Home() {
       )}
 
       {state.status === "ready" && (
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {state.wilayas.map((w) => (
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-2">
+            {state.wilayas.map((w) => (
             <a
               key={w.id}
               href={`/wilayas/${w.id}`}
@@ -122,7 +124,11 @@ export default function Home() {
                 </div>
               </div>
             </a>
-          ))}
+            ))}
+          </div>
+          <div className="lg:col-span-1">
+            <AgentChat />
+          </div>
         </div>
       )}
     </main>
