@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/models/wilaya.dart';
+import '../../chat/presentation/agent_chat_screen.dart';
 import '../../wilaya/presentation/wilaya_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,6 +39,17 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text(AppConfig.appName),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => AgentChatScreen(api: _api),
+            ),
+          );
+        },
+        icon: const Icon(Icons.assistant),
+        label: const Text('Ask ATHAR'),
       ),
       body: FutureBuilder<List<Wilaya>>(
         future: _wilayas,

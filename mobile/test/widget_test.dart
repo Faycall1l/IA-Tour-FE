@@ -6,6 +6,7 @@ import 'package:athar_mobile/core/api/api_client.dart';
 import 'package:athar_mobile/core/models/poi_detail.dart';
 import 'package:athar_mobile/core/models/wilaya.dart';
 import 'package:athar_mobile/core/models/wilaya_detail.dart';
+import 'package:athar_mobile/features/chat/presentation/agent_chat_screen.dart';
 import 'package:athar_mobile/features/poi/presentation/poi_detail_screen.dart';
 import 'package:athar_mobile/features/wilaya/presentation/wilaya_detail_screen.dart';
 
@@ -50,6 +51,22 @@ class _FakeApiClient extends ApiClient {
         suggestedDurationMin: 40,
         isFeatured: true,
       );
+
+  @override
+  Future<String> verifyOtp(String phone, String code) async => 'fake-token';
+
+  @override
+  Future<AgentChatReply> chat(
+    String message, {
+    String? sessionId,
+    required String token,
+  }) async {
+    return AgentChatReply(
+      reply: 'Here are the top things to do in Algiers…',
+      sessionId: 'sess-1',
+      degraded: false,
+    );
+  }
 }
 
 void main() {
@@ -136,6 +153,40 @@ testWidgets('POI detail screen shows fun fact, fee, and duration',
     await tester.pumpAndSettle();
 
     expect(find.text('DID YOU KNOW?'), findsOneWidget);
+  });
+testWidgets('agent chat signs in with debug OTP and sends a message',
+      (tester) async {
+    final api = _FakeApiClient();
+    await tester.pumpWidget(
+      MaterialApp(home: AgentChatScreen(api: api)),
+    );
+    await tester.pumpAndSettle();
+
+    // Enter phone, tap "Send code", then enter the 6-digit debug code.
+    await tester.enterText(
+      find.widgetWithText(TextField, '+213'),
+      '+213555010203',
+    );
+    await tester.tap(find.text('Send code'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.widgetWithText(TextField, '6-digit code'),
+      '000000',
+    );
+    await tester.tap(find.text('Verify & chat'));
+    await tester.pumpAndSettle();
+
+    // Chat input is now shown; send a question and expect the reply.
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Ask anything about Algeria…'),
+      'What to do in Oran?',
+    );
+    await tester.tap(find.byIcon(Icons.send));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Here are the top things to do in Algiers…'), findsOneWidget);
+    expect(find.text('What to do in Oran?'), findsOneWidget);
   });
 }
 
