@@ -197,9 +197,10 @@ export default function WilayaDetailPage() {
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {poisView.map((p) => (
-                  <article
+                  <a
                     key={p.id}
-                    className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
+                    href={`/pois/${p.id}`}
+                    className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md"
                   >
                     {p.photo_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -234,7 +235,7 @@ export default function WilayaDetailPage() {
                           : "Free"}
                       </p>
                     </div>
-                  </article>
+                  </a>
                 ))}
               </div>
             )}
