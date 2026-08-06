@@ -20,6 +20,9 @@ dependencies:
   latlong2: ^0.9.1
   # Auth/session
   flutter_secure_storage: ^9.2.2
+  # Generated API client (S3: openapi_flutter_gen)
+  athar_api:
+    path: lib/core/api/generated/athar_api
 
 dev_dependencies:
   flutter_test:
