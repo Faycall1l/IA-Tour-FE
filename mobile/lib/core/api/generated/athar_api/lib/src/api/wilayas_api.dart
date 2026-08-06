@@ -6,8 +6,8 @@ import 'package:dio/dio.dart';
 
 import '../models/search.dart';
 import '../models/wilayaid.dart';
-import 'getwilayaapiv1wilayaswilayaidget_result.dart';
-import 'listwilayasapiv1wilayasget_result.dart';
+import 'getwilayaswilayaid_result.dart';
+import 'getwilayas_result.dart';
 
 class WilayasApi {
   const WilayasApi({required this.dio, this.baseUrl});
@@ -16,7 +16,7 @@ class WilayasApi {
   final String? baseUrl;
 
   /// All 69 wilayas with French/Arabic/English names and destination descriptions. Optional name search. Public.
-  Future<ListWilayasApiV1WilayasGetResult> listWilayasApiV1WilayasGet({
+  Future<GetWilayasResult> getWilayas({
     Search? search,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -39,12 +39,11 @@ class WilayasApi {
       cancelToken: cancelToken,
     );
 
-    return ListWilayasApiV1WilayasGetResult.fromResponse(response);
+    return GetWilayasResult.fromResponse(response);
   }
 
   /// Single wilaya detail including description and coordinates. Public.
-  Future<GetWilayaApiV1WilayasWilayaIdGetResult>
-      getWilayaApiV1WilayasWilayaIdGet({
+  Future<GetWilayasWilayaIdResult> getWilayasWilayaId({
     required WilayaId? wilayaId,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -62,6 +61,6 @@ class WilayasApi {
       cancelToken: cancelToken,
     );
 
-    return GetWilayaApiV1WilayasWilayaIdGetResult.fromResponse(response);
+    return GetWilayasWilayaIdResult.fromResponse(response);
   }
 }

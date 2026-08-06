@@ -7,15 +7,15 @@ import 'package:dio/dio.dart';
 import '../models/mode.dart';
 import '../models/type.dart';
 import '../models/wilayaid.dart';
-import 'getroutesfromapiv1transportroutesfromoriginwilayaidget_result.dart';
-import 'gettransportrouteapiv1transportroutesoriginwilayaiddestwilayaidget_result.dart';
-import 'listlinesapiv1transportlinesget_result.dart';
-import 'listoperatorsapiv1transportoperatorsget_result.dart';
-import 'liststationsapiv1transportstationsget_result.dart';
-import 'neareststationsapiv1transportstationsnearbyget_result.dart';
-import 'planrouteapiv1transportplanget_result.dart';
-import 'poiaccessapiv1transportaccesspoiidget_result.dart';
-import 'routetopoiapiv1transportroutetopoipoiidget_result.dart';
+import 'gettransportaccesspoiid_result.dart';
+import 'gettransportlines_result.dart';
+import 'gettransportoperators_result.dart';
+import 'gettransportplan_result.dart';
+import 'gettransportroutetopoipoiid_result.dart';
+import 'gettransportroutesfromoriginwilayaid_result.dart';
+import 'gettransportroutesoriginwilayaiddestwilayaid_result.dart';
+import 'gettransportstationsnearby_result.dart';
+import 'gettransportstations_result.dart';
 
 class TransportApi {
   const TransportApi({required this.dio, this.baseUrl});
@@ -24,8 +24,8 @@ class TransportApi {
   final String? baseUrl;
 
   /// List reachable wilayas from an origin with driving distance/time, ordered by distance.
-  Future<GetRoutesFromApiV1TransportRoutesFromOriginWilayaIdGetResult>
-      getRoutesFromApiV1TransportRoutesFromOriginWilayaIdGet({
+  Future<GetTransportRoutesFromOriginWilayaIdResult>
+      getTransportRoutesFromOriginWilayaId({
     required int originWilayaId,
     int? limit,
     CancelToken? cancelToken,
@@ -49,13 +49,12 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return GetRoutesFromApiV1TransportRoutesFromOriginWilayaIdGetResult
-        .fromResponse(response);
+    return GetTransportRoutesFromOriginWilayaIdResult.fromResponse(response);
   }
 
   /// Multi-modal options (train, bus, taxi, flight) between two wilayas with schedules, pricing, transfers, and operator contacts. Falls back to driving estimates when no scheduled line exists.
-  Future<GetTransportRouteApiV1TransportRoutesOriginWilayaIdDestWilayaIdGetResult>
-      getTransportRouteApiV1TransportRoutesOriginWilayaIdDestWilayaIdGet({
+  Future<GetTransportRoutesOriginWilayaIdDestWilayaIdResult>
+      getTransportRoutesOriginWilayaIdDestWilayaId({
     required int originWilayaId,
     required int destWilayaId,
     CancelToken? cancelToken,
@@ -74,13 +73,12 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return GetTransportRouteApiV1TransportRoutesOriginWilayaIdDestWilayaIdGetResult
-        .fromResponse(response);
+    return GetTransportRoutesOriginWilayaIdDestWilayaIdResult.fromResponse(
+        response);
   }
 
   /// All transit stations, optionally filtered by wilaya and type (bus, train, tram, taxi, airport, ferry, cablecar).
-  Future<ListStationsApiV1TransportStationsGetResult>
-      listStationsApiV1TransportStationsGet({
+  Future<GetTransportStationsResult> getTransportStations({
     WilayaId? wilayaId,
     Type? type_,
     CancelToken? cancelToken,
@@ -107,12 +105,11 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return ListStationsApiV1TransportStationsGetResult.fromResponse(response);
+    return GetTransportStationsResult.fromResponse(response);
   }
 
   /// Stations nearest to a lat/lng point, optionally filtered by type. Uses the transit graph spatial index.
-  Future<NearestStationsApiV1TransportStationsNearbyGetResult>
-      nearestStationsApiV1TransportStationsNearbyGet({
+  Future<GetTransportStationsNearbyResult> getTransportStationsNearby({
     double? lat,
     double? lng,
     int? limit,
@@ -147,13 +144,11 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return NearestStationsApiV1TransportStationsNearbyGetResult.fromResponse(
-        response);
+    return GetTransportStationsNearbyResult.fromResponse(response);
   }
 
   /// Transport lines, optionally filtered by mode (bus, train, tram, taxi, flight, ferry, cablecar, walking). Includes schedules and pricing.
-  Future<ListLinesApiV1TransportLinesGetResult>
-      listLinesApiV1TransportLinesGet({
+  Future<GetTransportLinesResult> getTransportLines({
     Mode? mode,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -176,11 +171,11 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return ListLinesApiV1TransportLinesGetResult.fromResponse(response);
+    return GetTransportLinesResult.fromResponse(response);
   }
 
   /// Multi-modal route from a GPS point to a destination with turn-by-turn steps: walking, transit (schedule + pricing), and transfers as milestones for line changes. Handles walking-only and driving-recommended cases.
-  Future<PlanRouteApiV1TransportPlanGetResult> planRouteApiV1TransportPlanGet({
+  Future<GetTransportPlanResult> getTransportPlan({
     double? fromLat,
     double? fromLng,
     double? toLat,
@@ -223,12 +218,11 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return PlanRouteApiV1TransportPlanGetResult.fromResponse(response);
+    return GetTransportPlanResult.fromResponse(response);
   }
 
   /// Nearest stations and routing summary for a POI, useful for the 'how to get there' panel.
-  Future<PoiAccessApiV1TransportAccessPoiIdGetResult>
-      poiAccessApiV1TransportAccessPoiIdGet({
+  Future<GetTransportAccessPoiIdResult> getTransportAccessPoiId({
     required String poiId,
     double? lat,
     double? lng,
@@ -260,12 +254,11 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return PoiAccessApiV1TransportAccessPoiIdGetResult.fromResponse(response);
+    return GetTransportAccessPoiIdResult.fromResponse(response);
   }
 
   /// Turn-by-turn transit directions from a GPS point to a specific POI. Returns the plan plus POI access info. Falls back to an error object when no route exists.
-  Future<RouteToPoiApiV1TransportRouteToPoiPoiIdGetResult>
-      routeToPoiApiV1TransportRouteToPoiPoiIdGet({
+  Future<GetTransportRouteToPoiPoiIdResult> getTransportRouteToPoiPoiId({
     required String poiId,
     double? fromLat,
     double? fromLng,
@@ -297,13 +290,11 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return RouteToPoiApiV1TransportRouteToPoiPoiIdGetResult.fromResponse(
-        response);
+    return GetTransportRouteToPoiPoiIdResult.fromResponse(response);
   }
 
   /// Active transport operators with contact info (phone, website, email) and coverage, filtered by mode: train, flight, bus, taxi, tram, cablecar, ferry.
-  Future<ListOperatorsApiV1TransportOperatorsGetResult>
-      listOperatorsApiV1TransportOperatorsGet({
+  Future<GetTransportOperatorsResult> getTransportOperators({
     Mode? mode,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -326,6 +317,6 @@ class TransportApi {
       cancelToken: cancelToken,
     );
 
-    return ListOperatorsApiV1TransportOperatorsGetResult.fromResponse(response);
+    return GetTransportOperatorsResult.fromResponse(response);
   }
 }

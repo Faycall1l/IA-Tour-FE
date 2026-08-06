@@ -4,8 +4,8 @@
 //
 import 'package:dio/dio.dart';
 
-import 'searchapiv1searchget_result.dart';
-import 'suggestapiv1searchsuggestget_result.dart';
+import 'getsearchsuggest_result.dart';
+import 'getsearch_result.dart';
 
 class SearchApi {
   const SearchApi({required this.dio, this.baseUrl});
@@ -14,7 +14,7 @@ class SearchApi {
   final String? baseUrl;
 
   /// Fast prefix autocomplete across POI names, experience titles, and stay names. Sorted by name length.
-  Future<SuggestApiV1SearchSuggestGetResult> suggestApiV1SearchSuggestGet({
+  Future<GetSearchSuggestResult> getSearchSuggest({
     String? q,
     int? limit,
     CancelToken? cancelToken,
@@ -41,11 +41,11 @@ class SearchApi {
       cancelToken: cancelToken,
     );
 
-    return SuggestApiV1SearchSuggestGetResult.fromResponse(response);
+    return GetSearchSuggestResult.fromResponse(response);
   }
 
   /// Full-text search (French tsvector) across POIs, stays, and experiences in a single ranked result set. Each result carries entity_type, category, coordinates, price, and ts_rank score. Falls back gracefully if search vectors are absent.
-  Future<SearchApiV1SearchGetResult> searchApiV1SearchGet({
+  Future<GetSearchResult> getSearch({
     String? q,
     int? page,
     int? pageSize,
@@ -76,6 +76,6 @@ class SearchApi {
       cancelToken: cancelToken,
     );
 
-    return SearchApiV1SearchGetResult.fromResponse(response);
+    return GetSearchResult.fromResponse(response);
   }
 }

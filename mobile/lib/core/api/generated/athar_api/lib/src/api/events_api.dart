@@ -9,11 +9,11 @@ import '../models/eventcreate.dart';
 import '../models/eventupdate.dart';
 import '../models/month.dart';
 import '../models/wilayaid.dart';
-import 'createeventapiv1eventspost_result.dart';
-import 'deleteeventapiv1eventseventiddelete_result.dart';
-import 'geteventapiv1eventseventidget_result.dart';
-import 'listeventsapiv1eventsget_result.dart';
-import 'updateeventapiv1eventseventidpatch_result.dart';
+import 'deleteeventseventid_result.dart';
+import 'geteventseventid_result.dart';
+import 'getevents_result.dart';
+import 'patcheventseventid_result.dart';
+import 'postevents_result.dart';
 
 class EventsApi {
   const EventsApi({required this.dio, this.baseUrl});
@@ -22,7 +22,7 @@ class EventsApi {
   final String? baseUrl;
 
   /// Paginated events/festivals calendar filtered by wilaya, category, and month (1-12). Public.
-  Future<ListEventsApiV1EventsGetResult> listEventsApiV1EventsGet({
+  Future<GetEventsResult> getEvents({
     WilayaId? wilayaId,
     Category? category,
     Month? month,
@@ -61,11 +61,11 @@ class EventsApi {
       cancelToken: cancelToken,
     );
 
-    return ListEventsApiV1EventsGetResult.fromResponse(response);
+    return GetEventsResult.fromResponse(response);
   }
 
   /// Add an event/festival to the calendar. Requires provider or admin role; the wilaya must exist.
-  Future<CreateEventApiV1EventsPostResult> createEventApiV1EventsPost({
+  Future<PostEventsResult> postEvents({
     String? authorization,
     required EventCreate eventCreate,
     CancelToken? cancelToken,
@@ -90,11 +90,11 @@ class EventsApi {
       cancelToken: cancelToken,
     );
 
-    return CreateEventApiV1EventsPostResult.fromResponse(response);
+    return PostEventsResult.fromResponse(response);
   }
 
   /// Event detail. Public.
-  Future<GetEventApiV1EventsEventIdGetResult> getEventApiV1EventsEventIdGet({
+  Future<GetEventsEventIdResult> getEventsEventId({
     required String eventId,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -112,12 +112,11 @@ class EventsApi {
       cancelToken: cancelToken,
     );
 
-    return GetEventApiV1EventsEventIdGetResult.fromResponse(response);
+    return GetEventsEventIdResult.fromResponse(response);
   }
 
   /// Delete an event (provider or admin role).
-  Future<DeleteEventApiV1EventsEventIdDeleteResult>
-      deleteEventApiV1EventsEventIdDelete({
+  Future<DeleteEventsEventIdResult> deleteEventsEventId({
     required String eventId,
     String? authorization,
     CancelToken? cancelToken,
@@ -141,12 +140,11 @@ class EventsApi {
       cancelToken: cancelToken,
     );
 
-    return DeleteEventApiV1EventsEventIdDeleteResult.fromResponse(response);
+    return DeleteEventsEventIdResult.fromResponse(response);
   }
 
   /// Partial update of an event (provider or admin role).
-  Future<UpdateEventApiV1EventsEventIdPatchResult>
-      updateEventApiV1EventsEventIdPatch({
+  Future<PatchEventsEventIdResult> patchEventsEventId({
     required String eventId,
     String? authorization,
     required EventUpdate eventUpdate,
@@ -172,6 +170,6 @@ class EventsApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateEventApiV1EventsEventIdPatchResult.fromResponse(response);
+    return PatchEventsEventIdResult.fromResponse(response);
   }
 }

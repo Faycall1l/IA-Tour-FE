@@ -10,11 +10,11 @@ import '../models/propertytype.dart';
 import '../models/staycreate.dart';
 import '../models/stayupdate.dart';
 import '../models/wilayaid.dart';
-import 'createstayapiv1stayspost_result.dart';
-import 'deletestayapiv1staysstayiddelete_result.dart';
-import 'getstayapiv1staysstayidget_result.dart';
-import 'liststaysapiv1staysget_result.dart';
-import 'updatestayapiv1staysstayidput_result.dart';
+import 'deletestaysstayid_result.dart';
+import 'getstaysstayid_result.dart';
+import 'getstays_result.dart';
+import 'poststays_result.dart';
+import 'putstaysstayid_result.dart';
 
 class StaysApi {
   const StaysApi({required this.dio, this.baseUrl});
@@ -23,7 +23,7 @@ class StaysApi {
   final String? baseUrl;
 
   /// Paginated active stays filtered by wilaya, property type, and price range (DZD). Responses include provider name/avatar.
-  Future<ListStaysApiV1StaysGetResult> listStaysApiV1StaysGet({
+  Future<GetStaysResult> getStays({
     WilayaId? wilayaId,
     PropertyType? propertyType,
     MinPrice? minPrice,
@@ -66,11 +66,11 @@ class StaysApi {
       cancelToken: cancelToken,
     );
 
-    return ListStaysApiV1StaysGetResult.fromResponse(response);
+    return GetStaysResult.fromResponse(response);
   }
 
   /// List accommodation on the platform. Requires the authenticated user to have the hotel, agency, or admin role.
-  Future<CreateStayApiV1StaysPostResult> createStayApiV1StaysPost({
+  Future<PostStaysResult> postStays({
     String? authorization,
     required StayCreate stayCreate,
     CancelToken? cancelToken,
@@ -95,11 +95,11 @@ class StaysApi {
       cancelToken: cancelToken,
     );
 
-    return CreateStayApiV1StaysPostResult.fromResponse(response);
+    return PostStaysResult.fromResponse(response);
   }
 
   /// Stay detail with provider info. With auth, also returns is_favorited.
-  Future<GetStayApiV1StaysStayIdGetResult> getStayApiV1StaysStayIdGet({
+  Future<GetStaysStayIdResult> getStaysStayId({
     required String stayId,
     String? authorization,
     CancelToken? cancelToken,
@@ -123,11 +123,11 @@ class StaysApi {
       cancelToken: cancelToken,
     );
 
-    return GetStayApiV1StaysStayIdGetResult.fromResponse(response);
+    return GetStaysStayIdResult.fromResponse(response);
   }
 
   /// Update a stay listing. Only the owning provider or an admin can edit.
-  Future<UpdateStayApiV1StaysStayIdPutResult> updateStayApiV1StaysStayIdPut({
+  Future<PutStaysStayIdResult> putStaysStayId({
     required String stayId,
     String? authorization,
     required StayUpdate stayUpdate,
@@ -153,12 +153,11 @@ class StaysApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateStayApiV1StaysStayIdPutResult.fromResponse(response);
+    return PutStaysStayIdResult.fromResponse(response);
   }
 
   /// Delete a stay listing. Only the owning provider or an admin can delete.
-  Future<DeleteStayApiV1StaysStayIdDeleteResult>
-      deleteStayApiV1StaysStayIdDelete({
+  Future<DeleteStaysStayIdResult> deleteStaysStayId({
     required String stayId,
     String? authorization,
     CancelToken? cancelToken,
@@ -182,6 +181,6 @@ class StaysApi {
       cancelToken: cancelToken,
     );
 
-    return DeleteStayApiV1StaysStayIdDeleteResult.fromResponse(response);
+    return DeleteStaysStayIdResult.fromResponse(response);
   }
 }

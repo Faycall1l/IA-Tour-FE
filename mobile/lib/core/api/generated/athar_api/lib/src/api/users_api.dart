@@ -8,13 +8,13 @@ import '../models/providerprofileupdate.dart';
 import '../models/role.dart';
 import '../models/roleupdate.dart';
 import '../models/userupdate.dart';
-import 'getmeapiv1usersmeget_result.dart';
-import 'getproviderapiv1usersprovidersuseridget_result.dart';
-import 'listprovidersapiv1usersprovidersget_result.dart';
-import 'providerdashboardapiv1usersmedashboardget_result.dart';
-import 'setroleapiv1usersmeroleput_result.dart';
-import 'updatemeapiv1usersmeput_result.dart';
-import 'updateprofileapiv1usersmeprofileput_result.dart';
+import 'getusersmedashboard_result.dart';
+import 'getusersme_result.dart';
+import 'getusersprovidersuserid_result.dart';
+import 'getusersproviders_result.dart';
+import 'putusersmeprofile_result.dart';
+import 'putusersmerole_result.dart';
+import 'putusersme_result.dart';
 
 class UsersApi {
   const UsersApi({required this.dio, this.baseUrl});
@@ -23,7 +23,7 @@ class UsersApi {
   final String? baseUrl;
 
   /// Return the authenticated user's profile, including role, verification status, and provider profile link.
-  Future<GetMeApiV1UsersMeGetResult> getMeApiV1UsersMeGet({
+  Future<GetUsersMeResult> getUsersMe({
     String? authorization,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -46,11 +46,11 @@ class UsersApi {
       cancelToken: cancelToken,
     );
 
-    return GetMeApiV1UsersMeGetResult.fromResponse(response);
+    return GetUsersMeResult.fromResponse(response);
   }
 
   /// Update the authenticated user's profile fields. Role changes must use PUT /users/me/role.
-  Future<UpdateMeApiV1UsersMePutResult> updateMeApiV1UsersMePut({
+  Future<PutUsersMeResult> putUsersMe({
     String? authorization,
     required UserUpdate userUpdate,
     CancelToken? cancelToken,
@@ -75,11 +75,11 @@ class UsersApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateMeApiV1UsersMePutResult.fromResponse(response);
+    return PutUsersMeResult.fromResponse(response);
   }
 
   /// Self-assign a role. Restricted to SELF_ASSIGNABLE_ROLES (traveler/guide/agency/hotel); the `admin` role cannot be self-assigned. Switching to a provider role auto-creates a provider profile, and switching away deletes it.
-  Future<SetRoleApiV1UsersMeRolePutResult> setRoleApiV1UsersMeRolePut({
+  Future<PutUsersMeRoleResult> putUsersMeRole({
     String? authorization,
     required RoleUpdate roleUpdate,
     CancelToken? cancelToken,
@@ -104,12 +104,11 @@ class UsersApi {
       cancelToken: cancelToken,
     );
 
-    return SetRoleApiV1UsersMeRolePutResult.fromResponse(response);
+    return PutUsersMeRoleResult.fromResponse(response);
   }
 
   /// Update the authenticated user's provider profile (company name, website, experience, team size, etc.). The user must already have a provider role.
-  Future<UpdateProfileApiV1UsersMeProfilePutResult>
-      updateProfileApiV1UsersMeProfilePut({
+  Future<PutUsersMeProfileResult> putUsersMeProfile({
     String? authorization,
     required ProviderProfileUpdate providerProfileUpdate,
     CancelToken? cancelToken,
@@ -134,12 +133,11 @@ class UsersApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateProfileApiV1UsersMeProfilePutResult.fromResponse(response);
+    return PutUsersMeProfileResult.fromResponse(response);
   }
 
   /// List all provider users (guide/agency/hotel) with their profiles. Public.
-  Future<ListProvidersApiV1UsersProvidersGetResult>
-      listProvidersApiV1UsersProvidersGet({
+  Future<GetUsersProvidersResult> getUsersProviders({
     Role? role,
     int? page,
     int? pageSize,
@@ -170,12 +168,11 @@ class UsersApi {
       cancelToken: cancelToken,
     );
 
-    return ListProvidersApiV1UsersProvidersGetResult.fromResponse(response);
+    return GetUsersProvidersResult.fromResponse(response);
   }
 
   /// Return a single provider user with their profile. Public.
-  Future<GetProviderApiV1UsersProvidersUserIdGetResult>
-      getProviderApiV1UsersProvidersUserIdGet({
+  Future<GetUsersProvidersUserIdResult> getUsersProvidersUserId({
     required String userId,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -193,12 +190,11 @@ class UsersApi {
       cancelToken: cancelToken,
     );
 
-    return GetProviderApiV1UsersProvidersUserIdGetResult.fromResponse(response);
+    return GetUsersProvidersUserIdResult.fromResponse(response);
   }
 
   /// Aggregated dashboard for providers: listing counts (experiences/stays), active counts, and top 5 of each. Requires a provider role or admin.
-  Future<ProviderDashboardApiV1UsersMeDashboardGetResult>
-      providerDashboardApiV1UsersMeDashboardGet({
+  Future<GetUsersMeDashboardResult> getUsersMeDashboard({
     String? authorization,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -221,7 +217,6 @@ class UsersApi {
       cancelToken: cancelToken,
     );
 
-    return ProviderDashboardApiV1UsersMeDashboardGetResult.fromResponse(
-        response);
+    return GetUsersMeDashboardResult.fromResponse(response);
   }
 }

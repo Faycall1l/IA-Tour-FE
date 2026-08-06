@@ -31,9 +31,9 @@ class ApiClient {
       AppConfig.apiBaseUrl.replaceFirst(RegExp(r'/api/v1/?$'), '');
 
   Future<List<Wilaya>> getWilayas() async {
-    final res = await _generated.discover.listWilayasApiV1DiscoverWilayasGet();
+    final res = await _generated.discover.getDiscoverWilayas();
     return switch (res) {
-      gen.ListWilayasApiV1DiscoverWilayasGetResultHttp200(:final data) =>
+      gen.GetDiscoverWilayasResultHttp200(:final data) =>
         data.map(_toWilaya).toList(),
       _ => throw const ApiException('Failed to load wilayas'),
     };
@@ -41,13 +41,9 @@ class ApiClient {
 
   Future<WilayaDetail> getWilayaDetail(int wilayaId) async {
     final res = await _generated.discover
-        .discoverWilayaApiV1DiscoverWilayasWilayaIdGet(
-      wilayaId: gen.WilayaIdVariant0(wilayaId),
-    );
+        .getDiscoverWilayasWilayaId(wilayaId: gen.WilayaIdVariant0(wilayaId));
     return switch (res) {
-      gen.DiscoverWilayaApiV1DiscoverWilayasWilayaIdGetResultHttp200(
-        :final data
-      ) =>
+      gen.GetDiscoverWilayasWilayaIdResultHttp200(:final data) =>
         WilayaDetail(
           wilayaId: data.wilayaId,
           wilayaName: data.wilayaName,
@@ -61,19 +57,18 @@ class ApiClient {
 
   Future<PoiDetail> getPoiDetail(String poiId) async {
     final res = await _generated.pointsOfInterest
-        .getPoiApiV1PoisPoiIdGet(poiId: poiId);
+        .getPoisPoiId(poiId: poiId);
     return switch (res) {
-      gen.GetPoiApiV1PoisPoiIdGetResultHttp200(:final data) =>
-        _toPoiDetail(data),
+      gen.GetPoisPoiIdResultHttp200(:final data) => _toPoiDetail(data),
       _ => throw const ApiException('Failed to load POI detail'),
     };
   }
 
   Future<List<PoiDetail>> searchPois(String query, {int limit = 24}) async {
     final res = await _generated.pointsOfInterest
-        .searchPoisApiV1PoisSearchGet(q: query, limit: limit);
+        .getPoisSearch(q: query, limit: limit);
     return switch (res) {
-      gen.SearchPoisApiV1PoisSearchGetResultHttp200(:final data) =>
+      gen.GetPoisSearchResultHttp200(:final data) =>
         data.items.map(_toPoiDetail).toList(),
       _ => throw const ApiException('Search failed'),
     };
@@ -81,9 +76,9 @@ class ApiClient {
 
   Future<void> sendOtp(String phone) async {
     final res = await _generated.authentication
-        .sendOtpApiV1AuthSendOtpPost(oTPRequest: gen.OTPRequest(phone: phone));
+        .postAuthSendOtp(oTPRequest: gen.OTPRequest(phone: phone));
     switch (res) {
-      case gen.SendOtpApiV1AuthSendOtpPostResultHttp200():
+      case gen.PostAuthSendOtpResultHttp200():
         return;
       default:
         throw const ApiException('Failed to send OTP');
@@ -91,11 +86,11 @@ class ApiClient {
   }
 
   Future<String> verifyOtp(String phone, String code) async {
-    final res = await _generated.authentication.verifyOtpApiV1AuthVerifyOtpPost(
+    final res = await _generated.authentication.postAuthVerifyOtp(
       oTPVerify: gen.OTPVerify(phone: phone, code: code),
     );
     return switch (res) {
-      gen.VerifyOtpApiV1AuthVerifyOtpPostResultHttp200(:final data) =>
+      gen.PostAuthVerifyOtpResultHttp200(:final data) =>
         data.accessToken,
       _ => throw const ApiException('Login failed — no token returned'),
     };
@@ -106,7 +101,7 @@ class ApiClient {
     String? sessionId,
     required String token,
   }) async {
-    final res = await _generated.agents.agentChatApiV1AgentChatPost(
+    final res = await _generated.agents.postAgentChat(
       agentChatRequest: gen.AgentChatRequest(
         message: message,
         sessionId: sessionId != null
@@ -116,7 +111,7 @@ class ApiClient {
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return switch (res) {
-      gen.AgentChatApiV1AgentChatPostResultHttp200(:final data) =>
+      gen.PostAgentChatResultHttp200(:final data) =>
         AgentChatReply(
           reply: data.reply,
           sessionId: _val<String>(data.sessionId),

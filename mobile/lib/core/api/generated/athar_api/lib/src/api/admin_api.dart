@@ -8,16 +8,16 @@ import '../models/adminroleupdate.dart';
 import '../models/providertype.dart';
 import '../models/role.dart';
 import '../models/verified.dart';
-import 'admindeleteexperienceapiv1adminexperiencesexperienceiddelete_result.dart';
-import 'agentobservabilitystatsapiv1adminagentstatsget_result.dart';
-import 'approveproviderapiv1adminprovidersprofileidapproveput_result.dart';
-import 'dashboardstatsapiv1adminstatsget_result.dart';
-import 'getverificationstatsapiv1adminverifystatsget_result.dart';
-import 'listprovidersapiv1adminprovidersget_result.dart';
-import 'listusersapiv1adminusersget_result.dart';
-import 'setuserroleapiv1adminusersuseridroleput_result.dart';
-import 'toggleuserverificationapiv1adminusersuseridverifyput_result.dart';
-import 'verifypoiqualityapiv1adminverifypoipoiidget_result.dart';
+import 'deleteadminexperiencesexperienceid_result.dart';
+import 'getadminagentstats_result.dart';
+import 'getadminproviders_result.dart';
+import 'getadminstats_result.dart';
+import 'getadminusers_result.dart';
+import 'getadminverifypoipoiid_result.dart';
+import 'getadminverifystats_result.dart';
+import 'putadminprovidersprofileidapprove_result.dart';
+import 'putadminusersuseridrole_result.dart';
+import 'putadminusersuseridverify_result.dart';
 
 class AdminApi {
   const AdminApi({required this.dio, this.baseUrl});
@@ -26,8 +26,7 @@ class AdminApi {
   final String? baseUrl;
 
   /// Platform totals (POIs, stays, experiences, events, users, trips) plus POI distribution per wilaya and per category.
-  Future<DashboardStatsApiV1AdminStatsGetResult>
-      dashboardStatsApiV1AdminStatsGet({
+  Future<GetAdminStatsResult> getAdminStats({
     String? authorization,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -50,11 +49,11 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return DashboardStatsApiV1AdminStatsGetResult.fromResponse(response);
+    return GetAdminStatsResult.fromResponse(response);
   }
 
   /// Paginated user listing for admins, filtered by role and verification status.
-  Future<ListUsersApiV1AdminUsersGetResult> listUsersApiV1AdminUsersGet({
+  Future<GetAdminUsersResult> getAdminUsers({
     Role? role,
     Verified? verified,
     int? page,
@@ -94,12 +93,11 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return ListUsersApiV1AdminUsersGetResult.fromResponse(response);
+    return GetAdminUsersResult.fromResponse(response);
   }
 
   /// Change a user's role. Auto-creates a provider profile when promoting to a provider role, and deletes it when demoting.
-  Future<SetUserRoleApiV1AdminUsersUserIdRolePutResult>
-      setUserRoleApiV1AdminUsersUserIdRolePut({
+  Future<PutAdminUsersUserIdRoleResult> putAdminUsersUserIdRole({
     required String userId,
     String? authorization,
     required AdminRoleUpdate adminRoleUpdate,
@@ -125,12 +123,11 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return SetUserRoleApiV1AdminUsersUserIdRolePutResult.fromResponse(response);
+    return PutAdminUsersUserIdRoleResult.fromResponse(response);
   }
 
   /// Flip a user's is_verified flag (trust badge).
-  Future<ToggleUserVerificationApiV1AdminUsersUserIdVerifyPutResult>
-      toggleUserVerificationApiV1AdminUsersUserIdVerifyPut({
+  Future<PutAdminUsersUserIdVerifyResult> putAdminUsersUserIdVerify({
     required String userId,
     String? authorization,
     CancelToken? cancelToken,
@@ -154,13 +151,11 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return ToggleUserVerificationApiV1AdminUsersUserIdVerifyPutResult
-        .fromResponse(response);
+    return PutAdminUsersUserIdVerifyResult.fromResponse(response);
   }
 
   /// Paginated provider profiles for admins, filtered by verification status and provider type.
-  Future<ListProvidersApiV1AdminProvidersGetResult>
-      listProvidersApiV1AdminProvidersGet({
+  Future<GetAdminProvidersResult> getAdminProviders({
     Verified? verified,
     ProviderType? providerType,
     int? page,
@@ -200,12 +195,12 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return ListProvidersApiV1AdminProvidersGetResult.fromResponse(response);
+    return GetAdminProvidersResult.fromResponse(response);
   }
 
   /// Mark a provider profile as verified.
-  Future<ApproveProviderApiV1AdminProvidersProfileIdApprovePutResult>
-      approveProviderApiV1AdminProvidersProfileIdApprovePut({
+  Future<PutAdminProvidersProfileIdApproveResult>
+      putAdminProvidersProfileIdApprove({
     required String profileId,
     String? authorization,
     CancelToken? cancelToken,
@@ -229,13 +224,12 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return ApproveProviderApiV1AdminProvidersProfileIdApprovePutResult
-        .fromResponse(response);
+    return PutAdminProvidersProfileIdApproveResult.fromResponse(response);
   }
 
   /// Admin moderation: delete an experience regardless of owner. Removes it from the Qdrant index.
-  Future<AdminDeleteExperienceApiV1AdminExperiencesExperienceIdDeleteResult>
-      adminDeleteExperienceApiV1AdminExperiencesExperienceIdDelete({
+  Future<DeleteAdminExperiencesExperienceIdResult>
+      deleteAdminExperiencesExperienceId({
     required String experienceId,
     String? authorization,
     CancelToken? cancelToken,
@@ -259,13 +253,11 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return AdminDeleteExperienceApiV1AdminExperiencesExperienceIdDeleteResult
-        .fromResponse(response);
+    return DeleteAdminExperiencesExperienceIdResult.fromResponse(response);
   }
 
   /// Run an LLM-based (or rule-based dry-run fallback) quality verification on a POI, reporting a score out of 5, issue count, and missing fields.
-  Future<VerifyPoiQualityApiV1AdminVerifyPoiPoiIdGetResult>
-      verifyPoiQualityApiV1AdminVerifyPoiPoiIdGet({
+  Future<GetAdminVerifyPoiPoiIdResult> getAdminVerifyPoiPoiId({
     required String poiId,
     String? authorization,
     CancelToken? cancelToken,
@@ -289,13 +281,11 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return VerifyPoiQualityApiV1AdminVerifyPoiPoiIdGetResult.fromResponse(
-        response);
+    return GetAdminVerifyPoiPoiIdResult.fromResponse(response);
   }
 
   /// Aggregate POI data quality: totals, and counts with phone, website, opening hours, or short descriptions.
-  Future<GetVerificationStatsApiV1AdminVerifyStatsGetResult>
-      getVerificationStatsApiV1AdminVerifyStatsGet({
+  Future<GetAdminVerifyStatsResult> getAdminVerifyStats({
     String? authorization,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -318,13 +308,11 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return GetVerificationStatsApiV1AdminVerifyStatsGetResult.fromResponse(
-        response);
+    return GetAdminVerifyStatsResult.fromResponse(response);
   }
 
   /// Agent monitoring: totals, success/failure rates, token usage, average duration, and recent traces (P1 monitoring).
-  Future<AgentObservabilityStatsApiV1AdminAgentStatsGetResult>
-      agentObservabilityStatsApiV1AdminAgentStatsGet({
+  Future<GetAdminAgentStatsResult> getAdminAgentStats({
     int? limit,
     String? authorization,
     CancelToken? cancelToken,
@@ -352,7 +340,6 @@ class AdminApi {
       cancelToken: cancelToken,
     );
 
-    return AgentObservabilityStatsApiV1AdminAgentStatsGetResult.fromResponse(
-        response);
+    return GetAdminAgentStatsResult.fromResponse(response);
   }
 }

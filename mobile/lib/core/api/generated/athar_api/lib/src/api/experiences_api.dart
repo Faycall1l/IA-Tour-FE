@@ -4,7 +4,7 @@
 //
 import 'package:dio/dio.dart';
 
-import '../models/bodyuploadexperiencephotosapiv1experiencesexperienceidphotospost.dart';
+import '../models/bodypostexperiencesexperienceidphotos.dart';
 import '../models/category.dart';
 import '../models/experiencecreate.dart';
 import '../models/experienceupdate.dart';
@@ -13,13 +13,13 @@ import '../models/providertype.dart';
 import '../models/season.dart';
 import '../models/status.dart';
 import '../models/wilayaid.dart';
-import 'createexperienceapiv1experiencespost_result.dart';
-import 'deleteexperienceapiv1experiencesexperienceiddelete_result.dart';
-import 'getexperienceapiv1experiencesexperienceidget_result.dart';
-import 'listexperiencesapiv1experiencesget_result.dart';
-import 'searchexperiencesapiv1experiencessearchget_result.dart';
-import 'updateexperienceapiv1experiencesexperienceidput_result.dart';
-import 'uploadexperiencephotosapiv1experiencesexperienceidphotospost_result.dart';
+import 'deleteexperiencesexperienceid_result.dart';
+import 'getexperiencesexperienceid_result.dart';
+import 'getexperiencessearch_result.dart';
+import 'getexperiences_result.dart';
+import 'postexperiencesexperienceidphotos_result.dart';
+import 'postexperiences_result.dart';
+import 'putexperiencesexperienceid_result.dart';
 
 class ExperiencesApi {
   const ExperiencesApi({required this.dio, this.baseUrl});
@@ -28,8 +28,7 @@ class ExperiencesApi {
   final String? baseUrl;
 
   /// Paginated experiences (active by default). Filters: wilaya, category, provider_id, season, provider_type, status.
-  Future<ListExperiencesApiV1ExperiencesGetResult>
-      listExperiencesApiV1ExperiencesGet({
+  Future<GetExperiencesResult> getExperiences({
     WilayaId? wilayaId,
     Category? category,
     ProviderId? providerId,
@@ -80,12 +79,11 @@ class ExperiencesApi {
       cancelToken: cancelToken,
     );
 
-    return ListExperiencesApiV1ExperiencesGetResult.fromResponse(response);
+    return GetExperiencesResult.fromResponse(response);
   }
 
   /// Add a bookable tour/activity. Requires a provider role (guide, agency, or hotel). Indexed for vector search on creation.
-  Future<CreateExperienceApiV1ExperiencesPostResult>
-      createExperienceApiV1ExperiencesPost({
+  Future<PostExperiencesResult> postExperiences({
     String? authorization,
     required ExperienceCreate experienceCreate,
     CancelToken? cancelToken,
@@ -110,12 +108,11 @@ class ExperiencesApi {
       cancelToken: cancelToken,
     );
 
-    return CreateExperienceApiV1ExperiencesPostResult.fromResponse(response);
+    return PostExperiencesResult.fromResponse(response);
   }
 
   /// Vector search over active experiences with PostgreSQL full-text (French) fallback when Qdrant is unavailable.
-  Future<SearchExperiencesApiV1ExperiencesSearchGetResult>
-      searchExperiencesApiV1ExperiencesSearchGet({
+  Future<GetExperiencesSearchResult> getExperiencesSearch({
     String? q,
     int? limit,
     CancelToken? cancelToken,
@@ -142,13 +139,11 @@ class ExperiencesApi {
       cancelToken: cancelToken,
     );
 
-    return SearchExperiencesApiV1ExperiencesSearchGetResult.fromResponse(
-        response);
+    return GetExperiencesSearchResult.fromResponse(response);
   }
 
   /// Experience detail plus provider info (name, avatar, role). With auth, also returns is_favorited.
-  Future<GetExperienceApiV1ExperiencesExperienceIdGetResult>
-      getExperienceApiV1ExperiencesExperienceIdGet({
+  Future<GetExperiencesExperienceIdResult> getExperiencesExperienceId({
     required String experienceId,
     String? authorization,
     CancelToken? cancelToken,
@@ -172,13 +167,11 @@ class ExperiencesApi {
       cancelToken: cancelToken,
     );
 
-    return GetExperienceApiV1ExperiencesExperienceIdGetResult.fromResponse(
-        response);
+    return GetExperiencesExperienceIdResult.fromResponse(response);
   }
 
   /// Update an experience. Only the owning provider or an admin can edit. Re-indexes in Qdrant.
-  Future<UpdateExperienceApiV1ExperiencesExperienceIdPutResult>
-      updateExperienceApiV1ExperiencesExperienceIdPut({
+  Future<PutExperiencesExperienceIdResult> putExperiencesExperienceId({
     required String experienceId,
     String? authorization,
     required ExperienceUpdate experienceUpdate,
@@ -204,13 +197,11 @@ class ExperiencesApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateExperienceApiV1ExperiencesExperienceIdPutResult.fromResponse(
-        response);
+    return PutExperiencesExperienceIdResult.fromResponse(response);
   }
 
   /// Delete an experience. Only the owning provider or an admin can delete. Removes from the Qdrant index.
-  Future<DeleteExperienceApiV1ExperiencesExperienceIdDeleteResult>
-      deleteExperienceApiV1ExperiencesExperienceIdDelete({
+  Future<DeleteExperiencesExperienceIdResult> deleteExperiencesExperienceId({
     required String experienceId,
     String? authorization,
     CancelToken? cancelToken,
@@ -234,17 +225,16 @@ class ExperiencesApi {
       cancelToken: cancelToken,
     );
 
-    return DeleteExperienceApiV1ExperiencesExperienceIdDeleteResult
-        .fromResponse(response);
+    return DeleteExperiencesExperienceIdResult.fromResponse(response);
   }
 
   /// Append one or more photos (multipart, JPEG/PNG/WebP) to an experience's gallery via MinIO. Owner or admin only.
-  Future<UploadExperiencePhotosApiV1ExperiencesExperienceIdPhotosPostResult>
-      uploadExperiencePhotosApiV1ExperiencesExperienceIdPhotosPost({
+  Future<PostExperiencesExperienceIdPhotosResult>
+      postExperiencesExperienceIdPhotos({
     required String experienceId,
     String? authorization,
-    required BodyUploadExperiencePhotosApiV1ExperiencesExperienceIdPhotosPost
-        bodyUploadExperiencePhotosApiV1ExperiencesExperienceIdPhotosPost,
+    required BodyPostExperiencesExperienceIdPhotos
+        bodyPostExperiencesExperienceIdPhotos,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
     Options? options,
@@ -256,8 +246,7 @@ class ExperiencesApi {
 
     final response = await dio.request<Map<String, dynamic>>(
       '/api/v1/experiences/$experienceId/photos',
-      data: bodyUploadExperiencePhotosApiV1ExperiencesExperienceIdPhotosPost
-          .toFormData(),
+      data: bodyPostExperiencesExperienceIdPhotos.toFormData(),
       queryParameters: null,
       options: options ??
           Options(
@@ -268,7 +257,6 @@ class ExperiencesApi {
       cancelToken: cancelToken,
     );
 
-    return UploadExperiencePhotosApiV1ExperiencesExperienceIdPhotosPostResult
-        .fromResponse(response);
+    return PostExperiencesExperienceIdPhotosResult.fromResponse(response);
   }
 }

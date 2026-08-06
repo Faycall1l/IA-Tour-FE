@@ -8,10 +8,10 @@ import '../models/otprequest.dart';
 import '../models/otpverify.dart';
 import '../models/providerregisterrequest.dart';
 import '../models/tokenrefresh.dart';
-import 'refreshtokenapiv1authrefreshpost_result.dart';
-import 'registerproviderapiv1authregisterproviderpost_result.dart';
-import 'sendotpapiv1authsendotppost_result.dart';
-import 'verifyotpapiv1authverifyotppost_result.dart';
+import 'postauthrefresh_result.dart';
+import 'postauthregisterprovider_result.dart';
+import 'postauthsendotp_result.dart';
+import 'postauthverifyotp_result.dart';
 
 class AuthenticationApi {
   const AuthenticationApi({required this.dio, this.baseUrl});
@@ -20,7 +20,7 @@ class AuthenticationApi {
   final String? baseUrl;
 
   /// Request a 6-digit OTP for passwordless login. When Twilio is configured the code is delivered by SMS; otherwise it is generated in-memory (never returned in the response). Rate limited to 10/minute globally and 3 sends per phone per 10 minutes.
-  Future<SendOtpApiV1AuthSendOtpPostResult> sendOtpApiV1AuthSendOtpPost({
+  Future<PostAuthSendOtpResult> postAuthSendOtp({
     required OTPRequest oTPRequest,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -39,12 +39,11 @@ class AuthenticationApi {
       cancelToken: cancelToken,
     );
 
-    return SendOtpApiV1AuthSendOtpPostResult.fromResponse(response);
+    return PostAuthSendOtpResult.fromResponse(response);
   }
 
   /// Exchange a phone + OTP for an access token and refresh token. Creates the user account on first login. A code is invalidated after 5 failed attempts (constant-time comparison). The refresh token is stored hashed with a rotation family.
-  Future<VerifyOtpApiV1AuthVerifyOtpPostResult>
-      verifyOtpApiV1AuthVerifyOtpPost({
+  Future<PostAuthVerifyOtpResult> postAuthVerifyOtp({
     required OTPVerify oTPVerify,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -63,12 +62,11 @@ class AuthenticationApi {
       cancelToken: cancelToken,
     );
 
-    return VerifyOtpApiV1AuthVerifyOtpPostResult.fromResponse(response);
+    return PostAuthVerifyOtpResult.fromResponse(response);
   }
 
   /// Exchange a valid refresh token for a fresh access/refresh pair. Rotation is one-time-use: presenting an already-revoked token revokes the entire token family (stolen-token detection).
-  Future<RefreshTokenApiV1AuthRefreshPostResult>
-      refreshTokenApiV1AuthRefreshPost({
+  Future<PostAuthRefreshResult> postAuthRefresh({
     required TokenRefresh tokenRefresh,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -87,12 +85,11 @@ class AuthenticationApi {
       cancelToken: cancelToken,
     );
 
-    return RefreshTokenApiV1AuthRefreshPostResult.fromResponse(response);
+    return PostAuthRefreshResult.fromResponse(response);
   }
 
   /// Upgrade the authenticated user's account to a provider (guide/agency/hotel) and create their provider profile. Only users with the `traveler` role (or admins) can register; rate limited to 5/minute.
-  Future<RegisterProviderApiV1AuthRegisterProviderPostResult>
-      registerProviderApiV1AuthRegisterProviderPost({
+  Future<PostAuthRegisterProviderResult> postAuthRegisterProvider({
     String? authorization,
     required ProviderRegisterRequest providerRegisterRequest,
     CancelToken? cancelToken,
@@ -117,7 +114,6 @@ class AuthenticationApi {
       cancelToken: cancelToken,
     );
 
-    return RegisterProviderApiV1AuthRegisterProviderPostResult.fromResponse(
-        response);
+    return PostAuthRegisterProviderResult.fromResponse(response);
   }
 }

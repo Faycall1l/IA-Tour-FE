@@ -9,13 +9,13 @@ import '../models/agentsearchrequest.dart';
 import '../models/eventsqueryrequest.dart';
 import '../models/plantriprequest.dart';
 import '../models/transportqueryrequest.dart';
-import 'agentchatapiv1agentchatpost_result.dart';
-import 'agenteventsapiv1agenteventspost_result.dart';
-import 'agentplantripapiv1agentplantrippost_result.dart';
-import 'agentsearchapiv1agentsearchpost_result.dart';
-import 'agenttransportapiv1agenttransportpost_result.dart';
-import 'clearsessionapiv1agentsessionssessioniddelete_result.dart';
-import 'listsessionsapiv1agentsessionsget_result.dart';
+import 'deleteagentsessionssessionid_result.dart';
+import 'getagentsessions_result.dart';
+import 'postagentchat_result.dart';
+import 'postagentevents_result.dart';
+import 'postagentplantrip_result.dart';
+import 'postagentsearch_result.dart';
+import 'postagenttransport_result.dart';
 
 class AgentsApi {
   const AgentsApi({required this.dio, this.baseUrl});
@@ -24,7 +24,7 @@ class AgentsApi {
   final String? baseUrl;
 
   /// Ask the general travel assistant any Algeria travel question. Supports multi-turn memory via session_id. Rate limited to 20/hour; returns 503 when the LLM backend is not configured.
-  Future<AgentChatApiV1AgentChatPostResult> agentChatApiV1AgentChatPost({
+  Future<PostAgentChatResult> postAgentChat({
     String? authorization,
     required AgentChatRequest agentChatRequest,
     CancelToken? cancelToken,
@@ -49,12 +49,11 @@ class AgentsApi {
       cancelToken: cancelToken,
     );
 
-    return AgentChatApiV1AgentChatPostResult.fromResponse(response);
+    return PostAgentChatResult.fromResponse(response);
   }
 
   /// Structured itinerary planner: destination + duration + budget + interests produce a day-by-day plan. Rate limited to 10/hour.
-  Future<AgentPlanTripApiV1AgentPlanTripPostResult>
-      agentPlanTripApiV1AgentPlanTripPost({
+  Future<PostAgentPlanTripResult> postAgentPlanTrip({
     String? authorization,
     required PlanTripRequest planTripRequest,
     CancelToken? cancelToken,
@@ -79,12 +78,11 @@ class AgentsApi {
       cancelToken: cancelToken,
     );
 
-    return AgentPlanTripApiV1AgentPlanTripPostResult.fromResponse(response);
+    return PostAgentPlanTripResult.fromResponse(response);
   }
 
   /// Agent-driven search across POIs, stays, and experiences. Rate limited to 30/hour.
-  Future<AgentSearchApiV1AgentSearchPostResult>
-      agentSearchApiV1AgentSearchPost({
+  Future<PostAgentSearchResult> postAgentSearch({
     String? authorization,
     required AgentSearchRequest agentSearchRequest,
     CancelToken? cancelToken,
@@ -109,12 +107,11 @@ class AgentsApi {
       cancelToken: cancelToken,
     );
 
-    return AgentSearchApiV1AgentSearchPostResult.fromResponse(response);
+    return PostAgentSearchResult.fromResponse(response);
   }
 
   /// Ask about routes, schedules, or operator contacts. Rate limited to 20/hour.
-  Future<AgentTransportApiV1AgentTransportPostResult>
-      agentTransportApiV1AgentTransportPost({
+  Future<PostAgentTransportResult> postAgentTransport({
     String? authorization,
     required TransportQueryRequest transportQueryRequest,
     CancelToken? cancelToken,
@@ -139,12 +136,11 @@ class AgentsApi {
       cancelToken: cancelToken,
     );
 
-    return AgentTransportApiV1AgentTransportPostResult.fromResponse(response);
+    return PostAgentTransportResult.fromResponse(response);
   }
 
   /// Ask about festivals and cultural activities in a wilaya. Rate limited to 20/hour.
-  Future<AgentEventsApiV1AgentEventsPostResult>
-      agentEventsApiV1AgentEventsPost({
+  Future<PostAgentEventsResult> postAgentEvents({
     String? authorization,
     required EventsQueryRequest eventsQueryRequest,
     CancelToken? cancelToken,
@@ -169,12 +165,11 @@ class AgentsApi {
       cancelToken: cancelToken,
     );
 
-    return AgentEventsApiV1AgentEventsPostResult.fromResponse(response);
+    return PostAgentEventsResult.fromResponse(response);
   }
 
   /// List the user's agent conversation sessions. Rate limited to 30/hour.
-  Future<ListSessionsApiV1AgentSessionsGetResult>
-      listSessionsApiV1AgentSessionsGet({
+  Future<GetAgentSessionsResult> getAgentSessions({
     String? authorization,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -197,12 +192,11 @@ class AgentsApi {
       cancelToken: cancelToken,
     );
 
-    return ListSessionsApiV1AgentSessionsGetResult.fromResponse(response);
+    return GetAgentSessionsResult.fromResponse(response);
   }
 
   /// Soft-delete a session and its memories. Owner only. Rate limited to 20/hour.
-  Future<ClearSessionApiV1AgentSessionsSessionIdDeleteResult>
-      clearSessionApiV1AgentSessionsSessionIdDelete({
+  Future<DeleteAgentSessionsSessionIdResult> deleteAgentSessionsSessionId({
     required String sessionId,
     String? authorization,
     CancelToken? cancelToken,
@@ -226,7 +220,6 @@ class AgentsApi {
       cancelToken: cancelToken,
     );
 
-    return ClearSessionApiV1AgentSessionsSessionIdDeleteResult.fromResponse(
-        response);
+    return DeleteAgentSessionsSessionIdResult.fromResponse(response);
   }
 }

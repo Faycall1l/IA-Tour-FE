@@ -10,11 +10,11 @@ import '../models/artisanupdate.dart';
 import '../models/crafttype.dart';
 import '../models/search.dart';
 import '../models/wilayaid.dart';
-import 'createartisanapiv1artisanspost_result.dart';
-import 'deleteartisanapiv1artisansartisaniddelete_result.dart';
-import 'getartisanapiv1artisansartisanidget_result.dart';
-import 'listartisansapiv1artisansget_result.dart';
-import 'updateartisanapiv1artisansartisanidput_result.dart';
+import 'deleteartisansartisanid_result.dart';
+import 'getartisansartisanid_result.dart';
+import 'getartisans_result.dart';
+import 'postartisans_result.dart';
+import 'putartisansartisanid_result.dart';
 
 class ArtisansApi {
   const ArtisansApi({required this.dio, this.baseUrl});
@@ -23,7 +23,7 @@ class ArtisansApi {
   final String? baseUrl;
 
   /// Paginated artisans filtered by wilaya, craft type, visitor acceptance, and name search. Sort by name, newest, or years of experience.
-  Future<ListArtisansApiV1ArtisansGetResult> listArtisansApiV1ArtisansGet({
+  Future<GetArtisansResult> getArtisans({
     WilayaId? wilayaId,
     CraftType? craftType,
     AcceptsVisitors? acceptsVisitors,
@@ -70,11 +70,11 @@ class ArtisansApi {
       cancelToken: cancelToken,
     );
 
-    return ListArtisansApiV1ArtisansGetResult.fromResponse(response);
+    return GetArtisansResult.fromResponse(response);
   }
 
   /// Register a craft workshop. A user can have at most one artisan profile; creating one auto-promotes a traveler account to the artisan role.
-  Future<CreateArtisanApiV1ArtisansPostResult> createArtisanApiV1ArtisansPost({
+  Future<PostArtisansResult> postArtisans({
     String? authorization,
     required ArtisanCreate artisanCreate,
     CancelToken? cancelToken,
@@ -99,12 +99,11 @@ class ArtisansApi {
       cancelToken: cancelToken,
     );
 
-    return CreateArtisanApiV1ArtisansPostResult.fromResponse(response);
+    return PostArtisansResult.fromResponse(response);
   }
 
   /// Artisan detail. Public.
-  Future<GetArtisanApiV1ArtisansArtisanIdGetResult>
-      getArtisanApiV1ArtisansArtisanIdGet({
+  Future<GetArtisansArtisanIdResult> getArtisansArtisanId({
     required String artisanId,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -122,12 +121,11 @@ class ArtisansApi {
       cancelToken: cancelToken,
     );
 
-    return GetArtisanApiV1ArtisansArtisanIdGetResult.fromResponse(response);
+    return GetArtisansArtisanIdResult.fromResponse(response);
   }
 
   /// Update an artisan profile. Only the owner or an admin can edit.
-  Future<UpdateArtisanApiV1ArtisansArtisanIdPutResult>
-      updateArtisanApiV1ArtisansArtisanIdPut({
+  Future<PutArtisansArtisanIdResult> putArtisansArtisanId({
     required String artisanId,
     String? authorization,
     required ArtisanUpdate artisanUpdate,
@@ -153,12 +151,11 @@ class ArtisansApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateArtisanApiV1ArtisansArtisanIdPutResult.fromResponse(response);
+    return PutArtisansArtisanIdResult.fromResponse(response);
   }
 
   /// Delete an artisan profile. Only the owner or an admin can delete.
-  Future<DeleteArtisanApiV1ArtisansArtisanIdDeleteResult>
-      deleteArtisanApiV1ArtisansArtisanIdDelete({
+  Future<DeleteArtisansArtisanIdResult> deleteArtisansArtisanId({
     required String artisanId,
     String? authorization,
     CancelToken? cancelToken,
@@ -182,7 +179,6 @@ class ArtisansApi {
       cancelToken: cancelToken,
     );
 
-    return DeleteArtisanApiV1ArtisansArtisanIdDeleteResult.fromResponse(
-        response);
+    return DeleteArtisansArtisanIdResult.fromResponse(response);
   }
 }

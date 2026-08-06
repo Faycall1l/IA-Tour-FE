@@ -6,9 +6,9 @@ import 'package:dio/dio.dart';
 
 import '../models/entitytype.dart';
 import '../models/favoritecreate.dart';
-import 'addfavoriteapiv1favoritespost_result.dart';
-import 'listfavoritesapiv1favoritesget_result.dart';
-import 'removefavoriteapiv1favoritesfavoriteiddelete_result.dart';
+import 'deletefavoritesfavoriteid_result.dart';
+import 'getfavorites_result.dart';
+import 'postfavorites_result.dart';
 
 class FavoritesApi {
   const FavoritesApi({required this.dio, this.baseUrl});
@@ -17,7 +17,7 @@ class FavoritesApi {
   final String? baseUrl;
 
   /// The authenticated user's favorites, newest first. Optionally filtered by entity_type.
-  Future<ListFavoritesApiV1FavoritesGetResult> listFavoritesApiV1FavoritesGet({
+  Future<GetFavoritesResult> getFavorites({
     EntityType? entityType,
     String? authorization,
     CancelToken? cancelToken,
@@ -45,11 +45,11 @@ class FavoritesApi {
       cancelToken: cancelToken,
     );
 
-    return ListFavoritesApiV1FavoritesGetResult.fromResponse(response);
+    return GetFavoritesResult.fromResponse(response);
   }
 
   /// Favorite an entity (poi, experience, or stay) by entity_type + entity_id. Returns 404-style error if already favorited.
-  Future<AddFavoriteApiV1FavoritesPostResult> addFavoriteApiV1FavoritesPost({
+  Future<PostFavoritesResult> postFavorites({
     String? authorization,
     required FavoriteCreate favoriteCreate,
     CancelToken? cancelToken,
@@ -74,12 +74,11 @@ class FavoritesApi {
       cancelToken: cancelToken,
     );
 
-    return AddFavoriteApiV1FavoritesPostResult.fromResponse(response);
+    return PostFavoritesResult.fromResponse(response);
   }
 
   /// Unfavorite an entity. Only the owning user can remove.
-  Future<RemoveFavoriteApiV1FavoritesFavoriteIdDeleteResult>
-      removeFavoriteApiV1FavoritesFavoriteIdDelete({
+  Future<DeleteFavoritesFavoriteIdResult> deleteFavoritesFavoriteId({
     required String favoriteId,
     String? authorization,
     CancelToken? cancelToken,
@@ -103,7 +102,6 @@ class FavoritesApi {
       cancelToken: cancelToken,
     );
 
-    return RemoveFavoriteApiV1FavoritesFavoriteIdDeleteResult.fromResponse(
-        response);
+    return DeleteFavoritesFavoriteIdResult.fromResponse(response);
   }
 }

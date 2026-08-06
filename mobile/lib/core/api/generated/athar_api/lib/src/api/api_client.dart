@@ -27,7 +27,7 @@ import 'favorites_api.dart';
 
 class ApiClient {
   ApiClient({
-    this.baseUrl = '',
+    this.baseUrl = '/',
     this.errorHandler,
     Dio? dio,
     this.interceptors,

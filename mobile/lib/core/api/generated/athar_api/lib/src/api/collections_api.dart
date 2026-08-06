@@ -7,13 +7,13 @@ import 'package:dio/dio.dart';
 import '../models/collectioncreate.dart';
 import '../models/collectionitembatchcreate.dart';
 import '../models/collectionupdate.dart';
-import 'additemsapiv1collectionscollectioniditemspost_result.dart';
-import 'createcollectionapiv1collectionspost_result.dart';
-import 'deletecollectionapiv1collectionscollectioniddelete_result.dart';
-import 'getcollectionapiv1collectionscollectionidget_result.dart';
-import 'listcollectionsapiv1collectionsget_result.dart';
-import 'removeitemapiv1collectionscollectioniditemsitemiddelete_result.dart';
-import 'updatecollectionapiv1collectionscollectionidput_result.dart';
+import 'deletecollectionscollectioniditemsitemid_result.dart';
+import 'deletecollectionscollectionid_result.dart';
+import 'getcollectionscollectionid_result.dart';
+import 'getcollections_result.dart';
+import 'postcollectionscollectioniditems_result.dart';
+import 'postcollections_result.dart';
+import 'putcollectionscollectionid_result.dart';
 
 class CollectionsApi {
   const CollectionsApi({required this.dio, this.baseUrl});
@@ -22,8 +22,7 @@ class CollectionsApi {
   final String? baseUrl;
 
   /// The authenticated user's collections with item counts, newest first.
-  Future<ListCollectionsApiV1CollectionsGetResult>
-      listCollectionsApiV1CollectionsGet({
+  Future<GetCollectionsResult> getCollections({
     String? authorization,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -46,12 +45,11 @@ class CollectionsApi {
       cancelToken: cancelToken,
     );
 
-    return ListCollectionsApiV1CollectionsGetResult.fromResponse(response);
+    return GetCollectionsResult.fromResponse(response);
   }
 
   /// Create a named wishlist/trip collection, optionally public and with a description.
-  Future<CreateCollectionApiV1CollectionsPostResult>
-      createCollectionApiV1CollectionsPost({
+  Future<PostCollectionsResult> postCollections({
     String? authorization,
     required CollectionCreate collectionCreate,
     CancelToken? cancelToken,
@@ -76,12 +74,11 @@ class CollectionsApi {
       cancelToken: cancelToken,
     );
 
-    return CreateCollectionApiV1CollectionsPostResult.fromResponse(response);
+    return PostCollectionsResult.fromResponse(response);
   }
 
   /// A collection with all its items (sorted by sort_order then created_at). Owner only.
-  Future<GetCollectionApiV1CollectionsCollectionIdGetResult>
-      getCollectionApiV1CollectionsCollectionIdGet({
+  Future<GetCollectionsCollectionIdResult> getCollectionsCollectionId({
     required String collectionId,
     String? authorization,
     CancelToken? cancelToken,
@@ -105,13 +102,11 @@ class CollectionsApi {
       cancelToken: cancelToken,
     );
 
-    return GetCollectionApiV1CollectionsCollectionIdGetResult.fromResponse(
-        response);
+    return GetCollectionsCollectionIdResult.fromResponse(response);
   }
 
   /// Update a collection's name, description, or is_public flag. Owner only.
-  Future<UpdateCollectionApiV1CollectionsCollectionIdPutResult>
-      updateCollectionApiV1CollectionsCollectionIdPut({
+  Future<PutCollectionsCollectionIdResult> putCollectionsCollectionId({
     required String collectionId,
     String? authorization,
     required CollectionUpdate collectionUpdate,
@@ -137,13 +132,11 @@ class CollectionsApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateCollectionApiV1CollectionsCollectionIdPutResult.fromResponse(
-        response);
+    return PutCollectionsCollectionIdResult.fromResponse(response);
   }
 
   /// Delete a collection and all of its items. Owner only.
-  Future<DeleteCollectionApiV1CollectionsCollectionIdDeleteResult>
-      deleteCollectionApiV1CollectionsCollectionIdDelete({
+  Future<DeleteCollectionsCollectionIdResult> deleteCollectionsCollectionId({
     required String collectionId,
     String? authorization,
     CancelToken? cancelToken,
@@ -167,13 +160,12 @@ class CollectionsApi {
       cancelToken: cancelToken,
     );
 
-    return DeleteCollectionApiV1CollectionsCollectionIdDeleteResult
-        .fromResponse(response);
+    return DeleteCollectionsCollectionIdResult.fromResponse(response);
   }
 
   /// Batch-add items to a collection. Duplicates (same entity_type + entity_id) are skipped. At least one item required.
-  Future<AddItemsApiV1CollectionsCollectionIdItemsPostResult>
-      addItemsApiV1CollectionsCollectionIdItemsPost({
+  Future<PostCollectionsCollectionIdItemsResult>
+      postCollectionsCollectionIdItems({
     required String collectionId,
     String? authorization,
     required CollectionItemBatchCreate collectionItemBatchCreate,
@@ -199,13 +191,12 @@ class CollectionsApi {
       cancelToken: cancelToken,
     );
 
-    return AddItemsApiV1CollectionsCollectionIdItemsPostResult.fromResponse(
-        response);
+    return PostCollectionsCollectionIdItemsResult.fromResponse(response);
   }
 
   /// Remove a single item from a collection. Owner only.
-  Future<RemoveItemApiV1CollectionsCollectionIdItemsItemIdDeleteResult>
-      removeItemApiV1CollectionsCollectionIdItemsItemIdDelete({
+  Future<DeleteCollectionsCollectionIdItemsItemIdResult>
+      deleteCollectionsCollectionIdItemsItemId({
     required String collectionId,
     required String itemId,
     String? authorization,
@@ -230,7 +221,7 @@ class CollectionsApi {
       cancelToken: cancelToken,
     );
 
-    return RemoveItemApiV1CollectionsCollectionIdItemsItemIdDeleteResult
-        .fromResponse(response);
+    return DeleteCollectionsCollectionIdItemsItemIdResult.fromResponse(
+        response);
   }
 }

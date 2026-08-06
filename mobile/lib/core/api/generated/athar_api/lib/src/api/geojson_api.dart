@@ -7,10 +7,10 @@ import 'package:dio/dio.dart';
 import '../models/category.dart';
 import '../models/isfeatured.dart';
 import '../models/wilayaid.dart';
-import 'experiencesgeojsonapiv1experiencesgeojsonget_result.dart';
-import 'nearbypoisapiv1nearbypoisget_result.dart';
-import 'poisgeojsonapiv1poisgeojsonget_result.dart';
-import 'staysgeojsonapiv1staysgeojsonget_result.dart';
+import 'getexperiencesgeojson_result.dart';
+import 'getnearbypois_result.dart';
+import 'getpoisgeojson_result.dart';
+import 'getstaysgeojson_result.dart';
 
 class GeoJSONApi {
   const GeoJSONApi({required this.dio, this.baseUrl});
@@ -19,7 +19,7 @@ class GeoJSONApi {
   final String? baseUrl;
 
   /// All geolocated POIs as a GeoJSON FeatureCollection of points, filtered by wilaya, category, or featured status.
-  Future<PoisGeojsonApiV1PoisGeojsonGetResult> poisGeojsonApiV1PoisGeojsonGet({
+  Future<GetPoisGeojsonResult> getPoisGeojson({
     WilayaId? wilayaId,
     Category? category,
     IsFeatured? isFeatured,
@@ -54,12 +54,11 @@ class GeoJSONApi {
       cancelToken: cancelToken,
     );
 
-    return PoisGeojsonApiV1PoisGeojsonGetResult.fromResponse(response);
+    return GetPoisGeojsonResult.fromResponse(response);
   }
 
   /// All geolocated stays as a GeoJSON FeatureCollection, filtered by wilaya. Each feature carries the primary photo URL.
-  Future<StaysGeojsonApiV1StaysGeojsonGetResult>
-      staysGeojsonApiV1StaysGeojsonGet({
+  Future<GetStaysGeojsonResult> getStaysGeojson({
     WilayaId? wilayaId,
     int? limit,
     CancelToken? cancelToken,
@@ -86,12 +85,11 @@ class GeoJSONApi {
       cancelToken: cancelToken,
     );
 
-    return StaysGeojsonApiV1StaysGeojsonGetResult.fromResponse(response);
+    return GetStaysGeojsonResult.fromResponse(response);
   }
 
   /// Active experiences with a meeting point as a GeoJSON FeatureCollection, filtered by wilaya or category.
-  Future<ExperiencesGeojsonApiV1ExperiencesGeojsonGetResult>
-      experiencesGeojsonApiV1ExperiencesGeojsonGet({
+  Future<GetExperiencesGeojsonResult> getExperiencesGeojson({
     WilayaId? wilayaId,
     Category? category,
     int? limit,
@@ -122,12 +120,11 @@ class GeoJSONApi {
       cancelToken: cancelToken,
     );
 
-    return ExperiencesGeojsonApiV1ExperiencesGeojsonGetResult.fromResponse(
-        response);
+    return GetExperiencesGeojsonResult.fromResponse(response);
   }
 
   /// POIs within a radius (haversine-filtered) returned as a GeoJSON FeatureCollection with distance_km per feature.
-  Future<NearbyPoisApiV1NearbyPoisGetResult> nearbyPoisApiV1NearbyPoisGet({
+  Future<GetNearbyPoisResult> getNearbyPois({
     double? lat,
     double? lng,
     double? radiusKm,
@@ -162,6 +159,6 @@ class GeoJSONApi {
       cancelToken: cancelToken,
     );
 
-    return NearbyPoisApiV1NearbyPoisGetResult.fromResponse(response);
+    return GetNearbyPoisResult.fromResponse(response);
   }
 }

@@ -4,7 +4,7 @@
 //
 import 'package:dio/dio.dart';
 
-import 'healthcheckapiv1healthget_result.dart';
+import 'gethealth_result.dart';
 
 class HealthApi {
   const HealthApi({required this.dio, this.baseUrl});
@@ -13,7 +13,7 @@ class HealthApi {
   final String? baseUrl;
 
   /// Liveness + database connectivity probe. Returns 'ok' or 'degraded' with per-service status and latency.
-  Future<HealthCheckApiV1HealthGetResult> healthCheckApiV1HealthGet({
+  Future<GetHealthResult> getHealth({
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
     Options? options,
@@ -30,6 +30,6 @@ class HealthApi {
       cancelToken: cancelToken,
     );
 
-    return HealthCheckApiV1HealthGetResult.fromResponse(response);
+    return GetHealthResult.fromResponse(response);
   }
 }

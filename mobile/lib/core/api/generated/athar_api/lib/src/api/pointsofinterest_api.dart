@@ -4,7 +4,7 @@
 //
 import 'package:dio/dio.dart';
 
-import '../models/bodyuploadpoiphotoapiv1poispoiidphotopost.dart';
+import '../models/bodypostpoispoiidphoto.dart';
 import '../models/categories.dart';
 import '../models/category.dart';
 import '../models/neighborhood.dart';
@@ -14,19 +14,19 @@ import '../models/search.dart';
 import '../models/sort.dart';
 import '../models/startpoiid.dart';
 import '../models/wilayaid.dart';
-import 'createpoiapiv1poispost_result.dart';
-import 'deletepoiapiv1poispoiiddelete_result.dart';
-import 'getpoiapiv1poispoiidget_result.dart';
-import 'hubpoisapiv1poistourhubsget_result.dart';
-import 'listneighborhoodsapiv1poisneighborhoodsget_result.dart';
-import 'listpoisapiv1poisget_result.dart';
-import 'nearbypoisapiv1poisnearbyget_result.dart';
-import 'optimizepoitourapiv1poistouroptimizeget_result.dart';
-import 'poiclustersapiv1poistourclustersget_result.dart';
-import 'searchpoisapiv1poissearchget_result.dart';
-import 'similarpoisapiv1poispoiidsimilarget_result.dart';
-import 'updatepoiapiv1poispoiidpatch_result.dart';
-import 'uploadpoiphotoapiv1poispoiidphotopost_result.dart';
+import 'deletepoispoiid_result.dart';
+import 'getpoisnearby_result.dart';
+import 'getpoisneighborhoods_result.dart';
+import 'getpoispoiidsimilar_result.dart';
+import 'getpoispoiid_result.dart';
+import 'getpoissearch_result.dart';
+import 'getpoistourclusters_result.dart';
+import 'getpoistourhubs_result.dart';
+import 'getpoistouroptimize_result.dart';
+import 'getpois_result.dart';
+import 'patchpoispoiid_result.dart';
+import 'postpoispoiidphoto_result.dart';
+import 'postpois_result.dart';
 
 class PointsOfInterestApi {
   const PointsOfInterestApi({required this.dio, this.baseUrl});
@@ -35,7 +35,7 @@ class PointsOfInterestApi {
   final String? baseUrl;
 
   /// Paginated POI listing with filters: wilaya, category, neighborhood (substring), name/description search, and sort (name or created_at).
-  Future<ListPoisApiV1PoisGetResult> listPoisApiV1PoisGet({
+  Future<GetPoisResult> getPois({
     WilayaId? wilayaId,
     Category? category,
     Neighborhood? neighborhood,
@@ -82,11 +82,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return ListPoisApiV1PoisGetResult.fromResponse(response);
+    return GetPoisResult.fromResponse(response);
   }
 
   /// Add a new POI (requires provider or admin role). Wilaya must exist; the POI is immediately indexed for vector search.
-  Future<CreatePoiApiV1PoisPostResult> createPoiApiV1PoisPost({
+  Future<PostPoisResult> postPois({
     String? authorization,
     required POICreate pOICreate,
     CancelToken? cancelToken,
@@ -111,16 +111,14 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return CreatePoiApiV1PoisPostResult.fromResponse(response);
+    return PostPoisResult.fromResponse(response);
   }
 
   /// Upload an image (JPEG/PNG/WebP, magic-byte validated) to MinIO and set it as the POI's primary photo. Requires provider or admin role.
-  Future<UploadPoiPhotoApiV1PoisPoiIdPhotoPostResult>
-      uploadPoiPhotoApiV1PoisPoiIdPhotoPost({
+  Future<PostPoisPoiIdPhotoResult> postPoisPoiIdPhoto({
     required String poiId,
     String? authorization,
-    required BodyUploadPoiPhotoApiV1PoisPoiIdPhotoPost
-        bodyUploadPoiPhotoApiV1PoisPoiIdPhotoPost,
+    required BodyPostPoisPoiIdPhoto bodyPostPoisPoiIdPhoto,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
     Options? options,
@@ -132,7 +130,7 @@ class PointsOfInterestApi {
 
     final response = await dio.request<Map<String, dynamic>>(
       '/api/v1/pois/$poiId/photo',
-      data: bodyUploadPoiPhotoApiV1PoisPoiIdPhotoPost.toFormData(),
+      data: bodyPostPoisPoiIdPhoto.toFormData(),
       queryParameters: null,
       options: options ??
           Options(
@@ -143,12 +141,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return UploadPoiPhotoApiV1PoisPoiIdPhotoPostResult.fromResponse(response);
+    return PostPoisPoiIdPhotoResult.fromResponse(response);
   }
 
   /// Distinct POI neighborhoods, optionally filtered by wilaya.
-  Future<ListNeighborhoodsApiV1PoisNeighborhoodsGetResult>
-      listNeighborhoodsApiV1PoisNeighborhoodsGet({
+  Future<GetPoisNeighborhoodsResult> getPoisNeighborhoods({
     WilayaId? wilayaId,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -171,12 +168,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return ListNeighborhoodsApiV1PoisNeighborhoodsGetResult.fromResponse(
-        response);
+    return GetPoisNeighborhoodsResult.fromResponse(response);
   }
 
   /// POIs within a radius of a lat/lng point, sorted by distance. Optionally filtered by category. Results include distance_km.
-  Future<NearbyPoisApiV1PoisNearbyGetResult> nearbyPoisApiV1PoisNearbyGet({
+  Future<GetPoisNearbyResult> getPoisNearby({
     double? lat,
     double? lng,
     double? radiusKm,
@@ -215,11 +211,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return NearbyPoisApiV1PoisNearbyGetResult.fromResponse(response);
+    return GetPoisNearbyResult.fromResponse(response);
   }
 
   /// Vector search over the Qdrant index, falling back to PostgreSQL full-text (French) when Qdrant is unavailable or returns nothing. Named POIs are ranked before placeholder names like 'Ruins (non nommé)'.
-  Future<SearchPoisApiV1PoisSearchGetResult> searchPoisApiV1PoisSearchGet({
+  Future<GetPoisSearchResult> getPoisSearch({
     String? q,
     int? limit,
     CancelToken? cancelToken,
@@ -246,11 +242,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return SearchPoisApiV1PoisSearchGetResult.fromResponse(response);
+    return GetPoisSearchResult.fromResponse(response);
   }
 
   /// Full POI detail including TripAdvisor-style fields (ranking, price_level, suggested_duration_min, fun_fact). With auth, also returns is_favorited.
-  Future<GetPoiApiV1PoisPoiIdGetResult> getPoiApiV1PoisPoiIdGet({
+  Future<GetPoisPoiIdResult> getPoisPoiId({
     required String poiId,
     String? authorization,
     CancelToken? cancelToken,
@@ -274,11 +270,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return GetPoiApiV1PoisPoiIdGetResult.fromResponse(response);
+    return GetPoisPoiIdResult.fromResponse(response);
   }
 
   /// Permanently delete a POI (provider or admin role). Removes it from the Qdrant index.
-  Future<DeletePoiApiV1PoisPoiIdDeleteResult> deletePoiApiV1PoisPoiIdDelete({
+  Future<DeletePoisPoiIdResult> deletePoisPoiId({
     required String poiId,
     String? authorization,
     CancelToken? cancelToken,
@@ -302,11 +298,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return DeletePoiApiV1PoisPoiIdDeleteResult.fromResponse(response);
+    return DeletePoisPoiIdResult.fromResponse(response);
   }
 
   /// Partial update of POI fields (provider or admin role). Re-indexes the POI in Qdrant after changes.
-  Future<UpdatePoiApiV1PoisPoiIdPatchResult> updatePoiApiV1PoisPoiIdPatch({
+  Future<PatchPoisPoiIdResult> patchPoisPoiId({
     required String poiId,
     String? authorization,
     required POIUpdate pOIUpdate,
@@ -332,12 +328,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return UpdatePoiApiV1PoisPoiIdPatchResult.fromResponse(response);
+    return PatchPoisPoiIdResult.fromResponse(response);
   }
 
   /// POIs in the same wilaya and category as the reference POI, filling from the same wilaya when needed.
-  Future<SimilarPoisApiV1PoisPoiIdSimilarGetResult>
-      similarPoisApiV1PoisPoiIdSimilarGet({
+  Future<GetPoisPoiIdSimilarResult> getPoisPoiIdSimilar({
     required String poiId,
     int? limit,
     CancelToken? cancelToken,
@@ -361,12 +356,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return SimilarPoisApiV1PoisPoiIdSimilarGetResult.fromResponse(response);
+    return GetPoisPoiIdSimilarResult.fromResponse(response);
   }
 
   /// Plan an optimal walking route through a wilaya's POIs within a time budget, using the POI graph (walking times). Returns an ordered list of stops with walk/visit durations and cumulative time.
-  Future<OptimizePoiTourApiV1PoisTourOptimizeGetResult>
-      optimizePoiTourApiV1PoisTourOptimizeGet({
+  Future<GetPoisTourOptimizeResult> getPoisTourOptimize({
     WilayaId? wilayaId,
     double? budgetHours,
     Categories? categories,
@@ -405,12 +399,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return OptimizePoiTourApiV1PoisTourOptimizeGetResult.fromResponse(response);
+    return GetPoisTourOptimizeResult.fromResponse(response);
   }
 
   /// Density-based clustering of a wilaya's POIs by walking radius. Returns walkable clusters with their centers and representative POIs.
-  Future<PoiClustersApiV1PoisTourClustersGetResult>
-      poiClustersApiV1PoisTourClustersGet({
+  Future<GetPoisTourClustersResult> getPoisTourClusters({
     WilayaId? wilayaId,
     double? radiusM,
     CancelToken? cancelToken,
@@ -437,11 +430,11 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return PoiClustersApiV1PoisTourClustersGetResult.fromResponse(response);
+    return GetPoisTourClustersResult.fromResponse(response);
   }
 
   /// Top POIs by transit connectivity within a wilaya — the best starting points for public-transport exploration.
-  Future<HubPoisApiV1PoisTourHubsGetResult> hubPoisApiV1PoisTourHubsGet({
+  Future<GetPoisTourHubsResult> getPoisTourHubs({
     WilayaId? wilayaId,
     int? topN,
     CancelToken? cancelToken,
@@ -468,6 +461,6 @@ class PointsOfInterestApi {
       cancelToken: cancelToken,
     );
 
-    return HubPoisApiV1PoisTourHubsGetResult.fromResponse(response);
+    return GetPoisTourHubsResult.fromResponse(response);
   }
 }

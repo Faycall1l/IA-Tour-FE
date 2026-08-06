@@ -15,7 +15,7 @@ export interface paths {
          * Dashboard stats
          * @description Platform totals (POIs, stays, experiences, events, users, trips) plus POI distribution per wilaya and per category.
          */
-        get: operations["dashboard_stats_api_v1_admin_stats_get"];
+        get: operations["get_admin_stats"];
         put?: never;
         post?: never;
         delete?: never;
@@ -35,7 +35,7 @@ export interface paths {
          * List users
          * @description Paginated user listing for admins, filtered by role and verification status.
          */
-        get: operations["list_users_api_v1_admin_users_get"];
+        get: operations["get_admin_users"];
         put?: never;
         post?: never;
         delete?: never;
@@ -56,7 +56,7 @@ export interface paths {
          * Set user role
          * @description Change a user's role. Auto-creates a provider profile when promoting to a provider role, and deletes it when demoting.
          */
-        put: operations["set_user_role_api_v1_admin_users__user_id__role_put"];
+        put: operations["put_admin_users_user_id_role"];
         post?: never;
         delete?: never;
         options?: never;
@@ -76,7 +76,7 @@ export interface paths {
          * Toggle user verification
          * @description Flip a user's is_verified flag (trust badge).
          */
-        put: operations["toggle_user_verification_api_v1_admin_users__user_id__verify_put"];
+        put: operations["put_admin_users_user_id_verify"];
         post?: never;
         delete?: never;
         options?: never;
@@ -95,7 +95,7 @@ export interface paths {
          * List provider profiles
          * @description Paginated provider profiles for admins, filtered by verification status and provider type.
          */
-        get: operations["list_providers_api_v1_admin_providers_get"];
+        get: operations["get_admin_providers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -116,7 +116,7 @@ export interface paths {
          * Approve a provider
          * @description Mark a provider profile as verified.
          */
-        put: operations["approve_provider_api_v1_admin_providers__profile_id__approve_put"];
+        put: operations["put_admin_providers_profile_id_approve"];
         post?: never;
         delete?: never;
         options?: never;
@@ -138,7 +138,7 @@ export interface paths {
          * Delete any experience
          * @description Admin moderation: delete an experience regardless of owner. Removes it from the Qdrant index.
          */
-        delete: operations["admin_delete_experience_api_v1_admin_experiences__experience_id__delete"];
+        delete: operations["delete_admin_experiences_experience_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -155,7 +155,7 @@ export interface paths {
          * Verify POI quality
          * @description Run an LLM-based (or rule-based dry-run fallback) quality verification on a POI, reporting a score out of 5, issue count, and missing fields.
          */
-        get: operations["verify_poi_quality_api_v1_admin_verify_poi__poi_id__get"];
+        get: operations["get_admin_verify_poi_poi_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -175,7 +175,7 @@ export interface paths {
          * POI data-quality stats
          * @description Aggregate POI data quality: totals, and counts with phone, website, opening hours, or short descriptions.
          */
-        get: operations["get_verification_stats_api_v1_admin_verify_stats_get"];
+        get: operations["get_admin_verify_stats"];
         put?: never;
         post?: never;
         delete?: never;
@@ -195,7 +195,7 @@ export interface paths {
          * Agent observability stats
          * @description Agent monitoring: totals, success/failure rates, token usage, average duration, and recent traces (P1 monitoring).
          */
-        get: operations["agent_observability_stats_api_v1_admin_agent_stats_get"];
+        get: operations["get_admin_agent_stats"];
         put?: never;
         post?: never;
         delete?: never;
@@ -217,7 +217,7 @@ export interface paths {
          * Travel assistant chat
          * @description Ask the general travel assistant any Algeria travel question. Supports multi-turn memory via session_id. Rate limited to 20/hour; returns 503 when the LLM backend is not configured.
          */
-        post: operations["agent_chat_api_v1_agent_chat_post"];
+        post: operations["post_agent_chat"];
         delete?: never;
         options?: never;
         head?: never;
@@ -237,7 +237,7 @@ export interface paths {
          * Plan a trip itinerary
          * @description Structured itinerary planner: destination + duration + budget + interests produce a day-by-day plan. Rate limited to 10/hour.
          */
-        post: operations["agent_plan_trip_api_v1_agent_plan_trip_post"];
+        post: operations["post_agent_plan_trip"];
         delete?: never;
         options?: never;
         head?: never;
@@ -257,7 +257,7 @@ export interface paths {
          * Unified search via agent
          * @description Agent-driven search across POIs, stays, and experiences. Rate limited to 30/hour.
          */
-        post: operations["agent_search_api_v1_agent_search_post"];
+        post: operations["post_agent_search"];
         delete?: never;
         options?: never;
         head?: never;
@@ -277,7 +277,7 @@ export interface paths {
          * Transport specialist chat
          * @description Ask about routes, schedules, or operator contacts. Rate limited to 20/hour.
          */
-        post: operations["agent_transport_api_v1_agent_transport_post"];
+        post: operations["post_agent_transport"];
         delete?: never;
         options?: never;
         head?: never;
@@ -297,7 +297,7 @@ export interface paths {
          * Events specialist chat
          * @description Ask about festivals and cultural activities in a wilaya. Rate limited to 20/hour.
          */
-        post: operations["agent_events_api_v1_agent_events_post"];
+        post: operations["post_agent_events"];
         delete?: never;
         options?: never;
         head?: never;
@@ -315,7 +315,7 @@ export interface paths {
          * List agent sessions
          * @description List the user's agent conversation sessions. Rate limited to 30/hour.
          */
-        get: operations["list_sessions_api_v1_agent_sessions_get"];
+        get: operations["get_agent_sessions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -338,7 +338,7 @@ export interface paths {
          * Delete an agent session
          * @description Soft-delete a session and its memories. Owner only. Rate limited to 20/hour.
          */
-        delete: operations["clear_session_api_v1_agent_sessions__session_id__delete"];
+        delete: operations["delete_agent_sessions_session_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -355,13 +355,13 @@ export interface paths {
          * List artisans
          * @description Paginated artisans filtered by wilaya, craft type, visitor acceptance, and name search. Sort by name, newest, or years of experience.
          */
-        get: operations["list_artisans_api_v1_artisans_get"];
+        get: operations["get_artisans"];
         put?: never;
         /**
          * Create an artisan profile
          * @description Register a craft workshop. A user can have at most one artisan profile; creating one auto-promotes a traveler account to the artisan role.
          */
-        post: operations["create_artisan_api_v1_artisans_post"];
+        post: operations["post_artisans"];
         delete?: never;
         options?: never;
         head?: never;
@@ -379,18 +379,18 @@ export interface paths {
          * Get an artisan
          * @description Artisan detail. Public.
          */
-        get: operations["get_artisan_api_v1_artisans__artisan_id__get"];
+        get: operations["get_artisans_artisan_id"];
         /**
          * Update an artisan
          * @description Update an artisan profile. Only the owner or an admin can edit.
          */
-        put: operations["update_artisan_api_v1_artisans__artisan_id__put"];
+        put: operations["put_artisans_artisan_id"];
         post?: never;
         /**
          * Delete an artisan
          * @description Delete an artisan profile. Only the owner or an admin can delete.
          */
-        delete: operations["delete_artisan_api_v1_artisans__artisan_id__delete"];
+        delete: operations["delete_artisans_artisan_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -407,7 +407,7 @@ export interface paths {
          * Health check
          * @description Liveness + database connectivity probe. Returns 'ok' or 'degraded' with per-service status and latency.
          */
-        get: operations["health_check_api_v1_health_get"];
+        get: operations["get_health"];
         put?: never;
         post?: never;
         delete?: never;
@@ -429,7 +429,7 @@ export interface paths {
          * Send one-time password
          * @description Request a 6-digit OTP for passwordless login. When Twilio is configured the code is delivered by SMS; otherwise it is generated in-memory (never returned in the response). Rate limited to 10/minute globally and 3 sends per phone per 10 minutes.
          */
-        post: operations["send_otp_api_v1_auth_send_otp_post"];
+        post: operations["post_auth_send_otp"];
         delete?: never;
         options?: never;
         head?: never;
@@ -449,7 +449,7 @@ export interface paths {
          * Verify OTP and log in
          * @description Exchange a phone + OTP for an access token and refresh token. Creates the user account on first login. A code is invalidated after 5 failed attempts (constant-time comparison). The refresh token is stored hashed with a rotation family.
          */
-        post: operations["verify_otp_api_v1_auth_verify_otp_post"];
+        post: operations["post_auth_verify_otp"];
         delete?: never;
         options?: never;
         head?: never;
@@ -469,7 +469,7 @@ export interface paths {
          * Rotate tokens
          * @description Exchange a valid refresh token for a fresh access/refresh pair. Rotation is one-time-use: presenting an already-revoked token revokes the entire token family (stolen-token detection).
          */
-        post: operations["refresh_token_api_v1_auth_refresh_post"];
+        post: operations["post_auth_refresh"];
         delete?: never;
         options?: never;
         head?: never;
@@ -489,7 +489,7 @@ export interface paths {
          * Register as a provider
          * @description Upgrade the authenticated user's account to a provider (guide/agency/hotel) and create their provider profile. Only users with the `traveler` role (or admins) can register; rate limited to 5/minute.
          */
-        post: operations["register_provider_api_v1_auth_register_provider_post"];
+        post: operations["post_auth_register_provider"];
         delete?: never;
         options?: never;
         head?: never;
@@ -507,7 +507,7 @@ export interface paths {
          * All wilayas summary
          * @description Every wilaya with aggregate stats: POI/featured/experience/stay/artisan counts, top categories, highlight POI + photo, and coordinates.
          */
-        get: operations["list_wilayas_api_v1_discover_wilayas_get"];
+        get: operations["get_discover_wilayas"];
         put?: never;
         post?: never;
         delete?: never;
@@ -527,7 +527,7 @@ export interface paths {
          * Consolidated wilaya view
          * @description All content for a wilaya in one payload: POIs (alphabetical), active experiences (with provider info), active stays (by price), and artisans.
          */
-        get: operations["discover_wilaya_api_v1_discover_wilayas__wilaya_id__get"];
+        get: operations["get_discover_wilayas_wilaya_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -547,7 +547,7 @@ export interface paths {
          * Curated wilaya guide
          * @description Editorial per-wilaya guide: featured POIs first, then top N per category ordered by combined score, each with transport access info (nearest station, distance, walking time, nearby modes). Includes active experiences and stays.
          */
-        get: operations["wilaya_guide_api_v1_discover_wilayas__wilaya_id__guide_get"];
+        get: operations["get_discover_wilayas_wilaya_id_guide"];
         put?: never;
         post?: never;
         delete?: never;
@@ -567,7 +567,7 @@ export interface paths {
          * Experiences for a POI
          * @description Active experiences in the POI's wilaya whose title/description mentions the POI (falls back to all wilaya experiences).
          */
-        get: operations["experiences_by_poi_api_v1_discover_experiences_by_poi__poi_id__get"];
+        get: operations["get_discover_experiences_by_poi_poi_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -587,13 +587,13 @@ export interface paths {
          * List events
          * @description Paginated events/festivals calendar filtered by wilaya, category, and month (1-12). Public.
          */
-        get: operations["list_events_api_v1_events_get"];
+        get: operations["get_events"];
         put?: never;
         /**
          * Create an event
          * @description Add an event/festival to the calendar. Requires provider or admin role; the wilaya must exist.
          */
-        post: operations["create_event_api_v1_events_post"];
+        post: operations["post_events"];
         delete?: never;
         options?: never;
         head?: never;
@@ -611,21 +611,21 @@ export interface paths {
          * Get an event
          * @description Event detail. Public.
          */
-        get: operations["get_event_api_v1_events__event_id__get"];
+        get: operations["get_events_event_id"];
         put?: never;
         post?: never;
         /**
          * Delete an event
          * @description Delete an event (provider or admin role).
          */
-        delete: operations["delete_event_api_v1_events__event_id__delete"];
+        delete: operations["delete_events_event_id"];
         options?: never;
         head?: never;
         /**
          * Update an event
          * @description Partial update of an event (provider or admin role).
          */
-        patch: operations["update_event_api_v1_events__event_id__patch"];
+        patch: operations["patch_events_event_id"];
         trace?: never;
     };
     "/api/v1/pois": {
@@ -639,13 +639,13 @@ export interface paths {
          * List points of interest
          * @description Paginated POI listing with filters: wilaya, category, neighborhood (substring), name/description search, and sort (name or created_at).
          */
-        get: operations["list_pois_api_v1_pois_get"];
+        get: operations["get_pois"];
         put?: never;
         /**
          * Create a point of interest
          * @description Add a new POI (requires provider or admin role). Wilaya must exist; the POI is immediately indexed for vector search.
          */
-        post: operations["create_poi_api_v1_pois_post"];
+        post: operations["post_pois"];
         delete?: never;
         options?: never;
         head?: never;
@@ -665,7 +665,7 @@ export interface paths {
          * Upload a POI photo
          * @description Upload an image (JPEG/PNG/WebP, magic-byte validated) to MinIO and set it as the POI's primary photo. Requires provider or admin role.
          */
-        post: operations["upload_poi_photo_api_v1_pois__poi_id__photo_post"];
+        post: operations["post_pois_poi_id_photo"];
         delete?: never;
         options?: never;
         head?: never;
@@ -683,7 +683,7 @@ export interface paths {
          * List neighborhoods
          * @description Distinct POI neighborhoods, optionally filtered by wilaya.
          */
-        get: operations["list_neighborhoods_api_v1_pois_neighborhoods_get"];
+        get: operations["get_pois_neighborhoods"];
         put?: never;
         post?: never;
         delete?: never;
@@ -703,7 +703,7 @@ export interface paths {
          * Nearby POIs
          * @description POIs within a radius of a lat/lng point, sorted by distance. Optionally filtered by category. Results include distance_km.
          */
-        get: operations["nearby_pois_api_v1_pois_nearby_get"];
+        get: operations["get_pois_nearby"];
         put?: never;
         post?: never;
         delete?: never;
@@ -723,7 +723,7 @@ export interface paths {
          * Semantic POI search
          * @description Vector search over the Qdrant index, falling back to PostgreSQL full-text (French) when Qdrant is unavailable or returns nothing. Named POIs are ranked before placeholder names like 'Ruins (non nommé)'.
          */
-        get: operations["search_pois_api_v1_pois_search_get"];
+        get: operations["get_pois_search"];
         put?: never;
         post?: never;
         delete?: never;
@@ -743,21 +743,21 @@ export interface paths {
          * Get a point of interest
          * @description Full POI detail including TripAdvisor-style fields (ranking, price_level, suggested_duration_min, fun_fact). With auth, also returns is_favorited.
          */
-        get: operations["get_poi_api_v1_pois__poi_id__get"];
+        get: operations["get_pois_poi_id"];
         put?: never;
         post?: never;
         /**
          * Delete a point of interest
          * @description Permanently delete a POI (provider or admin role). Removes it from the Qdrant index.
          */
-        delete: operations["delete_poi_api_v1_pois__poi_id__delete"];
+        delete: operations["delete_pois_poi_id"];
         options?: never;
         head?: never;
         /**
          * Update a point of interest
          * @description Partial update of POI fields (provider or admin role). Re-indexes the POI in Qdrant after changes.
          */
-        patch: operations["update_poi_api_v1_pois__poi_id__patch"];
+        patch: operations["patch_pois_poi_id"];
         trace?: never;
     };
     "/api/v1/pois/{poi_id}/similar": {
@@ -771,7 +771,7 @@ export interface paths {
          * Similar POIs
          * @description POIs in the same wilaya and category as the reference POI, filling from the same wilaya when needed.
          */
-        get: operations["similar_pois_api_v1_pois__poi_id__similar_get"];
+        get: operations["get_pois_poi_id_similar"];
         put?: never;
         post?: never;
         delete?: never;
@@ -791,7 +791,7 @@ export interface paths {
          * Optimize a walking tour
          * @description Plan an optimal walking route through a wilaya's POIs within a time budget, using the POI graph (walking times). Returns an ordered list of stops with walk/visit durations and cumulative time.
          */
-        get: operations["optimize_poi_tour_api_v1_pois_tour_optimize_get"];
+        get: operations["get_pois_tour_optimize"];
         put?: never;
         post?: never;
         delete?: never;
@@ -811,7 +811,7 @@ export interface paths {
          * POI clusters
          * @description Density-based clustering of a wilaya's POIs by walking radius. Returns walkable clusters with their centers and representative POIs.
          */
-        get: operations["poi_clusters_api_v1_pois_tour_clusters_get"];
+        get: operations["get_pois_tour_clusters"];
         put?: never;
         post?: never;
         delete?: never;
@@ -831,7 +831,7 @@ export interface paths {
          * Hub POIs
          * @description Top POIs by transit connectivity within a wilaya — the best starting points for public-transport exploration.
          */
-        get: operations["hub_pois_api_v1_pois_tour_hubs_get"];
+        get: operations["get_pois_tour_hubs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -851,7 +851,7 @@ export interface paths {
          * Get recommendations
          * @description Personalized content-based recommendations (model cbf_v1) for the authenticated user, filtered by wilaya and entity type.
          */
-        get: operations["get_recommendations_api_v1_recommendations_get"];
+        get: operations["get_recommendations"];
         put?: never;
         post?: never;
         delete?: never;
@@ -871,7 +871,7 @@ export interface paths {
          * Get preferences
          * @description The user's inferred travel preferences (categories, budgets). Auto-creates a default profile on first access.
          */
-        get: operations["get_preferences_api_v1_recommendations_preferences_get"];
+        get: operations["get_recommendations_preferences"];
         put?: never;
         post?: never;
         delete?: never;
@@ -881,7 +881,7 @@ export interface paths {
          * Update preferences
          * @description Partially update the user's travel preferences.
          */
-        patch: operations["update_preferences_api_v1_recommendations_preferences_patch"];
+        patch: operations["patch_recommendations_preferences"];
         trace?: never;
     };
     "/api/v1/recommendations/preferences/derive": {
@@ -897,7 +897,7 @@ export interface paths {
          * Re-derive preferences
          * @description Rebuild the user's preferences from their interaction history (favorites, collections, trips).
          */
-        post: operations["derive_preferences_api_v1_recommendations_preferences_derive_post"];
+        post: operations["post_recommendations_preferences_derive"];
         delete?: never;
         options?: never;
         head?: never;
@@ -917,7 +917,7 @@ export interface paths {
          * Submit recommendation feedback
          * @description Record feedback on a recommendation: liked, dismissed, or bookmarked. Dismissed hides it; liked/bookmarked marks it seen.
          */
-        post: operations["submit_feedback_api_v1_recommendations__rec_id__feedback_post"];
+        post: operations["post_recommendations_rec_id_feedback"];
         delete?: never;
         options?: never;
         head?: never;
@@ -935,12 +935,12 @@ export interface paths {
          * Get current user
          * @description Return the authenticated user's profile, including role, verification status, and provider profile link.
          */
-        get: operations["get_me_api_v1_users_me_get"];
+        get: operations["get_users_me"];
         /**
          * Update current user
          * @description Update the authenticated user's profile fields. Role changes must use PUT /users/me/role.
          */
-        put: operations["update_me_api_v1_users_me_put"];
+        put: operations["put_users_me"];
         post?: never;
         delete?: never;
         options?: never;
@@ -960,7 +960,7 @@ export interface paths {
          * Switch role
          * @description Self-assign a role. Restricted to SELF_ASSIGNABLE_ROLES (traveler/guide/agency/hotel); the `admin` role cannot be self-assigned. Switching to a provider role auto-creates a provider profile, and switching away deletes it.
          */
-        put: operations["set_role_api_v1_users_me_role_put"];
+        put: operations["put_users_me_role"];
         post?: never;
         delete?: never;
         options?: never;
@@ -980,7 +980,7 @@ export interface paths {
          * Update provider profile
          * @description Update the authenticated user's provider profile (company name, website, experience, team size, etc.). The user must already have a provider role.
          */
-        put: operations["update_profile_api_v1_users_me_profile_put"];
+        put: operations["put_users_me_profile"];
         post?: never;
         delete?: never;
         options?: never;
@@ -999,7 +999,7 @@ export interface paths {
          * List providers
          * @description List all provider users (guide/agency/hotel) with their profiles. Public.
          */
-        get: operations["list_providers_api_v1_users_providers_get"];
+        get: operations["get_users_providers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1019,7 +1019,7 @@ export interface paths {
          * Get provider
          * @description Return a single provider user with their profile. Public.
          */
-        get: operations["get_provider_api_v1_users_providers__user_id__get"];
+        get: operations["get_users_providers_user_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1039,7 +1039,7 @@ export interface paths {
          * Provider dashboard
          * @description Aggregated dashboard for providers: listing counts (experiences/stays), active counts, and top 5 of each. Requires a provider role or admin.
          */
-        get: operations["provider_dashboard_api_v1_users_me_dashboard_get"];
+        get: operations["get_users_me_dashboard"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1059,7 +1059,7 @@ export interface paths {
          * List wilayas
          * @description All 69 wilayas with French/Arabic/English names and destination descriptions. Optional name search. Public.
          */
-        get: operations["list_wilayas_api_v1_wilayas_get"];
+        get: operations["get_wilayas"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1079,7 +1079,7 @@ export interface paths {
          * Get a wilaya
          * @description Single wilaya detail including description and coordinates. Public.
          */
-        get: operations["get_wilaya_api_v1_wilayas__wilaya_id__get"];
+        get: operations["get_wilayas_wilaya_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1099,13 +1099,13 @@ export interface paths {
          * List experiences
          * @description Paginated experiences (active by default). Filters: wilaya, category, provider_id, season, provider_type, status.
          */
-        get: operations["list_experiences_api_v1_experiences_get"];
+        get: operations["get_experiences"];
         put?: never;
         /**
          * Create an experience
          * @description Add a bookable tour/activity. Requires a provider role (guide, agency, or hotel). Indexed for vector search on creation.
          */
-        post: operations["create_experience_api_v1_experiences_post"];
+        post: operations["post_experiences"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1123,7 +1123,7 @@ export interface paths {
          * Semantic experience search
          * @description Vector search over active experiences with PostgreSQL full-text (French) fallback when Qdrant is unavailable.
          */
-        get: operations["search_experiences_api_v1_experiences_search_get"];
+        get: operations["get_experiences_search"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1143,18 +1143,18 @@ export interface paths {
          * Get an experience
          * @description Experience detail plus provider info (name, avatar, role). With auth, also returns is_favorited.
          */
-        get: operations["get_experience_api_v1_experiences__experience_id__get"];
+        get: operations["get_experiences_experience_id"];
         /**
          * Update an experience
          * @description Update an experience. Only the owning provider or an admin can edit. Re-indexes in Qdrant.
          */
-        put: operations["update_experience_api_v1_experiences__experience_id__put"];
+        put: operations["put_experiences_experience_id"];
         post?: never;
         /**
          * Delete an experience
          * @description Delete an experience. Only the owning provider or an admin can delete. Removes from the Qdrant index.
          */
-        delete: operations["delete_experience_api_v1_experiences__experience_id__delete"];
+        delete: operations["delete_experiences_experience_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1173,7 +1173,7 @@ export interface paths {
          * Upload experience photos
          * @description Append one or more photos (multipart, JPEG/PNG/WebP) to an experience's gallery via MinIO. Owner or admin only.
          */
-        post: operations["upload_experience_photos_api_v1_experiences__experience_id__photos_post"];
+        post: operations["post_experiences_experience_id_photos"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1191,13 +1191,13 @@ export interface paths {
          * List stays
          * @description Paginated active stays filtered by wilaya, property type, and price range (DZD). Responses include provider name/avatar.
          */
-        get: operations["list_stays_api_v1_stays_get"];
+        get: operations["get_stays"];
         put?: never;
         /**
          * Create a stay
          * @description List accommodation on the platform. Requires the authenticated user to have the hotel, agency, or admin role.
          */
-        post: operations["create_stay_api_v1_stays_post"];
+        post: operations["post_stays"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1215,18 +1215,18 @@ export interface paths {
          * Get a stay
          * @description Stay detail with provider info. With auth, also returns is_favorited.
          */
-        get: operations["get_stay_api_v1_stays__stay_id__get"];
+        get: operations["get_stays_stay_id"];
         /**
          * Update a stay
          * @description Update a stay listing. Only the owning provider or an admin can edit.
          */
-        put: operations["update_stay_api_v1_stays__stay_id__put"];
+        put: operations["put_stays_stay_id"];
         post?: never;
         /**
          * Delete a stay
          * @description Delete a stay listing. Only the owning provider or an admin can delete.
          */
-        delete: operations["delete_stay_api_v1_stays__stay_id__delete"];
+        delete: operations["delete_stays_stay_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1243,7 +1243,7 @@ export interface paths {
          * Destinations from a wilaya
          * @description List reachable wilayas from an origin with driving distance/time, ordered by distance.
          */
-        get: operations["get_routes_from_api_v1_transport_routes_from__origin_wilaya_id__get"];
+        get: operations["get_transport_routes_from_origin_wilaya_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1263,7 +1263,7 @@ export interface paths {
          * Inter-wilaya transport options
          * @description Multi-modal options (train, bus, taxi, flight) between two wilayas with schedules, pricing, transfers, and operator contacts. Falls back to driving estimates when no scheduled line exists.
          */
-        get: operations["get_transport_route_api_v1_transport_routes__origin_wilaya_id___dest_wilaya_id__get"];
+        get: operations["get_transport_routes_origin_wilaya_id_dest_wilaya_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1283,7 +1283,7 @@ export interface paths {
          * List stations
          * @description All transit stations, optionally filtered by wilaya and type (bus, train, tram, taxi, airport, ferry, cablecar).
          */
-        get: operations["list_stations_api_v1_transport_stations_get"];
+        get: operations["get_transport_stations"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1303,7 +1303,7 @@ export interface paths {
          * Nearest stations
          * @description Stations nearest to a lat/lng point, optionally filtered by type. Uses the transit graph spatial index.
          */
-        get: operations["nearest_stations_api_v1_transport_stations_nearby_get"];
+        get: operations["get_transport_stations_nearby"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1323,7 +1323,7 @@ export interface paths {
          * List transport lines
          * @description Transport lines, optionally filtered by mode (bus, train, tram, taxi, flight, ferry, cablecar, walking). Includes schedules and pricing.
          */
-        get: operations["list_lines_api_v1_transport_lines_get"];
+        get: operations["get_transport_lines"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1343,7 +1343,7 @@ export interface paths {
          * Plan a transit route
          * @description Multi-modal route from a GPS point to a destination with turn-by-turn steps: walking, transit (schedule + pricing), and transfers as milestones for line changes. Handles walking-only and driving-recommended cases.
          */
-        get: operations["plan_route_api_v1_transport_plan_get"];
+        get: operations["get_transport_plan"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1363,7 +1363,7 @@ export interface paths {
          * Transit access for a POI
          * @description Nearest stations and routing summary for a POI, useful for the 'how to get there' panel.
          */
-        get: operations["poi_access_api_v1_transport_access__poi_id__get"];
+        get: operations["get_transport_access_poi_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1383,7 +1383,7 @@ export interface paths {
          * Directions to a POI
          * @description Turn-by-turn transit directions from a GPS point to a specific POI. Returns the plan plus POI access info. Falls back to an error object when no route exists.
          */
-        get: operations["route_to_poi_api_v1_transport_route_to_poi__poi_id__get"];
+        get: operations["get_transport_route_to_poi_poi_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1403,7 +1403,7 @@ export interface paths {
          * List transport operators
          * @description Active transport operators with contact info (phone, website, email) and coverage, filtered by mode: train, flight, bus, taxi, tram, cablecar, ferry.
          */
-        get: operations["list_operators_api_v1_transport_operators_get"];
+        get: operations["get_transport_operators"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1423,13 +1423,13 @@ export interface paths {
          * List my trips
          * @description Paginated trips for the authenticated user, optionally filtered by status (active/archived). Each trip includes day plans.
          */
-        get: operations["list_trips_api_v1_trips_get"];
+        get: operations["get_trips"];
         put?: never;
         /**
          * Create a trip
          * @description Create a trip plan with title, wilaya, dates, and budget. Returns the full day-structured plan with cost/spend breakdown.
          */
-        post: operations["create_trip_api_v1_trips_post"];
+        post: operations["post_trips"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1447,7 +1447,7 @@ export interface paths {
          * Wilaya trip brief
          * @description Generated travel brief for a wilaya: must-see POIs, suggested itinerary, budget guidance. Public.
          */
-        get: operations["get_trip_brief_api_v1_trips_brief__wilaya_id__get"];
+        get: operations["get_trips_brief_wilaya_id"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1467,18 +1467,18 @@ export interface paths {
          * Get a trip
          * @description Trip detail with enriched day plans (item details, gaps detected, per-day distance and cost, budget remaining). Owner only.
          */
-        get: operations["get_trip_api_v1_trips__trip_id__get"];
+        get: operations["get_trips_trip_id"];
         /**
          * Update a trip
          * @description Update trip metadata (title, dates, budget, status). Owner only.
          */
-        put: operations["update_trip_api_v1_trips__trip_id__put"];
+        put: operations["put_trips_trip_id"];
         post?: never;
         /**
          * Delete a trip
          * @description Delete a trip and all of its items. Owner only.
          */
-        delete: operations["delete_trip_api_v1_trips__trip_id__delete"];
+        delete: operations["delete_trips_trip_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1497,7 +1497,7 @@ export interface paths {
          * Add a trip item
          * @description Add a POI/experience/stay/restaurant/transport item to a day of the trip. POI items validate the POI exists. Auto-assigns the next sort order.
          */
-        post: operations["add_trip_item_api_v1_trips__trip_id__items_post"];
+        post: operations["post_trips_trip_id_items"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1516,13 +1516,13 @@ export interface paths {
          * Update a trip item
          * @description Change a trip item's day, sort order, or time slot. Owner only.
          */
-        put: operations["update_trip_item_api_v1_trips__trip_id__items__item_id__put"];
+        put: operations["put_trips_trip_id_items_item_id"];
         post?: never;
         /**
          * Remove a trip item
          * @description Remove an item from a trip and return the updated trip. Owner only.
          */
-        delete: operations["delete_trip_item_api_v1_trips__trip_id__items__item_id__delete"];
+        delete: operations["delete_trips_trip_id_items_item_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1541,7 +1541,7 @@ export interface paths {
          * Share a trip
          * @description Generate (or reuse) an unguessable share token and a public share URL for the trip. Owner only.
          */
-        post: operations["share_trip_api_v1_trips__trip_id__share_post"];
+        post: operations["post_trips_trip_id_share"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1559,7 +1559,7 @@ export interface paths {
          * View a shared trip
          * @description View a trip by its public share token without authentication.
          */
-        get: operations["get_shared_trip_api_v1_trips_shared__share_token__get"];
+        get: operations["get_trips_shared_share_token"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1581,7 +1581,7 @@ export interface paths {
          * Optimize a trip
          * @description Reorder each day's items to minimize walking distance using the POI graph, then return the optimized trip. Owner only.
          */
-        post: operations["optimize_trip_api_v1_trips__trip_id__optimize_post"];
+        post: operations["post_trips_trip_id_optimize"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1599,7 +1599,7 @@ export interface paths {
          * Search suggestions
          * @description Fast prefix autocomplete across POI names, experience titles, and stay names. Sorted by name length.
          */
-        get: operations["suggest_api_v1_search_suggest_get"];
+        get: operations["get_search_suggest"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1619,7 +1619,7 @@ export interface paths {
          * Unified search
          * @description Full-text search (French tsvector) across POIs, stays, and experiences in a single ranked result set. Each result carries entity_type, category, coordinates, price, and ts_rank score. Falls back gracefully if search vectors are absent.
          */
-        get: operations["search_api_v1_search_get"];
+        get: operations["get_search"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1639,7 +1639,7 @@ export interface paths {
          * POIs as GeoJSON
          * @description All geolocated POIs as a GeoJSON FeatureCollection of points, filtered by wilaya, category, or featured status.
          */
-        get: operations["pois_geojson_api_v1_pois_geojson_get"];
+        get: operations["get_pois_geojson"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1659,7 +1659,7 @@ export interface paths {
          * Stays as GeoJSON
          * @description All geolocated stays as a GeoJSON FeatureCollection, filtered by wilaya. Each feature carries the primary photo URL.
          */
-        get: operations["stays_geojson_api_v1_stays_geojson_get"];
+        get: operations["get_stays_geojson"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1679,7 +1679,7 @@ export interface paths {
          * Experiences as GeoJSON
          * @description Active experiences with a meeting point as a GeoJSON FeatureCollection, filtered by wilaya or category.
          */
-        get: operations["experiences_geojson_api_v1_experiences_geojson_get"];
+        get: operations["get_experiences_geojson"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1699,7 +1699,7 @@ export interface paths {
          * Nearby POIs as GeoJSON
          * @description POIs within a radius (haversine-filtered) returned as a GeoJSON FeatureCollection with distance_km per feature.
          */
-        get: operations["nearby_pois_api_v1_nearby_pois_get"];
+        get: operations["get_nearby_pois"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1719,13 +1719,13 @@ export interface paths {
          * List collections
          * @description The authenticated user's collections with item counts, newest first.
          */
-        get: operations["list_collections_api_v1_collections_get"];
+        get: operations["get_collections"];
         put?: never;
         /**
          * Create a collection
          * @description Create a named wishlist/trip collection, optionally public and with a description.
          */
-        post: operations["create_collection_api_v1_collections_post"];
+        post: operations["post_collections"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1743,18 +1743,18 @@ export interface paths {
          * Get a collection
          * @description A collection with all its items (sorted by sort_order then created_at). Owner only.
          */
-        get: operations["get_collection_api_v1_collections__collection_id__get"];
+        get: operations["get_collections_collection_id"];
         /**
          * Update a collection
          * @description Update a collection's name, description, or is_public flag. Owner only.
          */
-        put: operations["update_collection_api_v1_collections__collection_id__put"];
+        put: operations["put_collections_collection_id"];
         post?: never;
         /**
          * Delete a collection
          * @description Delete a collection and all of its items. Owner only.
          */
-        delete: operations["delete_collection_api_v1_collections__collection_id__delete"];
+        delete: operations["delete_collections_collection_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1773,7 +1773,7 @@ export interface paths {
          * Add items to a collection
          * @description Batch-add items to a collection. Duplicates (same entity_type + entity_id) are skipped. At least one item required.
          */
-        post: operations["add_items_api_v1_collections__collection_id__items_post"];
+        post: operations["post_collections_collection_id_items"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1794,7 +1794,7 @@ export interface paths {
          * Remove an item from a collection
          * @description Remove a single item from a collection. Owner only.
          */
-        delete: operations["remove_item_api_v1_collections__collection_id__items__item_id__delete"];
+        delete: operations["delete_collections_collection_id_items_item_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1811,13 +1811,13 @@ export interface paths {
          * List favorites
          * @description The authenticated user's favorites, newest first. Optionally filtered by entity_type.
          */
-        get: operations["list_favorites_api_v1_favorites_get"];
+        get: operations["get_favorites"];
         put?: never;
         /**
          * Add a favorite
          * @description Favorite an entity (poi, experience, or stay) by entity_type + entity_id. Returns 404-style error if already favorited.
          */
-        post: operations["add_favorite_api_v1_favorites_post"];
+        post: operations["post_favorites"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1838,7 +1838,7 @@ export interface paths {
          * Remove a favorite
          * @description Unfavorite an entity. Only the owning user can remove.
          */
-        delete: operations["remove_favorite_api_v1_favorites__favorite_id__delete"];
+        delete: operations["delete_favorites_favorite_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2141,13 +2141,13 @@ export interface components {
             /** Accepts Visitors */
             accepts_visitors?: boolean | null;
         };
-        /** Body_upload_experience_photos_api_v1_experiences__experience_id__photos_post */
-        Body_upload_experience_photos_api_v1_experiences__experience_id__photos_post: {
+        /** Body_post_experiences_experience_id_photos */
+        Body_post_experiences_experience_id_photos: {
             /** Photos */
             photos: string[];
         };
-        /** Body_upload_poi_photo_api_v1_pois__poi_id__photo_post */
-        Body_upload_poi_photo_api_v1_pois__poi_id__photo_post: {
+        /** Body_post_pois_poi_id_photo */
+        Body_post_pois_poi_id_photo: {
             /** Photo */
             photo: string;
         };
@@ -4243,7 +4243,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    dashboard_stats_api_v1_admin_stats_get: {
+    get_admin_stats: {
         parameters: {
             query?: never;
             header?: {
@@ -4288,7 +4288,7 @@ export interface operations {
             };
         };
     };
-    list_users_api_v1_admin_users_get: {
+    get_admin_users: {
         parameters: {
             query?: {
                 role?: string | null;
@@ -4338,7 +4338,7 @@ export interface operations {
             };
         };
     };
-    set_user_role_api_v1_admin_users__user_id__role_put: {
+    put_admin_users_user_id_role: {
         parameters: {
             query?: never;
             header?: {
@@ -4396,7 +4396,7 @@ export interface operations {
             };
         };
     };
-    toggle_user_verification_api_v1_admin_users__user_id__verify_put: {
+    put_admin_users_user_id_verify: {
         parameters: {
             query?: never;
             header?: {
@@ -4450,7 +4450,7 @@ export interface operations {
             };
         };
     };
-    list_providers_api_v1_admin_providers_get: {
+    get_admin_providers: {
         parameters: {
             query?: {
                 verified?: boolean | null;
@@ -4500,7 +4500,7 @@ export interface operations {
             };
         };
     };
-    approve_provider_api_v1_admin_providers__profile_id__approve_put: {
+    put_admin_providers_profile_id_approve: {
         parameters: {
             query?: never;
             header?: {
@@ -4554,7 +4554,7 @@ export interface operations {
             };
         };
     };
-    admin_delete_experience_api_v1_admin_experiences__experience_id__delete: {
+    delete_admin_experiences_experience_id: {
         parameters: {
             query?: never;
             header?: {
@@ -4608,7 +4608,7 @@ export interface operations {
             };
         };
     };
-    verify_poi_quality_api_v1_admin_verify_poi__poi_id__get: {
+    get_admin_verify_poi_poi_id: {
         parameters: {
             query?: never;
             header?: {
@@ -4662,7 +4662,7 @@ export interface operations {
             };
         };
     };
-    get_verification_stats_api_v1_admin_verify_stats_get: {
+    get_admin_verify_stats: {
         parameters: {
             query?: never;
             header?: {
@@ -4707,7 +4707,7 @@ export interface operations {
             };
         };
     };
-    agent_observability_stats_api_v1_admin_agent_stats_get: {
+    get_admin_agent_stats: {
         parameters: {
             query?: {
                 /** @description Number of recent traces to return */
@@ -4755,7 +4755,7 @@ export interface operations {
             };
         };
     };
-    agent_chat_api_v1_agent_chat_post: {
+    post_agent_chat: {
         parameters: {
             query?: never;
             header?: {
@@ -4818,7 +4818,7 @@ export interface operations {
             };
         };
     };
-    agent_plan_trip_api_v1_agent_plan_trip_post: {
+    post_agent_plan_trip: {
         parameters: {
             query?: never;
             header?: {
@@ -4881,7 +4881,7 @@ export interface operations {
             };
         };
     };
-    agent_search_api_v1_agent_search_post: {
+    post_agent_search: {
         parameters: {
             query?: never;
             header?: {
@@ -4944,7 +4944,7 @@ export interface operations {
             };
         };
     };
-    agent_transport_api_v1_agent_transport_post: {
+    post_agent_transport: {
         parameters: {
             query?: never;
             header?: {
@@ -5007,7 +5007,7 @@ export interface operations {
             };
         };
     };
-    agent_events_api_v1_agent_events_post: {
+    post_agent_events: {
         parameters: {
             query?: never;
             header?: {
@@ -5070,7 +5070,7 @@ export interface operations {
             };
         };
     };
-    list_sessions_api_v1_agent_sessions_get: {
+    get_agent_sessions: {
         parameters: {
             query?: never;
             header?: {
@@ -5115,7 +5115,7 @@ export interface operations {
             };
         };
     };
-    clear_session_api_v1_agent_sessions__session_id__delete: {
+    delete_agent_sessions_session_id: {
         parameters: {
             query?: never;
             header?: {
@@ -5174,7 +5174,7 @@ export interface operations {
             };
         };
     };
-    list_artisans_api_v1_artisans_get: {
+    get_artisans: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -5209,7 +5209,7 @@ export interface operations {
             };
         };
     };
-    create_artisan_api_v1_artisans_post: {
+    post_artisans: {
         parameters: {
             query?: never;
             header?: {
@@ -5256,7 +5256,7 @@ export interface operations {
             };
         };
     };
-    get_artisan_api_v1_artisans__artisan_id__get: {
+    get_artisans_artisan_id: {
         parameters: {
             query?: never;
             header?: never;
@@ -5292,7 +5292,7 @@ export interface operations {
             };
         };
     };
-    update_artisan_api_v1_artisans__artisan_id__put: {
+    put_artisans_artisan_id: {
         parameters: {
             query?: never;
             header?: {
@@ -5350,7 +5350,7 @@ export interface operations {
             };
         };
     };
-    delete_artisan_api_v1_artisans__artisan_id__delete: {
+    delete_artisans_artisan_id: {
         parameters: {
             query?: never;
             header?: {
@@ -5402,7 +5402,7 @@ export interface operations {
             };
         };
     };
-    health_check_api_v1_health_get: {
+    get_health: {
         parameters: {
             query?: never;
             header?: never;
@@ -5420,9 +5420,16 @@ export interface operations {
                     "application/json": components["schemas"]["HealthResponse"];
                 };
             };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
-    send_otp_api_v1_auth_send_otp_post: {
+    post_auth_send_otp: {
         parameters: {
             query?: never;
             header?: never;
@@ -5469,7 +5476,7 @@ export interface operations {
             };
         };
     };
-    verify_otp_api_v1_auth_verify_otp_post: {
+    post_auth_verify_otp: {
         parameters: {
             query?: never;
             header?: never;
@@ -5516,7 +5523,7 @@ export interface operations {
             };
         };
     };
-    refresh_token_api_v1_auth_refresh_post: {
+    post_auth_refresh: {
         parameters: {
             query?: never;
             header?: never;
@@ -5563,7 +5570,7 @@ export interface operations {
             };
         };
     };
-    register_provider_api_v1_auth_register_provider_post: {
+    post_auth_register_provider: {
         parameters: {
             query?: never;
             header?: {
@@ -5619,7 +5626,7 @@ export interface operations {
             };
         };
     };
-    list_wilayas_api_v1_discover_wilayas_get: {
+    get_discover_wilayas: {
         parameters: {
             query?: never;
             header?: never;
@@ -5637,9 +5644,16 @@ export interface operations {
                     "application/json": components["schemas"]["WilayaSummary"][];
                 };
             };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
-    discover_wilaya_api_v1_discover_wilayas__wilaya_id__get: {
+    get_discover_wilayas_wilaya_id: {
         parameters: {
             query?: never;
             header?: never;
@@ -5675,7 +5689,7 @@ export interface operations {
             };
         };
     };
-    wilaya_guide_api_v1_discover_wilayas__wilaya_id__guide_get: {
+    get_discover_wilayas_wilaya_id_guide: {
         parameters: {
             query?: {
                 top?: number;
@@ -5713,7 +5727,7 @@ export interface operations {
             };
         };
     };
-    experiences_by_poi_api_v1_discover_experiences_by_poi__poi_id__get: {
+    get_discover_experiences_by_poi_poi_id: {
         parameters: {
             query?: never;
             header?: never;
@@ -5749,7 +5763,7 @@ export interface operations {
             };
         };
     };
-    list_events_api_v1_events_get: {
+    get_events: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -5782,7 +5796,7 @@ export interface operations {
             };
         };
     };
-    create_event_api_v1_events_post: {
+    post_events: {
         parameters: {
             query?: never;
             header?: {
@@ -5836,7 +5850,7 @@ export interface operations {
             };
         };
     };
-    get_event_api_v1_events__event_id__get: {
+    get_events_event_id: {
         parameters: {
             query?: never;
             header?: never;
@@ -5872,7 +5886,7 @@ export interface operations {
             };
         };
     };
-    delete_event_api_v1_events__event_id__delete: {
+    delete_events_event_id: {
         parameters: {
             query?: never;
             header?: {
@@ -5924,7 +5938,7 @@ export interface operations {
             };
         };
     };
-    update_event_api_v1_events__event_id__patch: {
+    patch_events_event_id: {
         parameters: {
             query?: never;
             header?: {
@@ -5982,7 +5996,7 @@ export interface operations {
             };
         };
     };
-    list_pois_api_v1_pois_get: {
+    get_pois: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -6017,7 +6031,7 @@ export interface operations {
             };
         };
     };
-    create_poi_api_v1_pois_post: {
+    post_pois: {
         parameters: {
             query?: never;
             header?: {
@@ -6071,7 +6085,7 @@ export interface operations {
             };
         };
     };
-    upload_poi_photo_api_v1_pois__poi_id__photo_post: {
+    post_pois_poi_id_photo: {
         parameters: {
             query?: never;
             header?: {
@@ -6084,7 +6098,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["Body_upload_poi_photo_api_v1_pois__poi_id__photo_post"];
+                "multipart/form-data": components["schemas"]["Body_post_pois_poi_id_photo"];
             };
         };
         responses: {
@@ -6136,7 +6150,7 @@ export interface operations {
             };
         };
     };
-    list_neighborhoods_api_v1_pois_neighborhoods_get: {
+    get_pois_neighborhoods: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -6165,7 +6179,7 @@ export interface operations {
             };
         };
     };
-    nearby_pois_api_v1_pois_nearby_get: {
+    get_pois_nearby: {
         parameters: {
             query: {
                 lat: number;
@@ -6198,7 +6212,7 @@ export interface operations {
             };
         };
     };
-    search_pois_api_v1_pois_search_get: {
+    get_pois_search: {
         parameters: {
             query: {
                 q: string;
@@ -6228,7 +6242,7 @@ export interface operations {
             };
         };
     };
-    get_poi_api_v1_pois__poi_id__get: {
+    get_pois_poi_id: {
         parameters: {
             query?: never;
             header?: {
@@ -6266,7 +6280,7 @@ export interface operations {
             };
         };
     };
-    delete_poi_api_v1_pois__poi_id__delete: {
+    delete_pois_poi_id: {
         parameters: {
             query?: never;
             header?: {
@@ -6318,7 +6332,7 @@ export interface operations {
             };
         };
     };
-    update_poi_api_v1_pois__poi_id__patch: {
+    patch_pois_poi_id: {
         parameters: {
             query?: never;
             header?: {
@@ -6376,7 +6390,7 @@ export interface operations {
             };
         };
     };
-    similar_pois_api_v1_pois__poi_id__similar_get: {
+    get_pois_poi_id_similar: {
         parameters: {
             query?: {
                 limit?: number;
@@ -6414,7 +6428,7 @@ export interface operations {
             };
         };
     };
-    optimize_poi_tour_api_v1_pois_tour_optimize_get: {
+    get_pois_tour_optimize: {
         parameters: {
             query: {
                 wilaya_id: number;
@@ -6448,7 +6462,7 @@ export interface operations {
             };
         };
     };
-    poi_clusters_api_v1_pois_tour_clusters_get: {
+    get_pois_tour_clusters: {
         parameters: {
             query: {
                 wilaya_id: number;
@@ -6478,7 +6492,7 @@ export interface operations {
             };
         };
     };
-    hub_pois_api_v1_pois_tour_hubs_get: {
+    get_pois_tour_hubs: {
         parameters: {
             query: {
                 wilaya_id: number;
@@ -6508,7 +6522,7 @@ export interface operations {
             };
         };
     };
-    get_recommendations_api_v1_recommendations_get: {
+    get_recommendations: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -6548,7 +6562,7 @@ export interface operations {
             };
         };
     };
-    get_preferences_api_v1_recommendations_preferences_get: {
+    get_recommendations_preferences: {
         parameters: {
             query?: never;
             header?: {
@@ -6586,7 +6600,7 @@ export interface operations {
             };
         };
     };
-    update_preferences_api_v1_recommendations_preferences_patch: {
+    patch_recommendations_preferences: {
         parameters: {
             query?: never;
             header?: {
@@ -6626,7 +6640,7 @@ export interface operations {
             };
         };
     };
-    derive_preferences_api_v1_recommendations_preferences_derive_post: {
+    post_recommendations_preferences_derive: {
         parameters: {
             query?: never;
             header?: {
@@ -6664,7 +6678,7 @@ export interface operations {
             };
         };
     };
-    submit_feedback_api_v1_recommendations__rec_id__feedback_post: {
+    post_recommendations_rec_id_feedback: {
         parameters: {
             query?: never;
             header?: {
@@ -6715,7 +6729,7 @@ export interface operations {
             };
         };
     };
-    get_me_api_v1_users_me_get: {
+    get_users_me: {
         parameters: {
             query?: never;
             header?: {
@@ -6753,7 +6767,7 @@ export interface operations {
             };
         };
     };
-    update_me_api_v1_users_me_put: {
+    put_users_me: {
         parameters: {
             query?: never;
             header?: {
@@ -6793,7 +6807,7 @@ export interface operations {
             };
         };
     };
-    set_role_api_v1_users_me_role_put: {
+    put_users_me_role: {
         parameters: {
             query?: never;
             header?: {
@@ -6842,7 +6856,7 @@ export interface operations {
             };
         };
     };
-    update_profile_api_v1_users_me_profile_put: {
+    put_users_me_profile: {
         parameters: {
             query?: never;
             header?: {
@@ -6891,7 +6905,7 @@ export interface operations {
             };
         };
     };
-    list_providers_api_v1_users_providers_get: {
+    get_users_providers: {
         parameters: {
             query?: {
                 role?: string | null;
@@ -6922,7 +6936,7 @@ export interface operations {
             };
         };
     };
-    get_provider_api_v1_users_providers__user_id__get: {
+    get_users_providers_user_id: {
         parameters: {
             query?: never;
             header?: never;
@@ -6960,7 +6974,7 @@ export interface operations {
             };
         };
     };
-    provider_dashboard_api_v1_users_me_dashboard_get: {
+    get_users_me_dashboard: {
         parameters: {
             query?: never;
             header?: {
@@ -7005,7 +7019,7 @@ export interface operations {
             };
         };
     };
-    list_wilayas_api_v1_wilayas_get: {
+    get_wilayas: {
         parameters: {
             query?: {
                 search?: string | null;
@@ -7034,7 +7048,7 @@ export interface operations {
             };
         };
     };
-    get_wilaya_api_v1_wilayas__wilaya_id__get: {
+    get_wilayas_wilaya_id: {
         parameters: {
             query?: never;
             header?: never;
@@ -7070,7 +7084,7 @@ export interface operations {
             };
         };
     };
-    list_experiences_api_v1_experiences_get: {
+    get_experiences: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -7106,7 +7120,7 @@ export interface operations {
             };
         };
     };
-    create_experience_api_v1_experiences_post: {
+    post_experiences: {
         parameters: {
             query?: never;
             header?: {
@@ -7160,7 +7174,7 @@ export interface operations {
             };
         };
     };
-    search_experiences_api_v1_experiences_search_get: {
+    get_experiences_search: {
         parameters: {
             query: {
                 q: string;
@@ -7190,7 +7204,7 @@ export interface operations {
             };
         };
     };
-    get_experience_api_v1_experiences__experience_id__get: {
+    get_experiences_experience_id: {
         parameters: {
             query?: never;
             header?: {
@@ -7228,7 +7242,7 @@ export interface operations {
             };
         };
     };
-    update_experience_api_v1_experiences__experience_id__put: {
+    put_experiences_experience_id: {
         parameters: {
             query?: never;
             header?: {
@@ -7286,7 +7300,7 @@ export interface operations {
             };
         };
     };
-    delete_experience_api_v1_experiences__experience_id__delete: {
+    delete_experiences_experience_id: {
         parameters: {
             query?: never;
             header?: {
@@ -7338,7 +7352,7 @@ export interface operations {
             };
         };
     };
-    upload_experience_photos_api_v1_experiences__experience_id__photos_post: {
+    post_experiences_experience_id_photos: {
         parameters: {
             query?: never;
             header?: {
@@ -7351,7 +7365,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["Body_upload_experience_photos_api_v1_experiences__experience_id__photos_post"];
+                "multipart/form-data": components["schemas"]["Body_post_experiences_experience_id_photos"];
             };
         };
         responses: {
@@ -7403,7 +7417,7 @@ export interface operations {
             };
         };
     };
-    list_stays_api_v1_stays_get: {
+    get_stays: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -7437,7 +7451,7 @@ export interface operations {
             };
         };
     };
-    create_stay_api_v1_stays_post: {
+    post_stays: {
         parameters: {
             query?: never;
             header?: {
@@ -7484,7 +7498,7 @@ export interface operations {
             };
         };
     };
-    get_stay_api_v1_stays__stay_id__get: {
+    get_stays_stay_id: {
         parameters: {
             query?: never;
             header?: {
@@ -7522,7 +7536,7 @@ export interface operations {
             };
         };
     };
-    update_stay_api_v1_stays__stay_id__put: {
+    put_stays_stay_id: {
         parameters: {
             query?: never;
             header?: {
@@ -7580,7 +7594,7 @@ export interface operations {
             };
         };
     };
-    delete_stay_api_v1_stays__stay_id__delete: {
+    delete_stays_stay_id: {
         parameters: {
             query?: never;
             header?: {
@@ -7632,7 +7646,7 @@ export interface operations {
             };
         };
     };
-    get_routes_from_api_v1_transport_routes_from__origin_wilaya_id__get: {
+    get_transport_routes_from_origin_wilaya_id: {
         parameters: {
             query?: {
                 limit?: number;
@@ -7665,7 +7679,7 @@ export interface operations {
             };
         };
     };
-    get_transport_route_api_v1_transport_routes__origin_wilaya_id___dest_wilaya_id__get: {
+    get_transport_routes_origin_wilaya_id_dest_wilaya_id: {
         parameters: {
             query?: never;
             header?: never;
@@ -7697,7 +7711,7 @@ export interface operations {
             };
         };
     };
-    list_stations_api_v1_transport_stations_get: {
+    get_transport_stations: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -7727,7 +7741,7 @@ export interface operations {
             };
         };
     };
-    nearest_stations_api_v1_transport_stations_nearby_get: {
+    get_transport_stations_nearby: {
         parameters: {
             query: {
                 lat: number;
@@ -7759,7 +7773,7 @@ export interface operations {
             };
         };
     };
-    list_lines_api_v1_transport_lines_get: {
+    get_transport_lines: {
         parameters: {
             query?: {
                 mode?: string | null;
@@ -7788,7 +7802,7 @@ export interface operations {
             };
         };
     };
-    plan_route_api_v1_transport_plan_get: {
+    get_transport_plan: {
         parameters: {
             query: {
                 from_lat: number;
@@ -7824,7 +7838,7 @@ export interface operations {
             };
         };
     };
-    poi_access_api_v1_transport_access__poi_id__get: {
+    get_transport_access_poi_id: {
         parameters: {
             query: {
                 lat: number;
@@ -7866,7 +7880,7 @@ export interface operations {
             };
         };
     };
-    route_to_poi_api_v1_transport_route_to_poi__poi_id__get: {
+    get_transport_route_to_poi_poi_id: {
         parameters: {
             query: {
                 from_lat: number;
@@ -7908,7 +7922,7 @@ export interface operations {
             };
         };
     };
-    list_operators_api_v1_transport_operators_get: {
+    get_transport_operators: {
         parameters: {
             query?: {
                 /** @description Filter by mode: train, flight, bus, taxi, tram, cablecar */
@@ -7938,7 +7952,7 @@ export interface operations {
             };
         };
     };
-    list_trips_api_v1_trips_get: {
+    get_trips: {
         parameters: {
             query?: {
                 status?: string | null;
@@ -7978,7 +7992,7 @@ export interface operations {
             };
         };
     };
-    create_trip_api_v1_trips_post: {
+    post_trips: {
         parameters: {
             query?: never;
             header?: {
@@ -8018,7 +8032,7 @@ export interface operations {
             };
         };
     };
-    get_trip_brief_api_v1_trips_brief__wilaya_id__get: {
+    get_trips_brief_wilaya_id: {
         parameters: {
             query?: never;
             header?: never;
@@ -8054,7 +8068,7 @@ export interface operations {
             };
         };
     };
-    get_trip_api_v1_trips__trip_id__get: {
+    get_trips_trip_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8101,7 +8115,7 @@ export interface operations {
             };
         };
     };
-    update_trip_api_v1_trips__trip_id__put: {
+    put_trips_trip_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8152,7 +8166,7 @@ export interface operations {
             };
         };
     };
-    delete_trip_api_v1_trips__trip_id__delete: {
+    delete_trips_trip_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8197,7 +8211,7 @@ export interface operations {
             };
         };
     };
-    add_trip_item_api_v1_trips__trip_id__items_post: {
+    post_trips_trip_id_items: {
         parameters: {
             query?: never;
             header?: {
@@ -8246,7 +8260,7 @@ export interface operations {
             };
         };
     };
-    update_trip_item_api_v1_trips__trip_id__items__item_id__put: {
+    put_trips_trip_id_items_item_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8298,7 +8312,7 @@ export interface operations {
             };
         };
     };
-    delete_trip_item_api_v1_trips__trip_id__items__item_id__delete: {
+    delete_trips_trip_id_items_item_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8346,7 +8360,7 @@ export interface operations {
             };
         };
     };
-    share_trip_api_v1_trips__trip_id__share_post: {
+    post_trips_trip_id_share: {
         parameters: {
             query?: never;
             header?: {
@@ -8393,7 +8407,7 @@ export interface operations {
             };
         };
     };
-    get_shared_trip_api_v1_trips_shared__share_token__get: {
+    get_trips_shared_share_token: {
         parameters: {
             query?: never;
             header?: never;
@@ -8429,7 +8443,7 @@ export interface operations {
             };
         };
     };
-    optimize_trip_api_v1_trips__trip_id__optimize_post: {
+    post_trips_trip_id_optimize: {
         parameters: {
             query?: never;
             header?: {
@@ -8476,7 +8490,7 @@ export interface operations {
             };
         };
     };
-    suggest_api_v1_search_suggest_get: {
+    get_search_suggest: {
         parameters: {
             query: {
                 q: string;
@@ -8506,7 +8520,7 @@ export interface operations {
             };
         };
     };
-    search_api_v1_search_get: {
+    get_search: {
         parameters: {
             query: {
                 /** @description Search query */
@@ -8538,7 +8552,7 @@ export interface operations {
             };
         };
     };
-    pois_geojson_api_v1_pois_geojson_get: {
+    get_pois_geojson: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -8570,7 +8584,7 @@ export interface operations {
             };
         };
     };
-    stays_geojson_api_v1_stays_geojson_get: {
+    get_stays_geojson: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -8600,7 +8614,7 @@ export interface operations {
             };
         };
     };
-    experiences_geojson_api_v1_experiences_geojson_get: {
+    get_experiences_geojson: {
         parameters: {
             query?: {
                 wilaya_id?: number | null;
@@ -8631,7 +8645,7 @@ export interface operations {
             };
         };
     };
-    nearby_pois_api_v1_nearby_pois_get: {
+    get_nearby_pois: {
         parameters: {
             query: {
                 lat: number;
@@ -8663,7 +8677,7 @@ export interface operations {
             };
         };
     };
-    list_collections_api_v1_collections_get: {
+    get_collections: {
         parameters: {
             query?: never;
             header?: {
@@ -8701,7 +8715,7 @@ export interface operations {
             };
         };
     };
-    create_collection_api_v1_collections_post: {
+    post_collections: {
         parameters: {
             query?: never;
             header?: {
@@ -8741,7 +8755,7 @@ export interface operations {
             };
         };
     };
-    get_collection_api_v1_collections__collection_id__get: {
+    get_collections_collection_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8788,7 +8802,7 @@ export interface operations {
             };
         };
     };
-    update_collection_api_v1_collections__collection_id__put: {
+    put_collections_collection_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8839,7 +8853,7 @@ export interface operations {
             };
         };
     };
-    delete_collection_api_v1_collections__collection_id__delete: {
+    delete_collections_collection_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8884,7 +8898,7 @@ export interface operations {
             };
         };
     };
-    add_items_api_v1_collections__collection_id__items_post: {
+    post_collections_collection_id_items: {
         parameters: {
             query?: never;
             header?: {
@@ -8942,7 +8956,7 @@ export interface operations {
             };
         };
     };
-    remove_item_api_v1_collections__collection_id__items__item_id__delete: {
+    delete_collections_collection_id_items_item_id: {
         parameters: {
             query?: never;
             header?: {
@@ -8988,7 +9002,7 @@ export interface operations {
             };
         };
     };
-    list_favorites_api_v1_favorites_get: {
+    get_favorites: {
         parameters: {
             query?: {
                 entity_type?: string | null;
@@ -9028,7 +9042,7 @@ export interface operations {
             };
         };
     };
-    add_favorite_api_v1_favorites_post: {
+    post_favorites: {
         parameters: {
             query?: never;
             header?: {
@@ -9075,7 +9089,7 @@ export interface operations {
             };
         };
     };
-    remove_favorite_api_v1_favorites__favorite_id__delete: {
+    delete_favorites_favorite_id: {
         parameters: {
             query?: never;
             header?: {

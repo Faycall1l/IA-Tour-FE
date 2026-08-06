@@ -10,18 +10,18 @@ import '../models/tripitemcreate.dart';
 import '../models/tripitemupdate.dart';
 import '../models/tripupdate.dart';
 import '../models/wilayaid.dart';
-import 'addtripitemapiv1tripstripiditemspost_result.dart';
-import 'createtripapiv1tripspost_result.dart';
-import 'deletetripapiv1tripstripiddelete_result.dart';
-import 'deletetripitemapiv1tripstripiditemsitemiddelete_result.dart';
-import 'getsharedtripapiv1tripssharedsharetokenget_result.dart';
-import 'gettripapiv1tripstripidget_result.dart';
-import 'gettripbriefapiv1tripsbriefwilayaidget_result.dart';
-import 'listtripsapiv1tripsget_result.dart';
-import 'optimizetripapiv1tripstripidoptimizepost_result.dart';
-import 'sharetripapiv1tripstripidsharepost_result.dart';
-import 'updatetripapiv1tripstripidput_result.dart';
-import 'updatetripitemapiv1tripstripiditemsitemidput_result.dart';
+import 'deletetripstripiditemsitemid_result.dart';
+import 'deletetripstripid_result.dart';
+import 'gettripsbriefwilayaid_result.dart';
+import 'gettripssharedsharetoken_result.dart';
+import 'gettripstripid_result.dart';
+import 'gettrips_result.dart';
+import 'posttripstripiditems_result.dart';
+import 'posttripstripidoptimize_result.dart';
+import 'posttripstripidshare_result.dart';
+import 'posttrips_result.dart';
+import 'puttripstripiditemsitemid_result.dart';
+import 'puttripstripid_result.dart';
 
 class TripDashboardApi {
   const TripDashboardApi({required this.dio, this.baseUrl});
@@ -30,7 +30,7 @@ class TripDashboardApi {
   final String? baseUrl;
 
   /// Paginated trips for the authenticated user, optionally filtered by status (active/archived). Each trip includes day plans.
-  Future<ListTripsApiV1TripsGetResult> listTripsApiV1TripsGet({
+  Future<GetTripsResult> getTrips({
     Status? status,
     int? page,
     int? pageSize,
@@ -66,11 +66,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return ListTripsApiV1TripsGetResult.fromResponse(response);
+    return GetTripsResult.fromResponse(response);
   }
 
   /// Create a trip plan with title, wilaya, dates, and budget. Returns the full day-structured plan with cost/spend breakdown.
-  Future<CreateTripApiV1TripsPostResult> createTripApiV1TripsPost({
+  Future<PostTripsResult> postTrips({
     String? authorization,
     required TripCreate tripCreate,
     CancelToken? cancelToken,
@@ -95,12 +95,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return CreateTripApiV1TripsPostResult.fromResponse(response);
+    return PostTripsResult.fromResponse(response);
   }
 
   /// Generated travel brief for a wilaya: must-see POIs, suggested itinerary, budget guidance. Public.
-  Future<GetTripBriefApiV1TripsBriefWilayaIdGetResult>
-      getTripBriefApiV1TripsBriefWilayaIdGet({
+  Future<GetTripsBriefWilayaIdResult> getTripsBriefWilayaId({
     required WilayaId? wilayaId,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -118,11 +117,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return GetTripBriefApiV1TripsBriefWilayaIdGetResult.fromResponse(response);
+    return GetTripsBriefWilayaIdResult.fromResponse(response);
   }
 
   /// Trip detail with enriched day plans (item details, gaps detected, per-day distance and cost, budget remaining). Owner only.
-  Future<GetTripApiV1TripsTripIdGetResult> getTripApiV1TripsTripIdGet({
+  Future<GetTripsTripIdResult> getTripsTripId({
     required String tripId,
     String? authorization,
     CancelToken? cancelToken,
@@ -146,11 +145,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return GetTripApiV1TripsTripIdGetResult.fromResponse(response);
+    return GetTripsTripIdResult.fromResponse(response);
   }
 
   /// Update trip metadata (title, dates, budget, status). Owner only.
-  Future<UpdateTripApiV1TripsTripIdPutResult> updateTripApiV1TripsTripIdPut({
+  Future<PutTripsTripIdResult> putTripsTripId({
     required String tripId,
     String? authorization,
     required TripUpdate tripUpdate,
@@ -176,12 +175,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateTripApiV1TripsTripIdPutResult.fromResponse(response);
+    return PutTripsTripIdResult.fromResponse(response);
   }
 
   /// Delete a trip and all of its items. Owner only.
-  Future<DeleteTripApiV1TripsTripIdDeleteResult>
-      deleteTripApiV1TripsTripIdDelete({
+  Future<DeleteTripsTripIdResult> deleteTripsTripId({
     required String tripId,
     String? authorization,
     CancelToken? cancelToken,
@@ -205,12 +203,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return DeleteTripApiV1TripsTripIdDeleteResult.fromResponse(response);
+    return DeleteTripsTripIdResult.fromResponse(response);
   }
 
   /// Add a POI/experience/stay/restaurant/transport item to a day of the trip. POI items validate the POI exists. Auto-assigns the next sort order.
-  Future<AddTripItemApiV1TripsTripIdItemsPostResult>
-      addTripItemApiV1TripsTripIdItemsPost({
+  Future<PostTripsTripIdItemsResult> postTripsTripIdItems({
     required String tripId,
     String? authorization,
     required TripItemCreate tripItemCreate,
@@ -236,12 +233,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return AddTripItemApiV1TripsTripIdItemsPostResult.fromResponse(response);
+    return PostTripsTripIdItemsResult.fromResponse(response);
   }
 
   /// Change a trip item's day, sort order, or time slot. Owner only.
-  Future<UpdateTripItemApiV1TripsTripIdItemsItemIdPutResult>
-      updateTripItemApiV1TripsTripIdItemsItemIdPut({
+  Future<PutTripsTripIdItemsItemIdResult> putTripsTripIdItemsItemId({
     required String tripId,
     required String itemId,
     String? authorization,
@@ -268,13 +264,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return UpdateTripItemApiV1TripsTripIdItemsItemIdPutResult.fromResponse(
-        response);
+    return PutTripsTripIdItemsItemIdResult.fromResponse(response);
   }
 
   /// Remove an item from a trip and return the updated trip. Owner only.
-  Future<DeleteTripItemApiV1TripsTripIdItemsItemIdDeleteResult>
-      deleteTripItemApiV1TripsTripIdItemsItemIdDelete({
+  Future<DeleteTripsTripIdItemsItemIdResult> deleteTripsTripIdItemsItemId({
     required String tripId,
     required String itemId,
     String? authorization,
@@ -299,13 +293,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return DeleteTripItemApiV1TripsTripIdItemsItemIdDeleteResult.fromResponse(
-        response);
+    return DeleteTripsTripIdItemsItemIdResult.fromResponse(response);
   }
 
   /// Generate (or reuse) an unguessable share token and a public share URL for the trip. Owner only.
-  Future<ShareTripApiV1TripsTripIdSharePostResult>
-      shareTripApiV1TripsTripIdSharePost({
+  Future<PostTripsTripIdShareResult> postTripsTripIdShare({
     required String tripId,
     String? authorization,
     CancelToken? cancelToken,
@@ -329,12 +321,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return ShareTripApiV1TripsTripIdSharePostResult.fromResponse(response);
+    return PostTripsTripIdShareResult.fromResponse(response);
   }
 
   /// View a trip by its public share token without authentication.
-  Future<GetSharedTripApiV1TripsSharedShareTokenGetResult>
-      getSharedTripApiV1TripsSharedShareTokenGet({
+  Future<GetTripsSharedShareTokenResult> getTripsSharedShareToken({
     required String shareToken,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -352,13 +343,11 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return GetSharedTripApiV1TripsSharedShareTokenGetResult.fromResponse(
-        response);
+    return GetTripsSharedShareTokenResult.fromResponse(response);
   }
 
   /// Reorder each day's items to minimize walking distance using the POI graph, then return the optimized trip. Owner only.
-  Future<OptimizeTripApiV1TripsTripIdOptimizePostResult>
-      optimizeTripApiV1TripsTripIdOptimizePost({
+  Future<PostTripsTripIdOptimizeResult> postTripsTripIdOptimize({
     required String tripId,
     String? authorization,
     CancelToken? cancelToken,
@@ -382,7 +371,6 @@ class TripDashboardApi {
       cancelToken: cancelToken,
     );
 
-    return OptimizeTripApiV1TripsTripIdOptimizePostResult.fromResponse(
-        response);
+    return PostTripsTripIdOptimizeResult.fromResponse(response);
   }
 }

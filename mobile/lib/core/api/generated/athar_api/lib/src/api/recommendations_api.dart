@@ -8,11 +8,11 @@ import '../models/entitytype.dart';
 import '../models/preferenceupdate.dart';
 import '../models/recommendationfeedback.dart';
 import '../models/wilayaid.dart';
-import 'derivepreferencesapiv1recommendationspreferencesderivepost_result.dart';
-import 'getpreferencesapiv1recommendationspreferencesget_result.dart';
-import 'getrecommendationsapiv1recommendationsget_result.dart';
-import 'submitfeedbackapiv1recommendationsrecidfeedbackpost_result.dart';
-import 'updatepreferencesapiv1recommendationspreferencespatch_result.dart';
+import 'getrecommendationspreferences_result.dart';
+import 'getrecommendations_result.dart';
+import 'patchrecommendationspreferences_result.dart';
+import 'postrecommendationspreferencesderive_result.dart';
+import 'postrecommendationsrecidfeedback_result.dart';
 
 class RecommendationsApi {
   const RecommendationsApi({required this.dio, this.baseUrl});
@@ -21,8 +21,7 @@ class RecommendationsApi {
   final String? baseUrl;
 
   /// Personalized content-based recommendations (model cbf_v1) for the authenticated user, filtered by wilaya and entity type.
-  Future<GetRecommendationsApiV1RecommendationsGetResult>
-      getRecommendationsApiV1RecommendationsGet({
+  Future<GetRecommendationsResult> getRecommendations({
     WilayaId? wilayaId,
     EntityType? entityType,
     int? limit,
@@ -58,13 +57,11 @@ class RecommendationsApi {
       cancelToken: cancelToken,
     );
 
-    return GetRecommendationsApiV1RecommendationsGetResult.fromResponse(
-        response);
+    return GetRecommendationsResult.fromResponse(response);
   }
 
   /// The user's inferred travel preferences (categories, budgets). Auto-creates a default profile on first access.
-  Future<GetPreferencesApiV1RecommendationsPreferencesGetResult>
-      getPreferencesApiV1RecommendationsPreferencesGet({
+  Future<GetRecommendationsPreferencesResult> getRecommendationsPreferences({
     String? authorization,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -87,13 +84,12 @@ class RecommendationsApi {
       cancelToken: cancelToken,
     );
 
-    return GetPreferencesApiV1RecommendationsPreferencesGetResult.fromResponse(
-        response);
+    return GetRecommendationsPreferencesResult.fromResponse(response);
   }
 
   /// Partially update the user's travel preferences.
-  Future<UpdatePreferencesApiV1RecommendationsPreferencesPatchResult>
-      updatePreferencesApiV1RecommendationsPreferencesPatch({
+  Future<PatchRecommendationsPreferencesResult>
+      patchRecommendationsPreferences({
     String? authorization,
     required PreferenceUpdate preferenceUpdate,
     CancelToken? cancelToken,
@@ -118,13 +114,12 @@ class RecommendationsApi {
       cancelToken: cancelToken,
     );
 
-    return UpdatePreferencesApiV1RecommendationsPreferencesPatchResult
-        .fromResponse(response);
+    return PatchRecommendationsPreferencesResult.fromResponse(response);
   }
 
   /// Rebuild the user's preferences from their interaction history (favorites, collections, trips).
-  Future<DerivePreferencesApiV1RecommendationsPreferencesDerivePostResult>
-      derivePreferencesApiV1RecommendationsPreferencesDerivePost({
+  Future<PostRecommendationsPreferencesDeriveResult>
+      postRecommendationsPreferencesDerive({
     String? authorization,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -147,13 +142,12 @@ class RecommendationsApi {
       cancelToken: cancelToken,
     );
 
-    return DerivePreferencesApiV1RecommendationsPreferencesDerivePostResult
-        .fromResponse(response);
+    return PostRecommendationsPreferencesDeriveResult.fromResponse(response);
   }
 
   /// Record feedback on a recommendation: liked, dismissed, or bookmarked. Dismissed hides it; liked/bookmarked marks it seen.
-  Future<SubmitFeedbackApiV1RecommendationsRecIdFeedbackPostResult>
-      submitFeedbackApiV1RecommendationsRecIdFeedbackPost({
+  Future<PostRecommendationsRecIdFeedbackResult>
+      postRecommendationsRecIdFeedback({
     required String recId,
     String? authorization,
     required RecommendationFeedback recommendationFeedback,
@@ -179,7 +173,6 @@ class RecommendationsApi {
       cancelToken: cancelToken,
     );
 
-    return SubmitFeedbackApiV1RecommendationsRecIdFeedbackPostResult
-        .fromResponse(response);
+    return PostRecommendationsRecIdFeedbackResult.fromResponse(response);
   }
 }

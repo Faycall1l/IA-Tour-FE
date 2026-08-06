@@ -5,10 +5,10 @@
 import 'package:dio/dio.dart';
 
 import '../models/wilayaid.dart';
-import 'discoverwilayaapiv1discoverwilayaswilayaidget_result.dart';
-import 'experiencesbypoiapiv1discoverexperiencesbypoipoiidget_result.dart';
-import 'listwilayasapiv1discoverwilayasget_result.dart';
-import 'wilayaguideapiv1discoverwilayaswilayaidguideget_result.dart';
+import 'getdiscoverexperiencesbypoipoiid_result.dart';
+import 'getdiscoverwilayaswilayaidguide_result.dart';
+import 'getdiscoverwilayaswilayaid_result.dart';
+import 'getdiscoverwilayas_result.dart';
 
 class DiscoverApi {
   const DiscoverApi({required this.dio, this.baseUrl});
@@ -17,8 +17,7 @@ class DiscoverApi {
   final String? baseUrl;
 
   /// Every wilaya with aggregate stats: POI/featured/experience/stay/artisan counts, top categories, highlight POI + photo, and coordinates.
-  Future<ListWilayasApiV1DiscoverWilayasGetResult>
-      listWilayasApiV1DiscoverWilayasGet({
+  Future<GetDiscoverWilayasResult> getDiscoverWilayas({
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
     Options? options,
@@ -35,12 +34,11 @@ class DiscoverApi {
       cancelToken: cancelToken,
     );
 
-    return ListWilayasApiV1DiscoverWilayasGetResult.fromResponse(response);
+    return GetDiscoverWilayasResult.fromResponse(response);
   }
 
   /// All content for a wilaya in one payload: POIs (alphabetical), active experiences (with provider info), active stays (by price), and artisans.
-  Future<DiscoverWilayaApiV1DiscoverWilayasWilayaIdGetResult>
-      discoverWilayaApiV1DiscoverWilayasWilayaIdGet({
+  Future<GetDiscoverWilayasWilayaIdResult> getDiscoverWilayasWilayaId({
     required WilayaId? wilayaId,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -58,13 +56,12 @@ class DiscoverApi {
       cancelToken: cancelToken,
     );
 
-    return DiscoverWilayaApiV1DiscoverWilayasWilayaIdGetResult.fromResponse(
-        response);
+    return GetDiscoverWilayasWilayaIdResult.fromResponse(response);
   }
 
   /// Editorial per-wilaya guide: featured POIs first, then top N per category ordered by combined score, each with transport access info (nearest station, distance, walking time, nearby modes). Includes active experiences and stays.
-  Future<WilayaGuideApiV1DiscoverWilayasWilayaIdGuideGetResult>
-      wilayaGuideApiV1DiscoverWilayasWilayaIdGuideGet({
+  Future<GetDiscoverWilayasWilayaIdGuideResult>
+      getDiscoverWilayasWilayaIdGuide({
     required WilayaId? wilayaId,
     int? top,
     CancelToken? cancelToken,
@@ -88,13 +85,12 @@ class DiscoverApi {
       cancelToken: cancelToken,
     );
 
-    return WilayaGuideApiV1DiscoverWilayasWilayaIdGuideGetResult.fromResponse(
-        response);
+    return GetDiscoverWilayasWilayaIdGuideResult.fromResponse(response);
   }
 
   /// Active experiences in the POI's wilaya whose title/description mentions the POI (falls back to all wilaya experiences).
-  Future<ExperiencesByPoiApiV1DiscoverExperiencesByPoiPoiIdGetResult>
-      experiencesByPoiApiV1DiscoverExperiencesByPoiPoiIdGet({
+  Future<GetDiscoverExperiencesByPoiPoiIdResult>
+      getDiscoverExperiencesByPoiPoiId({
     required String poiId,
     CancelToken? cancelToken,
     Map<String, dynamic>? extra,
@@ -112,7 +108,6 @@ class DiscoverApi {
       cancelToken: cancelToken,
     );
 
-    return ExperiencesByPoiApiV1DiscoverExperiencesByPoiPoiIdGetResult
-        .fromResponse(response);
+    return GetDiscoverExperiencesByPoiPoiIdResult.fromResponse(response);
   }
 }
