@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Nova_Round } from "next/font/google";
-import Navbar from "@/components/Navbar";
+import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${novaRound.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
+        <SiteHeader />
         {children}
         <Footer />
       </body>

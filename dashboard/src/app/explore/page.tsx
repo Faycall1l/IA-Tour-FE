@@ -2,7 +2,7 @@ import Link from "next/link";
 import Placeholder from "@/components/Placeholder";
 
 export const metadata = {
-  title: "Get inspired — ATHAR",
+  title: "Get inspired — GOAA",
   description:
     "Don't know where to go? Explore possible vacations and trips across Algeria.",
 };
@@ -16,20 +16,20 @@ const modes = [
 
 export default function ExplorePage() {
   return (
-    <main className="min-h-screen bg-zinc-50 px-6 pb-16 pt-24">
+    <main className="min-h-screen bg-white px-6 pb-16 pt-24">
       <div className="mx-auto max-w-6xl">
         <Link
           href="/"
-          className="mb-6 inline-block text-sm font-medium text-emerald-700 hover:underline"
+          className="mb-6 inline-block text-sm font-normal text-moss hover:text-rustic-gold hover:underline"
         >
           ← Home
         </Link>
 
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900">
+        <header className="mb-8 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-pine">
             Don&apos;t know where to go?
           </h1>
-          <p className="mt-1 text-zinc-600">
+          <p className="mt-1 text-sm text-moss">
             Explore possible vacations and trips until something calls your
             name.
           </p>
@@ -41,7 +41,7 @@ export default function ExplorePage() {
         />
 
         <section>
-          <h2 className="mb-4 text-xl font-semibold text-zinc-900">
+          <h2 className="mb-4 text-xl font-bold text-pine">
             Start exploring
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -49,7 +49,7 @@ export default function ExplorePage() {
               <Link
                 key={mode.href}
                 href={mode.href}
-                className="rounded-xl border border-zinc-200 bg-white px-5 py-4 text-sm font-medium text-zinc-700 shadow-sm transition hover:border-emerald-500 hover:text-emerald-700"
+                className="rounded-2xl border border-champagne bg-white px-5 py-4 text-sm font-normal text-moss transition hover:border-sea-foam hover:text-pine"
               >
                 {mode.title} →
               </Link>

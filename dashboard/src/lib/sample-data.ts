@@ -467,6 +467,140 @@ export const SAMPLE_WILAYAS: WilayaSummary[] = [
   },
 ];
 
+export interface SampleSite {
+  name: string;
+  category: string;
+  description: string;
+  photo: string;
+}
+
+export const SAMPLE_WILAYA_SITES: Record<number, SampleSite[]> = {
+  16: [
+    { name: "The Casbah of Algiers", category: "heritage", description: "A UNESCO medina of whitewashed lanes, Ottoman palaces and sea views from the top of the old city.", photo: "https://picsum.photos/seed/casbah/800/500" },
+    { name: "Notre-Dame d'Afrique", category: "heritage", description: "The basilica perched above the bay, blending Moorish and Byzantine styles.", photo: "https://picsum.photos/seed/nd-afrique/800/500" },
+    { name: "Jardin d'Essai", category: "nature", description: "A century-old botanical garden with giant araucarias and a monkey enclosure.", photo: "https://picsum.photos/seed/jardin-essai/800/500" },
+  ],
+  31: [
+    { name: "Fort Santa Cruz", category: "heritage", description: "Spanish fort on Mount Murdjadjo with sweeping views of Oran and the bay.", photo: "https://picsum.photos/seed/santa-cruz/800/500" },
+    { name: "Pasha's Mosque", category: "heritage", description: "Ottoman-era mosque with a restored minaret at the heart of Sidi El Houari.", photo: "https://picsum.photos/seed/pasha-mosque/800/500" },
+    { name: "Front de Mer", category: "culture", description: "The seafront esplanade where rai fills the air and the corniche wakes up at dusk.", photo: "https://picsum.photos/seed/front-de-mer/800/500" },
+  ],
+  25: [
+    { name: "Sidi M'Cid Bridge", category: "heritage", description: "The 175-metre suspension bridge spanning the Rhumel gorge.", photo: "https://picsum.photos/seed/sidi-mcid/800/500" },
+    { name: "Palace of Ahmed Bey", category: "heritage", description: "A 19th-century Ottoman palace with courtyards and tilework from around the country.", photo: "https://picsum.photos/seed/ahmed-bey/800/500" },
+    { name: "Cirta Museum", category: "culture", description: "Roman mosaics and Punic artifacts from the ancient capital of Numidia.", photo: "https://picsum.photos/seed/cirta/800/500" },
+  ],
+  13: [
+    { name: "El Mechouar Palace", category: "heritage", description: "The Zayyanid royal palace, now a museum inside the old citadel of Tlemcen.", photo: "https://picsum.photos/seed/el-mechouar/800/500" },
+    { name: "Grand Mosque of Tlemcen", category: "heritage", description: "A 12th-century Almoravid mosque with a horseshoe-arch prayer hall.", photo: "https://picsum.photos/seed/tlemcen-mosque/800/500" },
+    { name: "Mansourah Ruins", category: "heritage", description: "The unfinished 14th-century minaret and ramparts of the Merinid settlement.", photo: "https://picsum.photos/seed/mansourah/800/500" },
+  ],
+  6: [
+    { name: "Gouraya National Park", category: "nature", description: "Lush slopes, cliffs and the Gouraya peak overlooking the Mediterranean.", photo: "https://picsum.photos/seed/gouraya/800/500" },
+    { name: "Pic des Singes", category: "nature", description: "A lookout where you may spot Barbary macaques above the bay of Béjaïa.", photo: "https://picsum.photos/seed/pic-singes/800/500" },
+    { name: "Cap Carbon", category: "nature", description: "The dramatic peninsula and lighthouse at the mouth of the bay.", photo: "https://picsum.photos/seed/cap-carbon/800/500" },
+  ],
+  47: [
+    { name: "The M'zab Valley", category: "heritage", description: "Five fortified pentapole cities, a UNESCO oasis of white mosques and ksour.", photo: "https://picsum.photos/seed/mzab/800/500" },
+    { name: "Beni Isguen", category: "culture", description: "The best-preserved of the M'zab cities, with a weekly souk and strict traditions.", photo: "https://picsum.photos/seed/beni-isguen/800/500" },
+    { name: "Grand Mosque of Ghardaïa", category: "heritage", description: "The pyramidal 11th-century mosque crowned by its pointed minaret.", photo: "https://picsum.photos/seed/ghardaia-mosque/800/500" },
+  ],
+  11: [
+    { name: "Assekrem", category: "trekking", description: "The hermitage plateau at 2,700m with sunrise over the Hoggar's moonlike peaks.", photo: "https://picsum.photos/seed/assekrem/800/500" },
+    { name: "Hoggar Mountains", category: "trekking", description: "Volcanic massifs, gorges and the highest point of Algeria.", photo: "https://picsum.photos/seed/hoggar/800/500" },
+    { name: "Guelta of Silet", category: "nature", description: "A desert waterhole where rare life gathers between the dunes.", photo: "https://picsum.photos/seed/guelta-silet/800/500" },
+  ],
+  56: [
+    { name: "Tassili n'Ajjer", category: "heritage", description: "Neolithic rock art and stone forests on a vast UNESCO plateau.", photo: "https://picsum.photos/seed/tassili/800/500" },
+    { name: "Tadrart Dunes", category: "trekking", description: "Giant orange sand dunes and canyons that change colour at sunset.", photo: "https://picsum.photos/seed/tadrart/800/500" },
+    { name: "La Vache Qui Pleure", category: "trekking", description: "The landmark overhanging rock near the centre of the park.", photo: "https://picsum.photos/seed/vache-qui-pleure/800/500" },
+  ],
+  19: [
+    { name: "Timgad", category: "heritage", description: "The 'Pompeii of Africa', a grid-planned Roman colony in the Aurès foothills.", photo: "https://picsum.photos/seed/timgad/800/500" },
+    { name: "Djémila", category: "heritage", description: "Mountain-top Roman ruins — temples, forum and mosaics — on the slopes of Sétif.", photo: "https://picsum.photos/seed/djemila/800/500" },
+    { name: "Bougaa Rock", category: "nature", description: "The sandstone needle rising from the high-plateau villages.", photo: "https://picsum.photos/seed/bougaa/800/500" },
+  ],
+  23: [
+    { name: "Basilica of Saint Augustine", category: "heritage", description: "The imposing basilica overlooking the ruins of Hippone.", photo: "https://picsum.photos/seed/st-augustine/800/500" },
+    { name: "Hippone Ruins", category: "heritage", description: "Roman and early-Christian remains where Saint Augustine once preached.", photo: "https://picsum.photos/seed/hippone/800/500" },
+    { name: "Cap de Garde", category: "nature", description: "The headland and lighthouse between Annaba and the coast of Seraïdi.", photo: "https://picsum.photos/seed/cap-garde/800/500" },
+  ],
+  49: [
+    { name: "The Red Ksour of Timimoun", category: "heritage", description: "Coral-red clay towns rising from the Gourara oasis.", photo: "https://picsum.photos/seed/timimoun-ksour/800/500" },
+    { name: "Palm Grove of Timimoun", category: "nature", description: "A vast foggara-irrigated palm forest by the salt flats.", photo: "https://picsum.photos/seed/timimoun-palms/800/500" },
+    { name: "Tamentit", category: "culture", description: "Ancient caravan ksar once on the Trans-Saharan route.", photo: "https://picsum.photos/seed/tamentit/800/500" },
+  ],
+  1: [
+    { name: "Ksar of Ouled Said", category: "heritage", description: "A dense maze of clay houses and granaries in the Gourara.", photo: "https://picsum.photos/seed/ouled-said/800/500" },
+    { name: "Grand Mosque of Adrar", category: "heritage", description: "A distinctive Saharan mosque at the heart of the ksar.", photo: "https://picsum.photos/seed/adrar-mosque/800/500" },
+    { name: "Erg Admer", category: "trekking", description: "High golden dunes on the road south of Adrar.", photo: "https://picsum.photos/seed/erg-admer/800/500" },
+  ],
+};
+
+export interface SampleAgencyItinerary {
+  title: string;
+  days: number;
+  budget: string;
+  wilayas: string[];
+  highlights: string[];
+}
+
+export interface SampleAgency {
+  id: number;
+  name: string;
+  city: string;
+  rating: number;
+  description: string;
+  itineraries: SampleAgencyItinerary[];
+}
+
+export const SAMPLE_AGENCIES: SampleAgency[] = [
+  {
+    id: 1,
+    name: "Sahara Trails",
+    city: "Tamanrasset",
+    rating: 4.9,
+    description: "Deep-desert specialists running guided Hoggar and Tassili expeditions.",
+    itineraries: [
+      { title: "Hoggar Sunrise Trek", days: 5, budget: "mid-range", wilayas: ["Tamanrasset"], highlights: ["Assekrem sunrise", "Mouydir gorges", "Tuareg camp nights"] },
+      { title: "Tassili Rock Art Loop", days: 7, budget: "mid-range", wilayas: ["Djanet"], highlights: ["La Vache Qui Pleure", "Tadrart dunes", "Neolithic galleries"] },
+    ],
+  },
+  {
+    id: 2,
+    name: "Atlas Nomade",
+    city: "Algiers",
+    rating: 4.7,
+    description: "Coast-to-Sahara packages linking the white city to the deep south.",
+    itineraries: [
+      { title: "Casbah & Corniche", days: 2, budget: "budget", wilayas: ["Algiers"], highlights: ["Casbah walking tour", "Notre-Dame d'Afrique", "Jardin d'Essai"] },
+      { title: "North–South Classic", days: 10, budget: "mid-range", wilayas: ["Algiers", "Ghardaïa", "Tamanrasset"], highlights: ["M'zab pentapolis", "Assekrem", "Hoggar trek"] },
+    ],
+  },
+  {
+    id: 3,
+    name: "Kabylia Aventures",
+    city: "Béjaïa",
+    rating: 4.8,
+    description: "Mountain and Mediterranean escapes from the Soummam valley.",
+    itineraries: [
+      { title: "Gouraya & the Soummam", days: 3, budget: "budget", wilayas: ["Béjaïa"], highlights: ["Gouraya Park", "Pic des Singes", "Coves of Aokas"] },
+      { title: "Bridges & Ruins of the East", days: 6, budget: "mid-range", wilayas: ["Constantine", "Sétif"], highlights: ["Sidi M'Cid Bridge", "Djémila", "Timgad"] },
+    ],
+  },
+  {
+    id: 4,
+    name: "M'zab & Oasis Tours",
+    city: "Ghardaïa",
+    rating: 4.6,
+    description: "Local guides through the pentapolis and the palm groves of the desert.",
+    itineraries: [
+      { title: "The Pentapolis in a Day", days: 1, budget: "budget", wilayas: ["Ghardaïa"], highlights: ["Beni Isguen", "Grand Mosque", "M'zab skyline"] },
+      { title: "Gourara Red Road", days: 8, budget: "mid-range", wilayas: ["Adrar", "Timimoun"], highlights: ["Red ksour", "Timimoun palm grove", "Erg Admer"] },
+    ],
+  },
+];
+
 export const SAMPLE_CONTACTS: ContactSubmission[] = [
   {
     id: "contact-1",
@@ -487,6 +621,90 @@ export const SAMPLE_CONTACTS: ContactSubmission[] = [
     createdAt: "2026-08-05T09:12:00Z",
   },
 ];
+
+export const WILAYA_NAMES: Record<number, string> = {
+  1: "Adrar",
+  2: "Chlef",
+  3: "Laghouat",
+  4: "Oum El Bouaghi",
+  5: "Batna",
+  6: "Béjaïa",
+  7: "Biskra",
+  8: "Béchar",
+  9: "Blida",
+  10: "Bouira",
+  11: "Tamanrasset",
+  12: "Tébessa",
+  13: "Tlemcen",
+  14: "Tiaret",
+  15: "Tizi Ouzou",
+  16: "Algiers",
+  17: "Djelfa",
+  18: "Jijel",
+  19: "Sétif",
+  20: "Saïda",
+  21: "Skikda",
+  22: "Sidi Bel Abbès",
+  23: "Annaba",
+  24: "Guelma",
+  25: "Constantine",
+  26: "Médéa",
+  27: "Mostaganem",
+  28: "M'Sila",
+  29: "Mascara",
+  30: "Ouargla",
+  31: "Oran",
+  32: "El Bayadh",
+  33: "Illizi",
+  34: "Bordj Bou Arréridj",
+  35: "Boumerdès",
+  36: "El Tarf",
+  37: "Tindouf",
+  38: "Tissemsilt",
+  39: "El Oued",
+  40: "Khenchela",
+  41: "Souk Ahras",
+  42: "Tipaza",
+  43: "Mila",
+  44: "Aïn Defla",
+  45: "Naâma",
+  46: "Aïn Témouchent",
+  47: "Ghardaïa",
+  48: "Relizane",
+  49: "Timimoun",
+  50: "Beni Abbes",
+  51: "Ouled Djellal",
+  52: "Touggourt",
+  53: "Djanet",
+  54: "In Salah",
+  55: "In Guezzam",
+  56: "El M'Ghair",
+  57: "El Meniaa",
+  58: "Bordj Badji Mokhtar",
+};
+
+const WILAYA_NAME_ALIASES: Record<string, number> = {
+  alger: 16,
+  tamanghasset: 11,
+};
+
+function normalizeWilayaName(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\s']+/g, " ")
+    .trim();
+}
+
+export function wilayaIdForName(name: string): number | undefined {
+  const key = normalizeWilayaName(name);
+  if (WILAYA_NAME_ALIASES[key]) return WILAYA_NAME_ALIASES[key];
+  for (const [id, canonical] of Object.entries(WILAYA_NAMES)) {
+    if (normalizeWilayaName(canonical) === key) return Number(id);
+  }
+  return undefined;
+}
 
 export const WILAYA_COORDS: Record<number, { latitude: number; longitude: number }> = {
   1: { latitude: 27.87, longitude: -0.29 },

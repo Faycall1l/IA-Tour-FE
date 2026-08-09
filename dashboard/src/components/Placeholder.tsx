@@ -10,7 +10,7 @@ type PlaceholderProps = {
 export default function Placeholder({ label, className }: PlaceholderProps) {
   return (
     <div
-      className={`flex min-h-32 items-center justify-center rounded-xl border-2 border-dashed border-zinc-300 bg-white/70 px-6 text-center text-sm text-zinc-400 ${className ?? ""}`}
+      className={`flex min-h-32 items-center justify-center rounded-2xl border-2 border-dashed border-champagne bg-champagne/20 px-6 text-center text-sm text-moss ${className ?? ""}`}
     >
       {label}
     </div>

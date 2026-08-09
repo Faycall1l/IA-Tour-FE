@@ -2,40 +2,42 @@ import Link from "next/link";
 import Placeholder from "@/components/Placeholder";
 
 export const metadata = {
-  title: "Itinerary — ATHAR",
+  title: "Itinerary — GOAA",
   description:
     "Your optimized day-by-day itinerary, tuned for maximum fun and exploration.",
 };
 
 export default function ItineraryPage() {
   return (
-    <main className="min-h-screen bg-zinc-50 px-6 pb-16 pt-24">
+    <main className="min-h-screen bg-white px-6 pb-16 pt-24">
       <div className="mx-auto max-w-6xl">
         <Link
           href="/"
-          className="mb-6 inline-block text-sm font-medium text-emerald-700 hover:underline"
+          className="mb-6 inline-block text-sm font-normal text-moss hover:text-rustic-gold hover:underline"
         >
           ← Home
         </Link>
 
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900">My itinerary</h1>
-          <p className="mt-1 text-zinc-600">
+        <header className="mb-8 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-pine">
+            My itinerary
+          </h1>
+          <p className="mt-1 text-sm text-moss">
             Your trip, optimized day by day. Reorder, swap and fine-tune until
             it&apos;s perfect.
           </p>
         </header>
 
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-6 flex flex-wrap justify-center gap-2">
           <Link
             href="/plan"
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+            className="rounded-full bg-sea-foam px-4 py-1.5 text-xs font-normal text-pine shadow-sm transition hover:bg-champagne"
           >
             Optimize my itinerary
           </Link>
           <Link
             href="/stays"
-            className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-emerald-500 hover:text-emerald-700"
+            className="rounded-full border border-champagne bg-white px-4 py-1.5 text-xs font-normal text-moss transition hover:border-sea-foam hover:text-pine"
           >
             Choose my stay
           </Link>
