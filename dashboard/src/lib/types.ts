@@ -15,6 +15,8 @@ export type WilayaDetail = components["schemas"]["DiscoverResponse"];
 export type PoiRead = components["schemas"]["POIRead"];
 export type PoiFeed = components["schemas"]["POIFeed"];
 export type AgentChatResponse = components["schemas"]["AgentChatResponse"];
+export type ArtisanRead = components["schemas"]["ArtisanRead"];
+export type ArtisanFeed = components["schemas"]["ArtisanFeed"];
 
 export interface ApiErrorDetail {
   detail?: string | unknown;
