@@ -18,6 +18,7 @@ export type AgentChatResponse = components["schemas"]["AgentChatResponse"];
 export type ArtisanRead = components["schemas"]["ArtisanRead"];
 export type ArtisanFeed = components["schemas"]["ArtisanFeed"];
 export type ExperienceRead = components["schemas"]["ExperienceRead"];
+export type ExperienceDetail = components["schemas"]["ExperienceDetail"];
 export type ExperienceFeed = components["schemas"]["ExperienceFeed"];
 export type StayRead = components["schemas"]["StayRead"];
 export type StayFeed = components["schemas"]["StayFeed"];
