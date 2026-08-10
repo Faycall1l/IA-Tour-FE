@@ -65,7 +65,7 @@ function SearchPageInner() {
     category === "all" ? items : items.filter((p) => p.category === category);
 
   return (
-    <main className="min-h-screen bg-zinc-50 px-6 py-8">
+    <main className="min-h-screen bg-zinc-50 px-6 pb-8 pt-24">
       <a
         href="/"
         className="mb-6 inline-block text-sm font-medium text-emerald-700 hover:underline"
