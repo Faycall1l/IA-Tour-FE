@@ -61,10 +61,10 @@ export default function Footer() {
           <div className="flex items-start justify-between gap-2">
             <Link href="/" className="inline-flex flex-col leading-none">
               <span className="text-sm font-normal tracking-tight text-white">
-                GOAA
+                ATHAR
               </span>
               <span className="text-[9px] font-normal uppercase tracking-[0.18em] text-sea-foam">
-                go around algeria
+                agentic travel guide
               </span>
             </Link>
             <div className="flex items-center gap-1.5">
@@ -149,8 +149,8 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-6 py-1.5 text-[9px] font-normal text-champagne/50">
-          © {new Date().getFullYear()} GOAA — go around Algeria. All rights
-          reserved.
+          © {new Date().getFullYear()} ATHAR — the agentic travel guide for
+          Algeria. All rights reserved.
         </div>
       </div>
     </footer>

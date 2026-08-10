@@ -2,7 +2,7 @@ import Link from "next/link";
 import Placeholder from "@/components/Placeholder";
 
 export const metadata = {
-  title: "Itinerary — GOAA",
+  title: "Itinerary — ATHAR",
   description:
     "Your optimized day-by-day itinerary, tuned for maximum fun and exploration.",
 };

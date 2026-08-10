@@ -611,7 +611,7 @@ export const SAMPLE_CONTACTS: ContactSubmission[] = [
   {
     id: "contact-2",
     email: "agency@example.dz",
-    message: "We'd like to list our desert tours on GOAA.",
+    message: "We'd like to list our desert tours on ATHAR.",
     createdAt: "2026-08-03T15:40:00Z",
   },
   {

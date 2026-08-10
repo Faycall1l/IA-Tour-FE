@@ -2,7 +2,7 @@ import Link from "next/link";
 import Placeholder from "@/components/Placeholder";
 
 export const metadata = {
-  title: "Choose your stay — GOAA",
+  title: "Choose your stay — ATHAR",
   description:
     "Compare hotels, guesthouses and more across Algeria to pick the stay that fits your trip.",
 };
