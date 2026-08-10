@@ -5,7 +5,7 @@ import BlogsSection from "@/components/home/BlogsSection";
 import ReviewsSection from "@/components/home/ReviewsSection";
 
 export const metadata = {
-  title: "GOAA — go around Algeria",
+  title: "ATHAR — the agentic travel guide for Algeria",
   description:
     "The agentic travel guide for Algeria. Know where you want to go or get inspired — ATHAR plans the itinerary, picks the stays and handles the details.",
 };

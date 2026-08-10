@@ -2,8 +2,9 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState } from "react";
-import { SAMPLE_WILAYAS } from "@/lib/sample-data";
+import { useEffect, useState } from "react";
+import { client, unwrap } from "@/lib/client";
+import type { WilayaSummary } from "@/lib/types";
 import PlanSections from "./PlanSections";
 import type { PickedWilaya } from "./AlgeriaWilayaMap";
 
@@ -17,13 +18,35 @@ const AlgeriaWilayaMap = dynamic(() => import("./AlgeriaWilayaMap"), {
 });
 
 const DEFAULT_PICKS: PickedWilaya[] = [
-  { key: "Algiers", name: "Algiers", id: 16 },
+  { key: "Alger", name: "Alger", id: 16 },
   { key: "Béjaïa", name: "Béjaïa", id: 6 },
   { key: "Tamanrasset", name: "Tamanrasset", id: 11 },
 ];
 
 export default function WilayaPicker() {
   const [picked, setPicked] = useState<PickedWilaya[]>(DEFAULT_PICKS);
+  const [wilayas, setWilayas] = useState<WilayaSummary[]>([]);
+  const [status, setStatus] = useState<"loading" | "error" | "ready">(
+    "loading",
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    client
+      .GET("/api/v1/discover/wilayas")
+      .then((res) => {
+        if (cancelled) return;
+        const list = unwrap(res);
+        setWilayas(Array.isArray(list) ? list : []);
+        setStatus("ready");
+      })
+      .catch(() => {
+        if (!cancelled) setStatus("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function toggle(wilaya: PickedWilaya) {
     setPicked((prev) =>
@@ -33,9 +56,7 @@ export default function WilayaPicker() {
     );
   }
 
-  function sampleFor(id?: number) {
-    return SAMPLE_WILAYAS.find((w) => w.id === id);
-  }
+  const wilayaById = new Map(wilayas.map((w) => [w.id, w]));
 
   return (
     <>
@@ -66,7 +87,8 @@ export default function WilayaPicker() {
         ) : (
           <div className="no-scrollbar mt-3 flex flex-1 gap-2 overflow-x-auto lg:flex-col lg:overflow-y-auto">
             {picked.map((p) => {
-              const sample = sampleFor(p.id);
+              const w = p.id ? wilayaById.get(p.id) : undefined;
+              const photo = w?.highlight_poi_photo ?? undefined;
               return (
                 <div
                   key={p.key}
@@ -79,18 +101,29 @@ export default function WilayaPicker() {
                   >
                     ×
                   </button>
+                  {photo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={photo}
+                      alt={w?.name ?? p.name}
+                      className="mb-1.5 h-16 w-full rounded-lg object-cover"
+                      loading="lazy"
+                    />
+                  )}
                   <p className="pr-4 text-xs font-normal text-pine">{p.name}</p>
                   <p className="mt-0.5 line-clamp-2 text-[10px] text-moss">
-                    {sample?.highlight_poi ??
-                      sample?.description ??
-                      (p.id ? `Wilaya n°${p.id}` : "Algerian wilaya")}
+                    {status === "error"
+                      ? `Wilaya n°${p.id ?? "?"}`
+                      : (w?.highlight_poi ??
+                        w?.description ??
+                        `Wilaya n°${p.id ?? "?"}`)}
                   </p>
                   {p.id && (
                     <Link
                       href={`/wilayas/${p.id}`}
                       className="mt-2 inline-block text-[10px] font-normal text-rustic-gold transition hover:text-pine hover:underline"
                     >
-                      View {p.name} →
+                      View {w?.name ?? p.name} →
                     </Link>
                   )}
                 </div>

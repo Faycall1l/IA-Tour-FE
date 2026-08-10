@@ -3,9 +3,9 @@ import DateRangeBar from "@/components/plan/DateRangeBar";
 import WilayaPicker from "@/components/plan/WilayaPicker";
 
 export const metadata = {
-  title: "Plan a trip — GOAA",
+  title: "Plan a trip — ATHAR",
   description:
-    "Tell GOAA where you want to go and get an itinerary optimized for maximum fun and exploration.",
+    "Tell ATHAR where you want to go and get an itinerary optimized for maximum fun and exploration.",
 };
 
 const STEPS = [

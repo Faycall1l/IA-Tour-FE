@@ -4,10 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { WilayaSummary } from "@/lib/types";
-import { SAMPLE_WILAYAS } from "@/lib/sample-data";
 
 export default function TrendingDestinations() {
-  const [wilayas, setWilayas] = useState<WilayaSummary[]>(SAMPLE_WILAYAS);
+  const [wilayas, setWilayas] = useState<WilayaSummary[]>([]);
   const [status, setStatus] = useState<"loading" | "error" | "ready">(
     "loading",
   );
@@ -18,8 +17,7 @@ export default function TrendingDestinations() {
       .GET("/api/v1/discover/wilayas")
       .then((res) => {
         if (cancelled) return;
-        const data = unwrap(res);
-        if (data.length > 0) setWilayas(data);
+        setWilayas(unwrap(res));
         setStatus("ready");
       })
       .catch(() => {

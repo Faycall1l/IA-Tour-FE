@@ -18,10 +18,10 @@ export default function AppNavbar() {
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border border-white/40 bg-white/75 px-4 py-1.5 shadow-lg backdrop-blur-md">
         <Link href="/" className="flex shrink-0 flex-col leading-none">
           <span className="text-lg font-black tracking-tight text-pine">
-            GOAA
+            ATHAR
           </span>
           <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-moss">
-            go around algeria
+            agentic travel guide
           </span>
         </Link>
 

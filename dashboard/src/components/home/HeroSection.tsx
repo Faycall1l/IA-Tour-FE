@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { WilayaSummary } from "@/lib/types";
-import { FALLBACK_HERO_SLIDES } from "@/lib/sample-data";
 
 type Slide = {
   title: string;
@@ -43,8 +42,14 @@ function ArrowRight() {
   );
 }
 
+const DEFAULT_SLIDE: Slide = {
+  title: "ATHAR",
+  subtitle: "The agentic travel guide for Algeria",
+  gradient: "from-pine via-[#2e8b6a] to-sea-foam",
+};
+
 export default function HeroSection() {
-  const [slides, setSlides] = useState<Slide[]>(FALLBACK_HERO_SLIDES);
+  const [slides, setSlides] = useState<Slide[]>([]);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -80,10 +85,13 @@ export default function HeroSection() {
     return () => clearInterval(t);
   }, [slides.length]);
 
-  const slide = slides[index];
+  const slide = slides[index] ?? DEFAULT_SLIDE;
 
   return (
     <section className="relative h-[84vh] min-h-[560px] overflow-hidden">
+      {slides.length === 0 && (
+        <div className="absolute inset-0 bg-gradient-to-br from-pine via-[#2e8b6a] to-sea-foam" />
+      )}
       {slides.map((s, i) => (
         <div
           key={s.title}

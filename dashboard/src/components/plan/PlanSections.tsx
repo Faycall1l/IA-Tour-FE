@@ -1,20 +1,59 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import {
-  SAMPLE_AGENCIES,
-  SAMPLE_WILAYA_SITES,
-  type SampleAgency,
-  type SampleSite,
-} from "@/lib/sample-data";
+import { useEffect, useState } from "react";
+import { client, unwrap } from "@/lib/client";
+import type { PoiRead, ProviderUserRead } from "@/lib/types";
 import type { PickedWilaya } from "./AlgeriaWilayaMap";
 
 type Props = {
   picked: PickedWilaya[];
 };
 
+type SiteWithWilaya = {
+  poi: PoiRead;
+  wilaya: PickedWilaya;
+};
+
+type PickedSite = {
+  id: string;
+  name: string;
+  category: string;
+  wilaya_id: number;
+  wilaya_name: string;
+  photo_url?: string | null;
+};
+
 const PAGE_SIZE = 4;
+const POIS_PER_WILAYA = 8;
+const STORAGE_KEY = "athar:selected-sites";
+
+function loadSavedSites(): PickedSite[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as PickedSite[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveSites(sites: PickedSite[]) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+  } catch {
+    // storage unavailable — selection still works in-memory
+  }
+}
+
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\s']+/g, " ")
+    .trim();
+}
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -72,10 +111,12 @@ function SiteCard({
   selected,
   onToggle,
 }: {
-  site: SampleSite;
+  site: SiteWithWilaya;
   selected: boolean;
   onToggle: () => void;
 }) {
+  const { poi } = site;
+  const photo = poi.photo_url ?? poi.photo_urls?.[0];
   return (
     <button
       type="button"
@@ -87,21 +128,29 @@ function SiteCard({
           : "border-champagne hover:border-sea-foam"
       }`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={site.photo}
-        alt={site.name}
-        className="h-36 w-full object-cover"
-        loading="lazy"
-      />
+      {photo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={photo}
+          alt={poi.name}
+          className="h-36 w-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="flex h-36 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-3xl">
+          {poi.category.slice(0, 1).toUpperCase()}
+        </div>
+      )}
       <div className="p-4">
-        <p className="text-sm font-bold text-pine">{site.name}</p>
+        <p className="text-sm font-bold text-pine">{poi.name}</p>
         <p className="mt-0.5 text-[10px] font-normal uppercase tracking-wider text-rustic-gold">
-          {site.category}
+          {poi.category}
         </p>
-        <p className="mt-1.5 line-clamp-2 text-xs text-moss">
-          {site.description}
-        </p>
+        {poi.description && (
+          <p className="mt-1.5 line-clamp-2 text-xs text-moss">
+            {poi.description}
+          </p>
+        )}
       </div>
       <div
         className={`flex items-center justify-center border-t px-4 py-1.5 text-[10px] font-normal transition ${
@@ -116,42 +165,47 @@ function SiteCard({
   );
 }
 
-function AgencyCard({ agency }: { agency: SampleAgency }) {
+function AgencyCard({ provider }: { provider: ProviderUserRead }) {
+  const profile = provider.profile;
+  const name = provider.display_name ?? profile?.company_name ?? "Local agency";
+  const areas = profile?.service_areas ?? [];
+  const specializations = profile?.specializations ?? [];
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-champagne bg-white shadow-sm">
       <div className="bg-gradient-to-br from-champagne to-sea-foam/60 px-4 py-3">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-bold text-pine">{agency.name}</p>
-          <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-[10px] font-normal text-pine">
-            ★ {agency.rating.toFixed(1)}
+          <p className="text-sm font-bold text-pine">{name}</p>
+          <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-[10px] font-normal text-pine capitalize">
+            {profile?.provider_type ?? "agency"}
           </span>
         </div>
         <p className="mt-0.5 text-[10px] font-normal uppercase tracking-wider text-rustic-gold">
-          {agency.city}
+          {areas[0] ?? "Algeria"}
         </p>
       </div>
       <div className="flex flex-1 flex-col p-4">
-        <p className="text-xs text-moss">{agency.description}</p>
-        <ul className="mt-3 space-y-2">
-          {agency.itineraries.map((it) => (
-            <li
-              key={it.title}
-              className="rounded-xl border border-champagne bg-champagne/20 p-2.5"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-xs font-bold text-pine">{it.title}</p>
-                <span className="shrink-0 text-[10px] text-moss">
-                  {it.days}d · {it.budget}
-                </span>
-              </div>
-              <p className="mt-1 line-clamp-1 text-[10px] text-moss">
-                {it.wilayas.join(" → ")}
-              </p>
-            </li>
-          ))}
-        </ul>
+        {provider.bio && (
+          <p className="line-clamp-3 text-xs text-moss">{provider.bio}</p>
+        )}
+        {specializations.length > 0 && (
+          <ul className="mt-3 flex flex-wrap gap-1">
+            {specializations.slice(0, 3).map((s) => (
+              <li
+                key={s}
+                className="rounded-full bg-champagne px-2 py-0.5 text-[10px] font-normal text-pine"
+              >
+                {s}
+              </li>
+            ))}
+          </ul>
+        )}
+        {areas.length > 0 && (
+          <p className="mt-3 line-clamp-1 text-[10px] text-moss">
+            {areas.join(" · ")}
+          </p>
+        )}
         <Link
-          href={`/agencies/${agency.id}`}
+          href={`/agencies/${provider.id}`}
           className="mt-3 inline-block text-[10px] font-normal text-rustic-gold transition hover:text-pine hover:underline"
         >
           View agency →
@@ -162,42 +216,133 @@ function AgencyCard({ agency }: { agency: SampleAgency }) {
 }
 
 export default function PlanSections({ picked }: Props) {
+  const [sites, setSites] = useState<SiteWithWilaya[]>([]);
+  const [sitesStatus, setSitesStatus] = useState<
+    "loading" | "error" | "ready"
+  >("loading");
+  const [providers, setProviders] = useState<ProviderUserRead[]>([]);
   const [sitesPage, setSitesPage] = useState(0);
   const [agenciesPage, setAgenciesPage] = useState(0);
-  const [selectedSites, setSelectedSites] = useState<string[]>([]);
+  const [selectedSites, setSelectedSites] = useState<PickedSite[]>([]);
 
-  const pickedWithSites = picked.filter(
-    (p) => p.id && SAMPLE_WILAYA_SITES[p.id],
-  );
-  const allSites = pickedWithSites.flatMap((w) =>
-    SAMPLE_WILAYA_SITES[w.id as number].map((site) => ({ site, wilaya: w })),
-  );
-  const sites = allSites.slice(sitesPage * PAGE_SIZE, (sitesPage + 1) * PAGE_SIZE);
+  useEffect(() => {
+    setSelectedSites(loadSavedSites());
+  }, []);
 
-  function toggleSite(key: string) {
-    setSelectedSites((prev) =>
-      prev.includes(key)
-        ? prev.filter((k) => k !== key)
-        : [...prev, key],
-    );
+  useEffect(() => {
+    const ids = picked
+      .map((p) => p.id)
+      .filter((id): id is number => typeof id === "number");
+    if (ids.length === 0) {
+      setSites([]);
+      setSitesStatus("ready");
+      return;
+    }
+    let cancelled = false;
+    setSitesStatus("loading");
+    Promise.all(
+      ids.map((wilaya_id) =>
+        client
+          .GET("/api/v1/pois", {
+            params: {
+              query: {
+                wilaya_id,
+                page: 1,
+                page_size: POIS_PER_WILAYA,
+              },
+            },
+          })
+          .then((res) => {
+            const feed = unwrap(res);
+            return { wilaya_id, pois: feed.items ?? [] };
+          }),
+      ),
+    )
+      .then((groups) => {
+        if (cancelled) return;
+        const seen = new Set<string>();
+        const merged: SiteWithWilaya[] = [];
+        for (const group of groups) {
+          const wilaya = picked.find((p) => p.id === group.wilaya_id);
+          if (!wilaya) continue;
+          for (const poi of group.pois) {
+            if (seen.has(poi.id)) continue;
+            seen.add(poi.id);
+            merged.push({ poi, wilaya });
+          }
+        }
+        setSites(merged);
+        setSitesStatus("ready");
+      })
+      .catch(() => {
+        if (!cancelled) setSitesStatus("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [picked]);
+
+  useEffect(() => {
+    let cancelled = false;
+    client
+      .GET("/api/v1/users/providers", { params: { query: { page_size: 100 } } })
+      .then((res) => {
+        if (!cancelled) setProviders(unwrap(res) ?? []);
+      })
+      .catch(() => {
+        // providers are optional — the section just shows empty state
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function toggleSite(poi: PoiRead, wilaya: PickedWilaya) {
+    setSelectedSites((prev) => {
+      const exists = prev.some((s) => s.id === poi.id);
+      const next = exists
+        ? prev.filter((s) => s.id !== poi.id)
+        : [
+            ...prev,
+            {
+              id: poi.id,
+              name: poi.name,
+              category: poi.category,
+              wilaya_id: poi.wilaya_id,
+              wilaya_name: wilaya.name,
+              photo_url: poi.photo_url ?? poi.photo_urls?.[0],
+            },
+          ];
+      saveSites(next);
+      return next;
+    });
   }
 
-  const selectedSiteCards = allSites.filter(({ site, wilaya }) =>
-    selectedSites.includes(`${wilaya.key}-${site.name}`),
+  const sitesView = sites.slice(
+    sitesPage * PAGE_SIZE,
+    (sitesPage + 1) * PAGE_SIZE,
   );
 
-  const matchedAgencies = SAMPLE_AGENCIES.filter((a) =>
-    a.itineraries.some((it) =>
-      it.wilayas.some((w) =>
-        picked.some(
-          (p) =>
-            p.name.toLowerCase() === w.toLowerCase() ||
-            p.name.toLowerCase().includes(w.toLowerCase()),
-        ),
-      ),
-    ),
+  const agencyCandidates = providers.filter(
+    (p) =>
+      p.role === "agency" ||
+      p.role === "guide" ||
+      p.profile?.provider_type === "agency" ||
+      p.profile?.provider_type === "guide",
   );
-  const agencies = matchedAgencies.slice(
+  const pickedNames = picked.map((p) => normalize(p.name));
+  const matchedAgencies =
+    picked.length === 0
+      ? agencyCandidates
+      : agencyCandidates.filter((p) => {
+          const areas = (p.profile?.service_areas ?? []).map(normalize);
+          return pickedNames.some(
+            (pickedName) =>
+              areas.some((area) => area.includes(pickedName)) ||
+              areas.some((area) => pickedName.includes(area)),
+          );
+        });
+  const agenciesView = matchedAgencies.slice(
     agenciesPage * PAGE_SIZE,
     (agenciesPage + 1) * PAGE_SIZE,
   );
@@ -208,17 +353,23 @@ export default function PlanSections({ picked }: Props) {
       <section>
         <SectionHeading>Choose sites you wanna visit</SectionHeading>
 
-        {selectedSiteCards.length > 0 && (
+        {selectedSites.length > 0 && (
           <div className="mb-4 rounded-2xl border border-champagne bg-champagne/20 p-3">
             <p className="text-[10px] font-normal uppercase tracking-widest text-rustic-gold">
-              Your selected sites ({selectedSiteCards.length})
+              Your selected sites ({selectedSites.length})
             </p>
             <ul className="mt-2 flex flex-wrap gap-1.5">
-              {selectedSiteCards.map(({ site, wilaya }) => (
-                <li key={`${wilaya.key}-${site.name}`}>
+              {selectedSites.map((site) => (
+                <li key={site.id}>
                   <button
                     type="button"
-                    onClick={() => toggleSite(`${wilaya.key}-${site.name}`)}
+                    onClick={() => {
+                      setSelectedSites((prev) => {
+                        const next = prev.filter((s) => s.id !== site.id);
+                        saveSites(next);
+                        return next;
+                      });
+                    }}
                     className="rounded-full bg-white px-3 py-1 text-[10px] font-normal text-pine shadow-sm transition hover:bg-sea-foam"
                   >
                     {site.name} ×
@@ -233,37 +384,46 @@ export default function PlanSections({ picked }: Props) {
           <EmptyPanel>
             No wilaya selected yet — click on the map to see its sites.
           </EmptyPanel>
-        ) : pickedWithSites.length === 0 ? (
+        ) : sitesStatus === "loading" ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-64 animate-pulse rounded-2xl bg-champagne"
+              />
+            ))}
+          </div>
+        ) : sitesStatus === "error" ? (
           <EmptyPanel>
-            No site details for these wilayas yet — they&apos;ll appear once the
-            database is connected.
+            Could not load sites for these wilayas — is the API running?
+          </EmptyPanel>
+        ) : sites.length === 0 ? (
+          <EmptyPanel>
+            No site details for these wilayas yet.
           </EmptyPanel>
         ) : (
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {sites.map(({ site, wilaya }) => {
-                const key = `${wilaya.key}-${site.name}`;
-                return (
-                  <div key={key} className="flex flex-col">
-                    <SiteCard
-                      site={site}
-                      selected={selectedSites.includes(key)}
-                      onToggle={() => toggleSite(key)}
-                    />
-                    <Link
-                      href={`/wilayas/${wilaya.id}`}
-                      className="mt-2 self-end text-[10px] font-normal text-rustic-gold transition hover:text-pine hover:underline"
-                    >
-                      Explore {wilaya.name} →
-                    </Link>
-                  </div>
-                );
-              })}
+              {sitesView.map(({ poi, wilaya }) => (
+                <div key={poi.id} className="flex flex-col">
+                  <SiteCard
+                    site={{ poi, wilaya }}
+                    selected={selectedSites.some((s) => s.id === poi.id)}
+                    onToggle={() => toggleSite(poi, wilaya)}
+                  />
+                  <Link
+                    href={`/wilayas/${wilaya.id}`}
+                    className="mt-2 self-end text-[10px] font-normal text-rustic-gold transition hover:text-pine hover:underline"
+                  >
+                    Explore {wilaya.name} →
+                  </Link>
+                </div>
+              ))}
             </div>
-            {allSites.length > PAGE_SIZE && (
+            {sites.length > PAGE_SIZE && (
               <Pager
                 page={sitesPage}
-                total={allSites.length}
+                total={sites.length}
                 onChange={(p) => setSitesPage(Math.max(0, p))}
               />
             )}
@@ -283,8 +443,8 @@ export default function PlanSections({ picked }: Props) {
         ) : (
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {agencies.map((a) => (
-                <AgencyCard key={a.id} agency={a} />
+              {agenciesView.map((a) => (
+                <AgencyCard key={a.id} provider={a} />
               ))}
             </div>
             {matchedAgencies.length > PAGE_SIZE && (
