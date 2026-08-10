@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { ArtisanRead } from "@/lib/types";
-import { SAMPLE_ARTISANS } from "@/lib/sample-data";
 import type { ArtisanCard } from "@/lib/sample-data";
 import AlgeriaMap from "@/components/AlgeriaMap";
 
@@ -47,7 +46,10 @@ function toCard(a: ArtisanRead): ArtisanCard {
 }
 
 export default function ArtisansSection() {
-  const [artisans, setArtisans] = useState<ArtisanCard[]>(SAMPLE_ARTISANS);
+  const [artisans, setArtisans] = useState<ArtisanCard[]>([]);
+  const [status, setStatus] = useState<"loading" | "error" | "ready">(
+    "loading",
+  );
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -58,9 +60,12 @@ export default function ArtisansSection() {
         if (cancelled) return;
         const feed = unwrap(res);
         const cards = feed.items.filter((a) => a.photos && a.photos.length > 0);
-        if (cards.length > 0) setArtisans(cards.map(toCard));
+        setArtisans(cards.map(toCard));
+        setStatus("ready");
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!cancelled) setStatus("error");
+      });
     return () => {
       cancelled = true;
     };
@@ -76,8 +81,7 @@ export default function ArtisansSection() {
   }, [artisans.length]);
 
   const artisan = artisans[index];
-  const products = artisan.products.length > 0 ? artisan.products.slice(0, 4) : [];
-  const displayProducts = products.slice(0, 3);
+  const displayProducts = (artisan?.products ?? []).slice(0, 3);
 
   return (
     <section id="artisans" className="bg-white py-10">
@@ -91,6 +95,20 @@ export default function ArtisansSection() {
           </h2>
         </div>
 
+        {status === "loading" && artisans.length === 0 && (
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
+            <div className="h-64 animate-pulse rounded-2xl bg-champagne lg:col-span-3" />
+            <div className="h-64 animate-pulse rounded-2xl bg-champagne lg:col-span-2" />
+          </div>
+        )}
+
+        {status === "error" && artisans.length === 0 && (
+          <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+            Could not load artisans from the API.
+          </p>
+        )}
+
+        {artisan && (
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
           <div className="lg:col-span-3">
             <div
@@ -166,7 +184,9 @@ export default function ArtisansSection() {
             </div>
           </div>
         </div>
+        )}
 
+        {artisan && (
         <div className="mt-4 flex items-center gap-2">
           {artisans.map((a, i) => (
             <button
@@ -179,6 +199,7 @@ export default function ArtisansSection() {
             />
           ))}
         </div>
+        )}
       </div>
     </section>
   );

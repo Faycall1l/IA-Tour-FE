@@ -17,6 +17,17 @@ export type PoiFeed = components["schemas"]["POIFeed"];
 export type AgentChatResponse = components["schemas"]["AgentChatResponse"];
 export type ArtisanRead = components["schemas"]["ArtisanRead"];
 export type ArtisanFeed = components["schemas"]["ArtisanFeed"];
+export type ExperienceRead = components["schemas"]["ExperienceRead"];
+export type ExperienceFeed = components["schemas"]["ExperienceFeed"];
+export type StayRead = components["schemas"]["StayRead"];
+export type StayFeed = components["schemas"]["StayFeed"];
+export type EventRead = components["schemas"]["EventRead"];
+export type EventFeed = components["schemas"]["EventFeed"];
+export type ProviderUserRead = components["schemas"]["ProviderUserRead"];
+export type ProviderProfileRead = components["schemas"]["ProviderProfileRead"];
+export type TripBrief = components["schemas"]["TripBrief"];
+export type ProviderDashboard = components["schemas"]["ProviderDashboard"];
+export type UserRead = components["schemas"]["UserRead"];
 
 export interface ApiErrorDetail {
   detail?: string | unknown;
