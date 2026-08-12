@@ -17,6 +17,8 @@ export type PoiFeed = components["schemas"]["POIFeed"];
 export type AgentChatResponse = components["schemas"]["AgentChatResponse"];
 export type ArtisanRead = components["schemas"]["ArtisanRead"];
 export type ArtisanFeed = components["schemas"]["ArtisanFeed"];
+export type ArtisanTransitAccessRead =
+  components["schemas"]["ArtisanTransitAccessRead"];
 export type ExperienceRead = components["schemas"]["ExperienceRead"];
 export type ExperienceDetail = components["schemas"]["ExperienceDetail"];
 export type ExperienceFeed = components["schemas"]["ExperienceFeed"];
