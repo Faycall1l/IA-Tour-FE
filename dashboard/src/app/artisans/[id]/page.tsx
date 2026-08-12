@@ -84,7 +84,7 @@ export default function ArtisanPage({
   useEffect(() => {
     let cancelled = false;
     client
-      .GET("/api/v1/artisans/{id}", { params: { path: { id } } })
+      .GET("/api/v1/artisans/{artisan_id}", { params: { path: { artisan_id: id } } })
       .then((res) => {
         if (cancelled) return;
         setArtisan(unwrap(res));
