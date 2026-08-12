@@ -12,6 +12,7 @@ export interface ArtisanCard {
   latitude: number | null | undefined;
   longitude: number | null | undefined;
   products: ArtisanProduct[];
+  nearest_station?: { name: string; walking_time_min: number };
 }
 
 export interface BlogPost {

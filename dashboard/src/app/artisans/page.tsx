@@ -32,6 +32,7 @@ function toCard(a: ArtisanRead): ArtisanCard {
     emoji: craftEmoji(a.craft_type),
     src,
   }));
+  const nearest = a.nearest_transit?.[0];
   return {
     id: a.id,
     name: a.name,
@@ -40,6 +41,9 @@ function toCard(a: ArtisanRead): ArtisanCard {
     latitude: a.latitude,
     longitude: a.longitude,
     products,
+    nearest_station: nearest
+      ? { name: nearest.station_name, walking_time_min: nearest.walking_time_min }
+      : undefined,
   };
 }
 
@@ -136,6 +140,16 @@ export default function ArtisansPage() {
               <p className="mt-1 line-clamp-2 text-sm text-zinc-600">
                 {a.description}
               </p>
+              {a.nearest_station ? (
+                <p className="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                  🚶 {a.nearest_station.walking_time_min} min ·{" "}
+                  {a.nearest_station.name}
+                </p>
+              ) : (
+                <p className="mt-3 text-xs text-zinc-400">
+                  No nearby transit stop
+                </p>
+              )}
               <p className="mt-3 text-xs font-medium text-emerald-700">
                 Visit workshop →
               </p>
