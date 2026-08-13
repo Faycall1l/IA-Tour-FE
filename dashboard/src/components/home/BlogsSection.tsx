@@ -4,26 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { ExperienceRead } from "@/lib/types";
+import ExperienceCard from "@/components/cards/ExperienceCard";
 
 const PAGE_SIZE = 2;
 const FLIP_MS = 12000;
-
-const CATEGORY_EMOJIS: Record<string, string> = {
-  tour: "🧭",
-  tours: "🧭",
-  cultural: "🎭",
-  adventure: "🧗",
-  hiking: "🥾",
-  trekking: "🥾",
-  wellness: "🧘",
-  food: "🍲",
-  nature: "🌿",
-  desert: "🏜️",
-};
-
-function categoryEmoji(category: string): string {
-  return CATEGORY_EMOJIS[category.toLowerCase()] ?? "🏜️";
-}
 
 export default function BlogsSection() {
   const [experiences, setExperiences] = useState<ExperienceRead[]>([]);
@@ -69,13 +53,21 @@ export default function BlogsSection() {
 
   return (
     <section id="blog" className="bg-white py-10">
-      <div className="mx-auto mb-5 max-w-7xl px-6">
-        <p className="text-sm font-semibold uppercase tracking-widest text-rustic-gold">
-          Experiences & tours
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-pine">
-          Real tours from local agencies and guides
-        </h2>
+      <div className="mx-auto mb-5 flex max-w-7xl items-end justify-between gap-4 px-6">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-widest text-rustic-gold">
+            Experiences & tours
+          </p>
+          <h2 className="mt-1 text-2xl font-bold text-pine">
+            Real tours from local agencies and guides
+          </h2>
+        </div>
+        <Link
+          href="/offers"
+          className="shrink-0 text-sm font-medium text-rustic-gold hover:underline"
+        >
+          View all →
+        </Link>
       </div>
 
       {status === "loading" && experiences.length === 0 && (
@@ -102,70 +94,9 @@ export default function BlogsSection() {
             className="mx-auto max-w-7xl animate-fade-in-up px-6"
           >
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-              {visible.map((exp) => {
-                const emoji = categoryEmoji(exp.category);
-                const photo = exp.photos?.[0];
-                return (
-                  <article
-                    key={exp.id}
-                    className="flex flex-col overflow-hidden rounded-xl border border-champagne bg-white shadow-sm"
-                  >
-                    <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-5xl">
-                      {photo ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={photo}
-                          alt={exp.title}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        emoji
-                      )}
-                      <span className="absolute right-3 top-3 rounded-full bg-champagne px-2 py-0.5 text-[11px] font-semibold capitalize text-rustic-gold">
-                        {exp.category}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-1 flex-col p-5">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-champagne text-base">
-                          {emoji}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-pine">
-                            {exp.meeting_point ?? "Local agency"}
-                          </p>
-                          <p className="text-xs text-moss">
-                            {exp.duration_hours
-                              ? `${exp.duration_hours}h · ${exp.language ?? "FR/EN"}`
-                              : exp.language ?? "FR/EN"}
-                          </p>
-                        </div>
-                      </div>
-                      <h3 className="mt-3 text-base font-bold text-pine">
-                        {exp.title}
-                      </h3>
-                      <p className="mt-1 flex-1 text-sm leading-relaxed text-moss">
-                        {exp.description}
-                      </p>
-                      <div className="mt-3 flex items-center justify-between gap-3">
-                        <Link
-                          href={`/offers/${exp.id}`}
-                          className="text-sm font-medium text-rustic-gold hover:underline"
-                        >
-                          Details →
-                        </Link>
-                        <span className="text-sm font-semibold text-emerald-700">
-                          {exp.price_dzd
-                            ? `${exp.price_dzd.toLocaleString("en-US")} DZD`
-                            : "Free"}
-                        </span>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
+              {visible.map((exp) => (
+                <ExperienceCard key={exp.id} experience={exp} />
+              ))}
             </div>
           </div>
 

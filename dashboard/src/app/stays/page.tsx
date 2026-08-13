@@ -1,9 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { StayRead, WilayaSummary } from "@/lib/types";
+import StayCard from "@/components/cards/StayCard";
+import { LoadingGrid, ErrorPanel, EmptyPanel } from "@/components/ui/StatePanel";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 const PAGE_SIZE = 12;
 
@@ -74,23 +76,18 @@ export default function StaysPage() {
   return (
     <main className="min-h-screen bg-white px-6 pb-16 pt-24">
       <div className="mx-auto max-w-7xl">
-        <Link
-          href="/"
-          className="mb-6 inline-block text-sm font-normal text-moss hover:text-rustic-gold hover:underline"
-        >
-          ← Home
-        </Link>
-
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-pine">
-            Pick a stay
-          </h1>
-          <p className="mt-1 text-sm text-moss">
-            {total > 0
+        <SectionHeading
+          backHref="/"
+          backLabel="Home"
+          eyebrow="Where to sleep"
+          title="Pick a stay"
+          subtitle={
+            total > 0
               ? `${total.toLocaleString("en-US")} real stays across Algeria`
-              : "Real hotels, hostels and guesthouses from the ATHAR database."}
-          </p>
-        </header>
+              : "Real hotels, hostels and guesthouses from the ATHAR database."
+          }
+          center
+        />
 
         {/* Filters */}
         <div className="mb-8 grid grid-cols-1 gap-3 rounded-2xl border border-champagne bg-white p-4 shadow-sm sm:grid-cols-3">
@@ -144,94 +141,24 @@ export default function StaysPage() {
           </select>
         </div>
 
-        {status === "loading" && (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-72 animate-pulse rounded-2xl bg-champagne" />
-            ))}
-          </div>
-        )}
+        {status === "loading" && <LoadingGrid count={8} />}
 
         {status === "error" && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
-            <p className="text-sm text-amber-800">
-              Could not load stays — is the API running?
-            </p>
-            <button
-              onClick={() => setRetry((n) => n + 1)}
-              className="mt-3 rounded-full bg-amber-800 px-4 py-1.5 text-xs font-normal text-white"
-            >
-              Retry
-            </button>
-          </div>
+          <ErrorPanel
+            message="Could not load stays — is the API running?"
+            onRetry={() => setRetry((n) => n + 1)}
+          />
         )}
 
         {status === "ready" && stays.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-champagne bg-champagne/20 p-6 text-center text-sm text-moss">
-            No stays match these filters.
-          </p>
+          <EmptyPanel title="No stays match these filters." />
         )}
 
         {status === "ready" && stays.length > 0 && (
           <>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {stays.map((s) => (
-                <article
-                  key={s.id}
-                  className="flex flex-col overflow-hidden rounded-2xl border border-champagne bg-white shadow-sm transition hover:shadow-md"
-                >
-                  {s.photos && s.photos.length > 0 ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={s.photos[0]}
-                      alt={s.name}
-                      className="h-40 w-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="flex h-40 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-4xl">
-                      🛏
-                    </div>
-                  )}
-                  <div className="flex flex-1 flex-col p-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <h2 className="font-bold text-pine">{s.name}</h2>
-                      <span className="shrink-0 rounded-full bg-champagne px-2 py-0.5 text-[10px] font-normal capitalize text-rustic-gold">
-                        {s.property_type}
-                      </span>
-                    </div>
-                    <p className="mt-0.5 text-xs text-moss">
-                      Wilaya {s.wilaya_id}
-                      {wilayaName ? ` — ${wilayaName}` : ""}
-                    </p>
-                    {s.description && (
-                      <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-moss">
-                        {s.description}
-                      </p>
-                    )}
-                    <p className="mt-3 font-semibold text-emerald-700">
-                      {s.price_per_night_dzd.toLocaleString("en-US")} DZD
-                      <span className="text-xs font-normal text-moss"> /night</span>
-                    </p>
-                    {s.amenities && s.amenities.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {s.amenities.slice(0, 4).map((a) => (
-                          <span
-                            key={a}
-                            className="rounded-full bg-champagne/40 px-2 py-0.5 text-[10px] text-moss"
-                          >
-                            {a}
-                          </span>
-                        ))}
-                        {s.amenities.length > 4 && (
-                          <span className="rounded-full bg-champagne/40 px-2 py-0.5 text-[10px] text-moss">
-                            +{s.amenities.length - 4}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </article>
+                <StayCard key={s.id} stay={s} wilayaName={wilayaName} />
               ))}
             </div>
 
