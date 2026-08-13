@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { PoiRead, ProviderUserRead } from "@/lib/types";
+import {
+  loadSavedSites,
+  saveSites,
+  type PickedSite,
+} from "@/lib/itinerary";
 import type { PickedWilaya } from "./AlgeriaWilayaMap";
 
 type Props = {
@@ -15,36 +20,8 @@ type SiteWithWilaya = {
   wilaya: PickedWilaya;
 };
 
-type PickedSite = {
-  id: string;
-  name: string;
-  category: string;
-  wilaya_id: number;
-  wilaya_name: string;
-  photo_url?: string | null;
-};
-
 const PAGE_SIZE = 4;
 const POIS_PER_WILAYA = 8;
-const STORAGE_KEY = "athar:selected-sites";
-
-function loadSavedSites(): PickedSite[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as PickedSite[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveSites(sites: PickedSite[]) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
-  } catch {
-    // storage unavailable — selection still works in-memory
-  }
-}
 
 function normalize(s: string): string {
   return s

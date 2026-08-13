@@ -8,8 +8,9 @@
  */
 import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "./api-types";
-import { API_BASE_URL } from "./config";
+import { API_BASE_URL, USE_MOCK_API } from "./config";
 import { ApiError } from "./api";
+import { resolveMockPath } from "./mock-data";
 
 export const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1\/?$/, "");
 
@@ -22,11 +23,38 @@ const authMiddleware: Middleware = {
   },
 };
 
+/**
+ * Mock resolver. In mock-first mode every resolvable GET is answered
+ * immediately from the local dataset (no network wait — the backend isn't
+ * ready yet). Otherwise it only kicks in `onError` as an offline fallback.
+ * Mutations are never mocked — they surface the real network error.
+ */
+function mockBody(request: Request): Response | undefined {
+  if (request.method !== "GET") return undefined;
+  const url = new URL(request.url);
+  const body = resolveMockPath(url.pathname, url.searchParams);
+  if (body === undefined) return undefined;
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+const mockMiddleware: Middleware = {
+  async onRequest({ request }) {
+    if (!USE_MOCK_API) return undefined;
+    return mockBody(request);
+  },
+  async onError({ request }) {
+    return mockBody(request);
+  },
+};
+
 export const client = createClient<paths>({
   baseUrl: API_ORIGIN,
 });
 
-client.use(authMiddleware);
+client.use(authMiddleware, mockMiddleware);
 
 /** Unwrap an openapi-fetch result, throwing ApiError on non-2xx (like apiFetch). */
 export function unwrap<T>(res: {

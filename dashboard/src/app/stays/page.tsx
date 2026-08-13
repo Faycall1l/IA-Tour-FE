@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { StayRead, WilayaSummary } from "@/lib/types";
+import {
+  loadChosenStay,
+  saveChosenStay,
+  type PickedStay,
+} from "@/lib/itinerary";
 
 const PAGE_SIZE = 12;
 
@@ -19,6 +24,28 @@ export default function StaysPage() {
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
   const [page, setPage] = useState(1);
   const [retry, setRetry] = useState(0);
+  const [chosen, setChosen] = useState<PickedStay | null>(null);
+
+  useEffect(() => {
+    setChosen(loadChosenStay());
+  }, []);
+
+  function chooseStay(s: StayRead) {
+    const picked: PickedStay = {
+      id: s.id,
+      name: s.name,
+      property_type: s.property_type,
+      wilaya_id: s.wilaya_id,
+      address: s.address,
+      latitude: s.latitude,
+      longitude: s.longitude,
+      price_per_night_dzd: s.price_per_night_dzd,
+      photos: s.photos,
+    };
+    const next = chosen?.id === s.id ? null : picked;
+    setChosen(next);
+    saveChosenStay(next);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -87,10 +114,43 @@ export default function StaysPage() {
           </h1>
           <p className="mt-1 text-sm text-moss">
             {total > 0
-              ? `${total.toLocaleString("en-US")} real stays across Algeria`
+              ? `${total.toLocaleString("en-US")} real stays across Algeria — pick one and it becomes the start of your itinerary.`
               : "Real hotels, hostels and guesthouses from the ATHAR database."}
           </p>
         </header>
+
+        {/* Chosen stay banner */}
+        {chosen && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sea-foam bg-sea-foam/20 px-5 py-4">
+            <div>
+              <p className="text-[10px] font-normal uppercase tracking-widest text-rustic-gold">
+                Your sleeping spot
+              </p>
+              <p className="text-lg font-bold text-pine">{chosen.name}</p>
+              <p className="text-xs text-moss">
+                Wilaya {chosen.wilaya_id} ·{" "}
+                {chosen.price_per_night_dzd.toLocaleString("en-US")} DZD/night
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/itinerary"
+                className="rounded-full bg-pine px-5 py-2 text-xs font-normal text-white shadow-sm transition hover:bg-moss"
+              >
+                Go to itinerary →
+              </Link>
+              <button
+                onClick={() => {
+                  setChosen(null);
+                  saveChosenStay(null);
+                }}
+                className="rounded-full border border-champagne bg-white px-4 py-2 text-xs font-normal text-moss transition hover:border-sea-foam hover:text-pine"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="mb-8 grid grid-cols-1 gap-3 rounded-2xl border border-champagne bg-white p-4 shadow-sm sm:grid-cols-3">
@@ -175,64 +235,82 @@ export default function StaysPage() {
         {status === "ready" && stays.length > 0 && (
           <>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {stays.map((s) => (
-                <article
-                  key={s.id}
-                  className="flex flex-col overflow-hidden rounded-2xl border border-champagne bg-white shadow-sm transition hover:shadow-md"
-                >
-                  {s.photos && s.photos.length > 0 ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={s.photos[0]}
-                      alt={s.name}
-                      className="h-40 w-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="flex h-40 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-4xl">
-                      🛏
-                    </div>
-                  )}
-                  <div className="flex flex-1 flex-col p-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <h2 className="font-bold text-pine">{s.name}</h2>
-                      <span className="shrink-0 rounded-full bg-champagne px-2 py-0.5 text-[10px] font-normal capitalize text-rustic-gold">
-                        {s.property_type}
-                      </span>
-                    </div>
-                    <p className="mt-0.5 text-xs text-moss">
-                      Wilaya {s.wilaya_id}
-                      {wilayaName ? ` — ${wilayaName}` : ""}
-                    </p>
-                    {s.description && (
-                      <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-moss">
-                        {s.description}
-                      </p>
-                    )}
-                    <p className="mt-3 font-semibold text-emerald-700">
-                      {s.price_per_night_dzd.toLocaleString("en-US")} DZD
-                      <span className="text-xs font-normal text-moss"> /night</span>
-                    </p>
-                    {s.amenities && s.amenities.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {s.amenities.slice(0, 4).map((a) => (
-                          <span
-                            key={a}
-                            className="rounded-full bg-champagne/40 px-2 py-0.5 text-[10px] text-moss"
-                          >
-                            {a}
-                          </span>
-                        ))}
-                        {s.amenities.length > 4 && (
-                          <span className="rounded-full bg-champagne/40 px-2 py-0.5 text-[10px] text-moss">
-                            +{s.amenities.length - 4}
-                          </span>
-                        )}
+              {stays.map((s) => {
+                const isChosen = chosen?.id === s.id;
+                return (
+                  <article
+                    key={s.id}
+                    className={`flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md ${
+                      isChosen
+                        ? "border-sea-foam ring-2 ring-sea-foam/50"
+                        : "border-champagne"
+                    }`}
+                  >
+                    {s.photos && s.photos.length > 0 ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={s.photos[0]}
+                        alt={s.name}
+                        className="h-40 w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="flex h-40 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-4xl">
+                        🛏
                       </div>
                     )}
-                  </div>
-                </article>
-              ))}
+                    <div className="flex flex-1 flex-col p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <h2 className="font-bold text-pine">{s.name}</h2>
+                        <span className="shrink-0 rounded-full bg-champagne px-2 py-0.5 text-[10px] font-normal capitalize text-rustic-gold">
+                          {s.property_type}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-xs text-moss">
+                        Wilaya {s.wilaya_id}
+                        {wilayaName ? ` — ${wilayaName}` : ""}
+                      </p>
+                      {s.description && (
+                        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-moss">
+                          {s.description}
+                        </p>
+                      )}
+                      <p className="mt-3 font-semibold text-emerald-700">
+                        {s.price_per_night_dzd.toLocaleString("en-US")} DZD
+                        <span className="text-xs font-normal text-moss"> /night</span>
+                      </p>
+                      {s.amenities && s.amenities.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {s.amenities.slice(0, 4).map((a) => (
+                            <span
+                              key={a}
+                              className="rounded-full bg-champagne/40 px-2 py-0.5 text-[10px] text-moss"
+                            >
+                              {a}
+                            </span>
+                          ))}
+                          {s.amenities.length > 4 && (
+                            <span className="rounded-full bg-champagne/40 px-2 py-0.5 text-[10px] text-moss">
+                              +{s.amenities.length - 4}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => chooseStay(s)}
+                        className={`mt-3 rounded-full border px-4 py-2 text-xs font-semibold transition ${
+                          isChosen
+                            ? "border-pine bg-pine text-white hover:bg-moss"
+                            : "border-sea-foam bg-sea-foam/20 text-pine hover:bg-sea-foam"
+                        }`}
+                      >
+                        {isChosen ? "✓ Chosen — my stay" : "Choose this stay"}
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
 
             {totalPages > 1 && (
