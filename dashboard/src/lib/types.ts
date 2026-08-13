@@ -31,6 +31,15 @@ export type ProviderProfileRead = components["schemas"]["ProviderProfileRead"];
 export type TripBrief = components["schemas"]["TripBrief"];
 export type ProviderDashboard = components["schemas"]["ProviderDashboard"];
 export type UserRead = components["schemas"]["UserRead"];
+export type FavoriteRead = components["schemas"]["FavoriteRead"];
+export type FavoriteFeed = components["schemas"]["FavoriteFeed"];
+export type CollectionRead = components["schemas"]["CollectionRead"];
+export type CollectionBrief = components["schemas"]["CollectionBrief"];
+export type CollectionFeed = components["schemas"]["CollectionFeed"];
+export type CollectionItemRead = components["schemas"]["CollectionItemRead"];
+export type TripRead = components["schemas"]["TripRead"];
+export type TripFeed = components["schemas"]["TripFeed"];
+export type TripItemRead = components["schemas"]["TripItemRead"];
 
 export interface ApiErrorDetail {
   detail?: string | unknown;
