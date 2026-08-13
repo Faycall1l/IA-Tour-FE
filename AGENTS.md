@@ -35,8 +35,27 @@ a Next.js dashboard and a Flutter mobile app.
      dir is excluded), `flutter test`, `flutter build web --release`.
   4. Commit both repos separately (backend first, then frontend).
 
+## Git on this machine (iCloud Desktop — important)
+- This repo lives under an iCloud-synced Desktop folder. `git status`/`git diff`/
+  `git commit` do full working-tree/index scans that **stall for minutes or hang
+  indefinitely** (fileproviderd intermittently blocks reads/writes of small
+  files, incl. `.git/HEAD` and `.git/index.lock`). Symptom: `git log`/`git ls-files`
+  are instant, `git status` never returns.
+- **Workaround**: keep a throwaway clone on the fast local FS and do git there.
+  `git clone https://github.com/Faycall1l/IA-Tour-FE.git /var/folders/_f/5f5skv_d26v8ffs4fs8bjq900000gn/T/opencode/fe-repo`,
+  `git -C fe-repo fetch && reset --hard origin/main`, copy changed files in with
+  `cp`, then `add/commit/push`. Repair the iCloud `.git` afterwards with
+  `rsync -a fe-repo/.git/ "Athar frontend/.git/"` (refs/objects stay correct;
+  `git status` there may still hang, but that's cosmetic).
+- Alternatively commit via plumbing in-place (`git add <files> && TREE=$(git
+  write-tree) && C=$(git commit-tree $TREE -p HEAD -m "msg") && git update-ref
+  refs/heads/main $C && git push`) — avoids the refresh scan that hangs `git commit`,
+  though the `git add`/`push` object writes can still stall.
+- `next build` (Turbopack) also stalls reading the working tree; the documented
+  dashboard verification is `tsc --noEmit`, which completes.
+
 ## S6 — BFF assessment (recommend-only, no code)
-- **Current**: 87 paths / 112 operations; two generated clients consume the API
+- **Current**: 88 paths / 113 operations; two generated clients consume the API
   directly over HTTP. Auth is short-lived bearer tokens (access + rotating
   refresh); no server-side long-lived secrets needed on the client. Clients
   derive types + errors for free from the shared OpenAPI spec.

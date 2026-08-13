@@ -1392,6 +1392,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/transport/route-to-artisan/{artisan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Directions to an artisan workshop
+         * @description Turn-by-turn transit directions from a GPS point to a specific artisan workshop. Returns the plan plus the nearest-transit walking edges. Falls back to an error object when no route exists or the artisan has no coordinates.
+         */
+        get: operations["get_transport_route_to_artisan_artisan_id"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/transport/operators": {
         parameters: {
             query?: never;
@@ -2099,6 +2119,31 @@ export interface components {
             is_verified?: boolean | null;
             /** Created At */
             created_at?: string | null;
+            /** Nearest Transit */
+            nearest_transit?: components["schemas"]["ArtisanTransitAccessRead"][];
+        };
+        /**
+         * ArtisanTransitAccessRead
+         * @description A walking edge from an artisan to one nearby transit station.
+         */
+        ArtisanTransitAccessRead: {
+            /**
+             * Station Id
+             * Format: uuid
+             */
+            station_id: string;
+            /** Station Name */
+            station_name: string;
+            /** Station Type */
+            station_type: string;
+            /** Operator */
+            operator: string;
+            /** Distance M */
+            distance_m: number;
+            /** Walking Time Min */
+            walking_time_min: number;
+            /** Rank */
+            rank: number;
         };
         /** ArtisanUpdate */
         ArtisanUpdate: {
@@ -7907,6 +7952,48 @@ export interface operations {
                 };
             };
             /** @description POI not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid UUID or coordinates */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_transport_route_to_artisan_artisan_id: {
+        parameters: {
+            query: {
+                from_lat: number;
+                from_lng: number;
+                from_name?: string;
+            };
+            header?: never;
+            path: {
+                artisan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Route plan + nearest transit access */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Artisan not found */
             404: {
                 headers: {
                     [name: string]: unknown;

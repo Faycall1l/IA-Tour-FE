@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { client, unwrap } from "@/lib/client";
+import AuthGate from "@/components/AuthGate";
+import { useAuth } from "@/lib/auth";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -9,100 +11,8 @@ interface ChatMessage {
   degraded?: boolean;
 }
 
-const TOKEN_KEY = "athar_access_token";
-
-function AuthGate({
-  onAuthed,
-}: {
-  onAuthed: (token: string) => void;
-}) {
-  const [phone, setPhone] = useState("+213");
-  const [code, setCode] = useState("");
-  const [step, setStep] = useState<"phone" | "code">("phone");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const requestOtp = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      await unwrap(
-        await client.POST("/api/v1/auth/send-otp", { body: { phone } }),
-      );
-      setStep("code");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send OTP");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const verifyOtp = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await unwrap(
-        await client.POST("/api/v1/auth/verify-otp", {
-          body: { phone, code },
-        }),
-      );
-      onAuthed(res.access_token);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid code");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <div className="flex flex-col gap-3">
-      <p className="text-sm text-zinc-500">
-        Sign in to chat with the ATHAR travel assistant (passwordless OTP).
-      </p>
-      <input
-        type="tel"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        placeholder="+2135XXXXXXXX"
-        className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-      />
-      {step === "code" && (
-        <input
-          type="text"
-          inputMode="numeric"
-          maxLength={6}
-          value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-          placeholder="6-digit code"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-        />
-      )}
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {step === "phone" ? (
-        <button
-          onClick={requestOtp}
-          disabled={busy || phone.length < 10}
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-        >
-          {busy ? "Sending…" : "Send code"}
-        </button>
-      ) : (
-        <button
-          onClick={verifyOtp}
-          disabled={busy || code.length !== 6}
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-        >
-          {busy ? "Signing in…" : "Verify & chat"}
-        </button>
-      )}
-    </div>
-  );
-}
-
 export default function AgentChat() {
-  const [token, setToken] = useState<string | null>(() =>
-    typeof window === "undefined" ? null : localStorage.getItem(TOKEN_KEY),
-  );
+  const { token, signIn, signOut } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -135,8 +45,7 @@ export default function AgentChat() {
     } catch (err) {
       const status = err instanceof Error && "status" in err ? (err as { status: number }).status : 0;
       if (status === 401) {
-        localStorage.removeItem(TOKEN_KEY);
-        setToken(null);
+        signOut();
         setError("Session expired — sign in again.");
       } else if (status === 503) {
         setError("Assistant is unavailable right now. Try again shortly.");
@@ -148,9 +57,8 @@ export default function AgentChat() {
     }
   }, [busy, input, sessionId, token]);
 
-  const signOut = () => {
-    localStorage.removeItem(TOKEN_KEY);
-    setToken(null);
+  const signOutFn = () => {
+    signOut();
     setMessages([]);
     setSessionId(null);
   };
@@ -166,7 +74,7 @@ export default function AgentChat() {
         </div>
         {token && (
           <button
-            onClick={signOut}
+            onClick={signOutFn}
             className="text-xs font-medium text-zinc-400 hover:text-zinc-700"
           >
             Sign out
@@ -176,7 +84,11 @@ export default function AgentChat() {
 
       <div className="px-5 py-4">
         {!token ? (
-          <AuthGate onAuthed={(t) => setToken(t)} />
+          <AuthGate
+            onAuthed={signIn}
+            prompt="Sign in to chat with the ATHAR travel assistant (passwordless OTP)."
+            submitLabel="Verify & chat"
+          />
         ) : (
           <>
             <div className="mb-3 flex h-80 flex-col gap-3 overflow-y-auto pr-1">

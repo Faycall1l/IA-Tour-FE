@@ -1,32 +1,64 @@
-import Link from "next/link";
-import Placeholder from "@/components/Placeholder";
+"use client";
 
-export const metadata = {
-  title: "My profile — ATHAR",
-  description: "Your tourist profile.",
-};
+import { useAuth } from "@/lib/auth";
+import AuthGate from "@/components/AuthGate";
+import SectionHeading from "@/components/ui/SectionHeading";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import FavoritesSection from "@/components/profile/FavoritesSection";
+import CollectionsSection from "@/components/profile/CollectionsSection";
+import TripsSection from "@/components/profile/TripsSection";
 
 export default function ProfilePage() {
+  const auth = useAuth();
+
+  if (auth.status !== "authenticated") {
+    return (
+      <main className="min-h-screen bg-white px-6 pb-16 pt-24">
+        <div className="mx-auto max-w-md">
+          <SectionHeading
+            backHref="/"
+            backLabel="Home"
+            eyebrow="Account"
+            title="Sign in"
+            subtitle="Your traveler profile — saved places, collections and trips."
+          />
+          {auth.status === "loading" ? (
+            <p className="text-sm text-moss">Loading…</p>
+          ) : (
+            <AuthGate onAuthed={auth.signIn} submitLabel="Sign in to your profile" />
+          )}
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main className="min-h-screen bg-zinc-50 px-6 pb-16 pt-24">
-      <div className="mx-auto max-w-6xl">
-        <Link
-          href="/"
-          className="mb-6 inline-block text-sm font-medium text-emerald-700 hover:underline"
-        >
-          ← Home
-        </Link>
+    <main className="min-h-screen bg-white px-6 pb-16 pt-24">
+      <div className="mx-auto max-w-5xl">
+        <SectionHeading
+          backHref="/"
+          backLabel="Home"
+          eyebrow="Account"
+          title="My profile"
+        />
 
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900">My profile</h1>
-          <p className="mt-1 text-zinc-600">
-            Your traveler profile — preferences, saved trips and activity.
-          </p>
-        </header>
+        <div className="space-y-6">
+          <ProfileHeader user={auth.user} />
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <FavoritesSection />
+            <CollectionsSection />
+          </div>
+          <TripsSection />
+        </div>
 
-        <Placeholder label="Profile card — photo, name, travel preferences" className="mb-8 min-h-40" />
-        <Placeholder label="Saved itineraries & upcoming trips" className="mb-8" />
-        <Placeholder label="Saved stays, offers & artisans" />
+        <div className="mt-8 flex justify-end">
+          <button
+            onClick={auth.signOut}
+            className="rounded-full border border-champagne bg-white px-4 py-2 text-xs font-medium text-moss transition hover:bg-champagne/30"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
     </main>
   );
