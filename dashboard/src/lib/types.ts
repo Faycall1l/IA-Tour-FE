@@ -40,6 +40,7 @@ export type CollectionItemRead = components["schemas"]["CollectionItemRead"];
 export type TripRead = components["schemas"]["TripRead"];
 export type TripFeed = components["schemas"]["TripFeed"];
 export type TripItemRead = components["schemas"]["TripItemRead"];
+export type DayPlan = components["schemas"]["DayPlan"];
 
 export interface ApiErrorDetail {
   detail?: string | unknown;
