@@ -8,11 +8,11 @@ export const API_BASE_URL =
 
 /**
  * Serve GETs from the local mock dataset instead of the real backend.
- * The backend is still being wired up, so this defaults to ON — every
- * resolvable GET is answered instantly with mock data, no network wait.
- * Flip to `NEXT_PUBLIC_USE_MOCK_API=false` once the API is ready.
+ * The real API is live and fully seeded, so this defaults to OFF — every
+ * GET hits the real backend. Set `NEXT_PUBLIC_USE_MOCK_API=true` to fall
+ * back to mock sample data (e.g. offline demo without a backend).
  */
-export const USE_MOCK_API = process.env.NEXT_PUBLIC_USE_MOCK_API !== "false";
+export const USE_MOCK_API = process.env.NEXT_PUBLIC_USE_MOCK_API === "true";
 
 export const APP_NAME = "ATHAR";
 
