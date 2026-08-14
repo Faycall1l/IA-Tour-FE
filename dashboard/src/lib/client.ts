@@ -9,10 +9,20 @@
 import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "./api-types";
 import { API_BASE_URL, USE_MOCK_API } from "./config";
-import { ApiError } from "./api";
 import { resolveMockPath } from "./mock-data";
 
 export const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1\/?$/, "");
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly detail?: unknown,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
 
 const authMiddleware: Middleware = {
   async onRequest({ request }) {
