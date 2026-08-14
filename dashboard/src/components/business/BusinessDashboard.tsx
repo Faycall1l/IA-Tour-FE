@@ -6,6 +6,7 @@ import { client, unwrap } from "@/lib/client";
 import type { ProviderDashboard } from "@/lib/types";
 import { useAuth } from "@/lib/auth";
 import AuthGate from "@/components/AuthGate";
+import RegisterProviderForm from "@/components/business/RegisterProviderForm";
 import { LoadingPanel, ErrorPanel } from "@/components/ui/StatePanel";
 
 /**
@@ -22,6 +23,10 @@ export default function BusinessDashboardPage() {
 
   useEffect(() => {
     if (auth.status !== "authenticated") return;
+    const role = auth.user.role;
+    const isProvider =
+      role === "agency" || role === "guide" || role === "hotel" || role === "admin";
+    if (!isProvider) return;
     let cancelled = false;
     setStatus("loading");
     client
@@ -37,7 +42,7 @@ export default function BusinessDashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [auth.status, retry]);
+  }, [auth, retry]);
 
   if (auth.status !== "authenticated") {
     return (
@@ -55,6 +60,23 @@ export default function BusinessDashboardPage() {
             <AuthGate onAuthed={auth.signIn} submitLabel="Sign in to dashboard" />
           </div>
         )}
+      </>
+    );
+  }
+
+  if (auth.user?.role === "traveler") {
+    return (
+      <>
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-pine">Dashboard</h1>
+          <p className="mt-1 text-sm text-moss">
+            You&apos;re signed in as a traveler — register as a provider to
+            start managing listings.
+          </p>
+        </header>
+        <div className="max-w-lg">
+          <RegisterProviderForm />
+        </div>
       </>
     );
   }
