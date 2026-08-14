@@ -1,6 +1,7 @@
 "use client";
 
 import ProfileEditorForm from "@/components/business/ProfileEditorForm";
+import StayManager from "@/components/business/StayManager";
 
 export default function BusinessPlacePage() {
   return (
@@ -14,8 +15,13 @@ export default function BusinessPlacePage() {
         </p>
       </header>
 
-      <div className="max-w-2xl">
-        <ProfileEditorForm />
+      <div className="space-y-6">
+        <div className="max-w-2xl">
+          <ProfileEditorForm />
+        </div>
+        <div className="max-w-2xl">
+          <StayManager />
+        </div>
       </div>
     </main>
   );
