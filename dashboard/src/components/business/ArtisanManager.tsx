@@ -202,7 +202,7 @@ export default function ArtisanManager() {
     let cancelled = false;
     setStatus("loading");
     client
-      .GET("/api/v1/artisans", { params: { query: { page_size: 200 } } })
+      .GET("/api/v1/artisans", { params: { query: { page_size: 50 } } })
       .then((res) => {
         if (cancelled) return;
         const all = unwrap(res).items ?? [];
