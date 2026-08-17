@@ -1,0 +1,18 @@
+
+> dashboard@0.1.0 dev
+> next dev
+
+▲ Next.js 16.3.0 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.100.22.6:3000
+- Environments: .env.local
+✓ Ready in 1787ms
+✓ Running next.config.ts took 10.2s
+
+ GET / 200 in 2.3s (next.js: 1820ms, application-code: 524ms)
+ GET / 200 in 102ms (next.js: 19ms, application-code: 83ms)
+ GET / 200 in 79ms (next.js: 6ms, application-code: 73ms)
+ GET /wilayas 200 in 1055ms (next.js: 905ms, application-code: 150ms)
+ GET /wilayas 200 in 173ms (next.js: 13ms, application-code: 160ms)
+ GET / 200 in 117ms (next.js: 34ms, application-code: 82ms)
+[?25h

@@ -1,176 +1,134 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { client, unwrap } from "@/lib/client";
-import type { WilayaSummary } from "@/lib/types";
+import { useMemo, useState } from "react";
+import { resolveMockPath } from "@/lib/mock-data";
+import { WILAYA_NAMES } from "@/lib/sample-data";
+import type {
+  ExperienceFeed,
+  ExperienceRead,
+  PoiFeed,
+  PoiRead,
+  WilayaSummary,
+} from "@/lib/types";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import WilayaCarousel from "@/components/explore/WilayaCarousel";
+import CategoryPicker from "@/components/explore/CategoryPicker";
+import ActivityExplorer from "@/components/explore/ActivityExplorer";
+import { buildCategories } from "@/components/explore/categories";
 
-const modes = [
-  { title: "Browse by wilaya", href: "/wilayas", emoji: "🗺" },
-  { title: "Search all POIs", href: "/search", emoji: "🔍" },
-  { title: "Browse stays", href: "/stays", emoji: "🛏" },
-  { title: "Plan a trip", href: "/plan", emoji: "🧭" },
-];
+/**
+ * The explore page is currently served from the offline mock dataset so the
+ * design can be reviewed without the backend. Swap these initializers back to
+ * `client.GET` (see src/lib/client.ts) once the API contract for this page is
+ * ready. This is scoped to this page only — it does not touch the global
+ * NEXT_PUBLIC_USE_MOCK_API flag.
+ */
+const mockExplorer = {
+  wilayas: resolveMockPath(
+    "/api/v1/discover/wilayas",
+    new URLSearchParams(),
+  ) as WilayaSummary[],
+  pois: (resolveMockPath(
+    "/api/v1/pois",
+    new URLSearchParams({ page_size: "100" }),
+  ) as PoiFeed).items,
+  experiences: (resolveMockPath(
+    "/api/v1/experiences",
+    new URLSearchParams({ page_size: "100" }),
+  ) as ExperienceFeed).items,
+};
 
 export default function ExplorePage() {
-  const [wilayas, setWilayas] = useState<WilayaSummary[]>([]);
-  const [status, setStatus] = useState<"loading" | "error" | "ready">("loading");
-  const [surprise, setSurprise] = useState<number | null>(null);
+  const [wilayas] = useState<WilayaSummary[]>(mockExplorer.wilayas);
+  const [pois] = useState<PoiRead[]>(mockExplorer.pois);
+  const [experiences] = useState<ExperienceRead[]>(mockExplorer.experiences);
+  const [selected, setSelected] = useState<string[]>([]);
 
-  useEffect(() => {
-    let cancelled = false;
-    client
-      .GET("/api/v1/discover/wilayas")
-      .then((res) => {
-        if (cancelled) return;
-        setWilayas(unwrap(res) ?? []);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (!cancelled) setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const poisByWilaya = useMemo(() => {
+    const map = new Map<number, PoiRead[]>();
+    for (const p of pois) {
+      const bucket = map.get(p.wilaya_id) ?? [];
+      bucket.push(p);
+      map.set(p.wilaya_id, bucket);
+    }
+    return map;
+  }, [pois]);
 
-  const top = useMemo(
-    () => [...wilayas].sort((a, b) => b.total_pois - a.total_pois).slice(0, 8),
-    [wilayas],
+  const wilayaNames = useMemo(() => {
+    const names: Record<number, string> = { ...WILAYA_NAMES };
+    for (const w of wilayas) names[w.id] = w.name;
+    return names;
+  }, [wilayas]);
+
+  const categories = useMemo(
+    () => buildCategories(wilayas, pois, experiences),
+    [wilayas, pois, experiences],
   );
 
   function surpriseMe() {
-    if (wilayas.length === 0) return;
-    setSurprise(wilayas[Math.floor(Math.random() * wilayas.length)].id);
+    if (categories.length === 0) return;
+    const pick = categories[Math.floor(Math.random() * categories.length)];
+    setSelected([pick]);
   }
 
-  const surpriseWilaya = surprise
-    ? wilayas.find((w) => w.id === surprise)
-    : null;
+  function toggleCategory(c: string) {
+    setSelected((prev) =>
+      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-white px-6 pb-16 pt-24">
+    <main className="min-h-screen bg-white px-6 pb-20 pt-24">
       <div className="mx-auto max-w-7xl">
-        <Link
-          href="/"
-          className="mb-6 inline-block text-sm font-normal text-moss hover:text-rustic-gold hover:underline"
-        >
-          ← Home
-        </Link>
+        <Breadcrumb segments={[{ label: "home", href: "/" }, { label: "Explore" }]} />
 
-        <header className="mb-8 text-center">
+        <header className="mb-10 text-center">
           <h1 className="text-3xl font-bold tracking-tight text-pine">
             Don&apos;t know where to go?
           </h1>
           <p className="mt-1 text-sm text-moss">
-            Start from the wilayas with the most to see, or let us surprise you.
+            Flip through wilayas, then pick a vibe — we&apos;ll show you places
+            and activities that fit.
           </p>
         </header>
 
-        {/* Inspiration feed */}
-        <section className="mb-10">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-xl font-bold text-pine">Get inspired</h2>
-            <button
-              onClick={surpriseMe}
-              className="rounded-full bg-sea-foam px-4 py-1.5 text-xs font-normal text-pine shadow-sm transition hover:bg-champagne"
-            >
-              Surprise me 🎲
-            </button>
-          </div>
-
-          {surpriseWilaya && (
-            <div className="mb-5 overflow-hidden rounded-2xl border border-sea-foam bg-champagne/30 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-[10px] font-normal uppercase tracking-widest text-rustic-gold">
-                    How about…
-                  </p>
-                  <p className="text-lg font-bold text-pine">
-                    {surpriseWilaya.name}
-                  </p>
-                  <p className="line-clamp-1 text-xs text-moss">
-                    {surpriseWilaya.highlight_poi ??
-                      surpriseWilaya.description ??
-                      `${surpriseWilaya.total_pois} POIs to explore`}
-                  </p>
-                </div>
-                <Link
-                  href={`/wilayas/${surpriseWilaya.id}`}
-                  className="rounded-full bg-rustic-gold px-5 py-2 text-xs font-normal text-white transition hover:bg-pine"
-                >
-                  Explore →
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {status === "loading" && (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-44 animate-pulse rounded-2xl bg-champagne" />
-              ))}
-            </div>
-          )}
-
-          {status === "error" && (
-            <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-              Could not load wilayas — is the API running?
-            </p>
-          )}
-
-          {status === "ready" && top.length > 0 && (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {top.map((w) => (
-                <Link
-                  key={w.id}
-                  href={`/wilayas/${w.id}`}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-champagne bg-white shadow-sm transition hover:shadow-md"
-                >
-                  {w.highlight_poi_photo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={w.highlight_poi_photo}
-                      alt={w.name}
-                      className="h-32 w-full object-cover transition group-hover:scale-[1.02]"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="flex h-32 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-3xl">
-                      {w.name.slice(0, 1)}
-                    </div>
-                  )}
-                  <div className="flex flex-1 flex-col p-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-sm font-bold text-pine">{w.name}</h3>
-                      <span className="shrink-0 rounded-full bg-champagne px-2 py-0.5 text-[10px] font-normal text-rustic-gold">
-                        {w.total_pois} POIs
-                      </span>
-                    </div>
-                    <p className="mt-1 line-clamp-2 text-xs text-moss">
-                      {w.highlight_poi ?? w.description ?? ""}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
+        <WilayaCarousel wilayas={wilayas} poisByWilaya={poisByWilaya} />
 
         <section>
-          <h2 className="mb-4 text-xl font-bold text-pine">Start exploring</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {modes.map((mode) => (
-              <Link
-                key={mode.href}
-                href={mode.href}
-                className="rounded-2xl border border-champagne bg-white px-5 py-4 text-sm font-normal text-moss transition hover:border-sea-foam hover:text-pine"
-              >
-                <span className="mr-2">{mode.emoji}</span>
-                {mode.title} →
-              </Link>
-            ))}
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-pine">Pick a vibe</h2>
+            <p className="text-sm text-moss">
+              Choose one or several categories, or roll the dice.
+            </p>
           </div>
+          <CategoryPicker
+            categories={categories}
+            selected={selected}
+            onToggle={toggleCategory}
+            onSurprise={surpriseMe}
+          />
+        </section>
+
+        <section className="mt-10">
+          <div className="mb-4 flex items-baseline justify-between gap-3">
+            <h2 className="text-xl font-bold text-pine">
+              Places &amp; activities
+            </h2>
+          {selected.length > 0 && (
+            <button
+              onClick={() => setSelected([])}
+              className="text-xs font-semibold text-rustic-gold hover:text-pine hover:underline"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+        <ActivityExplorer
+          pois={pois}
+          experiences={experiences}
+          wilayaNames={wilayaNames}
+          selectedCategories={selected}
+        />
         </section>
       </div>
     </main>

@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { PoiRead, WilayaSummary } from "@/lib/types";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { LoadingPanel, ErrorPanel } from "@/components/ui/StatePanel";
 import PoiDetailView from "@/components/pois/PoiDetailView";
@@ -56,9 +57,18 @@ export default function PoiDetailPage() {
   return (
     <main className="min-h-screen bg-white px-6 pb-16 pt-24">
       <div className="mx-auto max-w-5xl">
+        <Breadcrumb
+          segments={[
+            { label: "home", href: "/" },
+            ...(state.status === "ready" && wilayaName
+              ? [{ label: wilayaName, href: `/wilayas/${state.poi.wilaya_id}` }]
+              : []),
+            ...(state.status === "ready"
+              ? [{ label: state.poi.name ?? state.poi.category }]
+              : []),
+          ]}
+        />
         <SectionHeading
-          backHref={state.status === "ready" ? `/wilayas/${state.poi.wilaya_id}` : "/"}
-          backLabel={state.status === "ready" ? "Wilaya" : "Home"}
           eyebrow="Place"
           title={state.status === "ready" ? (state.poi.name ?? state.poi.category) : "Place details"}
         />
