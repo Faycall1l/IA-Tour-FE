@@ -1,23 +1,20 @@
-import Placeholder from "@/components/Placeholder";
+"use client";
 
-export const metadata = {
-  title: "Artisan profile — ATHAR",
-  description: "Manage your artisan profile.",
-};
+import ArtisanManager from "@/components/business/ArtisanManager";
 
 export default function BusinessArtisanPage() {
   return (
     <main>
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-zinc-900">Artisan profile</h1>
-        <p className="mt-1 text-zinc-600">
-          This is how your artisan page looks to you, the owner.
+        <h1 className="text-3xl font-bold text-pine">Artisan profile</h1>
+        <p className="mt-1 text-sm text-moss">
+          How your artisan page appears to travelers.
         </p>
       </header>
 
-      <Placeholder label="Artisan info editor — photo, craft, workshop, story" className="mb-6 min-h-48" />
-      <Placeholder label="Manage work gallery & products" className="mb-6" />
-      <Placeholder label="Reviews & contact management" />
+      <div className="max-w-2xl">
+        <ArtisanManager />
+      </div>
     </main>
   );
 }

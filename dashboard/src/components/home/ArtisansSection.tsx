@@ -59,8 +59,7 @@ export default function ArtisansSection() {
       .then((res) => {
         if (cancelled) return;
         const feed = unwrap(res);
-        const cards = feed.items.filter((a) => a.photos && a.photos.length > 0);
-        setArtisans(cards.map(toCard));
+        setArtisans(feed.items.map(toCard));
         setStatus("ready");
       })
       .catch(() => {

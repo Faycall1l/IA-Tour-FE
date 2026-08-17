@@ -32,98 +32,11 @@ export interface Review {
   comment: string;
 }
 
-export const SAMPLE_ARTISANS: ArtisanCard[] = [
-  {
-    id: "sample-kerzaz",
-    name: "Atelier Kerzaz",
-    craft_type: "Pottery",
-    description:
-      "Hand-thrown Kabyle pottery from the Soummam valley — glazed bowls, jars and tagines fired the traditional way.",
-    latitude: 36.75,
-    longitude: 5.08,
-    products: [
-      { label: "Glazed tagine", emoji: "🏺" },
-      { label: "Soummam bowl", emoji: "🥣" },
-      { label: "Koucha jar", emoji: "🫙" },
-      { label: "Amphora", emoji: "⚱️" },
-    ],
-  },
-  {
-    id: "sample-dar-el-henna",
-    name: "Dar El Henna",
-    craft_type: "Leather crafts",
-    description:
-      "Hand-stitched leather slippers and bags from the old medina of Constantine, finished with braided henna-dyed seams.",
-    latitude: 36.36,
-    longitude: 6.61,
-    products: [
-      { label: "Balgha slippers", emoji: "🥿" },
-      { label: "Saddle bag", emoji: "👜" },
-      { label: "Tooled belt", emoji: "🪢" },
-      { label: "Coin purse", emoji: "👛" },
-    ],
-  },
-  {
-    id: "sample-nous-nous",
-    name: "Nous Nous Carpets",
-    craft_type: "Carpets & textiles",
-    description:
-      "M'zab hand-knotted carpets and woven wool textiles, each one telling the pattern language of the five ksour.",
-    latitude: 32.49,
-    longitude: 3.67,
-    products: [
-      { label: "M'zab rug", emoji: "🧶" },
-      { label: "Wool shawl", emoji: "🧣" },
-      { label: "Cushion set", emoji: "🛋️" },
-      { label: "Wall hanging", emoji: "🪢" },
-    ],
-  },
-  {
-    id: "sample-tassili-silver",
-    name: "Tassili Silverworks",
-    craft_type: "Silver jewellery",
-    description:
-      "Tuareg-inspired silver jewellery — the tanaghilt cross of the Ahaggar, hammered and engraved in Tamanrasset.",
-    latitude: 22.79,
-    longitude: 5.52,
-    products: [
-      { label: "Tanaghilt cross", emoji: "📿" },
-      { label: "Silver bracelet", emoji: "💍" },
-      { label: "Berber fibula", emoji: "🔱" },
-      { label: "Earrings", emoji: "✨" },
-    ],
-  },
-  {
-    id: "sample-el-qilada",
-    name: "El Qilada",
-    craft_type: "Coral & jewellery",
-    description:
-      "Coral jewellery and filigree from the Annaba coast, following the techniques of the old coral-workers' guild.",
-    latitude: 36.9,
-    longitude: 7.77,
-    products: [
-      { label: "Coral necklace", emoji: "📿" },
-      { label: "Filigree ring", emoji: "💍" },
-      { label: "Pendant", emoji: "🔮" },
-      { label: "Brooch", emoji: "🪙" },
-    ],
-  },
-  {
-    id: "sample-fahs",
-    name: "Fahs El M'chaa",
-    craft_type: "Woodcraft",
-    description:
-      "Carved cedarwood chests and mashrabiya screens from Tlemcen, inlaid with mother-of-pearl and brass.",
-    latitude: 34.88,
-    longitude: -1.31,
-    products: [
-      { label: "Cedar chest", emoji: "🧰" },
-      { label: "Mashrabiya screen", emoji: "🪟" },
-      { label: "Inlaid mirror", emoji: "🪞" },
-      { label: "Spice box", emoji: "📦" },
-    ],
-  },
-];
+// No fictional artisan sample data: the project rule is that every record must
+// come from a real, verifiable source. The mock fallback below therefore maps an
+// empty list — artisans come from the real API (OSM-derived data). Kept empty on
+// purpose; do not seed invented craft businesses here.
+export const SAMPLE_ARTISANS: ArtisanCard[] = [];
 
 export const SAMPLE_POSTS: BlogPost[] = [
   {
