@@ -100,7 +100,7 @@ export default function TransportEdge({
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 rounded-full bg-champagne px-3 py-1 text-[11px] font-semibold text-pine transition hover:bg-rustic-gold hover:text-white"
                   >
-                    🗓 Calendar · {websiteLabel(cal)} ↗
+                     Calendar · {websiteLabel(cal)} ↗
                   </a>
                 );
               })()}

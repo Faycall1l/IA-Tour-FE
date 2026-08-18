@@ -37,7 +37,7 @@ export default function CategoryPicker({
         onClick={onSurprise}
         className="rounded-full bg-rustic-gold px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-pine"
       >
-        🎲 Surprise me
+        Surprise me
       </button>
     </div>
   );

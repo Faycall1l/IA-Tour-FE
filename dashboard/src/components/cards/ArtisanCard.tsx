@@ -2,22 +2,22 @@ import Link from "next/link";
 import type { ArtisanRead } from "@/lib/types";
 
 const CRAFT_EMOJIS: Record<string, string> = {
-  pottery: "🏺",
-  "leather crafts": "👜",
-  "carpets & textiles": "🧶",
-  "silver jewellery": "💍",
-  "coral & jewellery": "📿",
-  woodcraft: "🪵",
-  weaving: "🧵",
-  embroidery: "🪡",
-  calligraphy: "🖋️",
-  "metal work": "⚒️",
-  "glass work": "🫙",
+  pottery: "Pottery",
+  "leather crafts": "Leather",
+  "carpets & textiles": "Textiles",
+  "silver jewellery": "Jewellery",
+  "coral & jewellery": "Jewellery",
+  woodcraft: "Woodcraft",
+  weaving: "Weaving",
+  embroidery: "Embroidery",
+  calligraphy: "Calligraphy",
+  "metal work": "Metalwork",
+  "glass work": "Glasswork",
 };
 
-export function craftEmoji(craft: string): string {
+function craftEmoji(craft: string): string {
   const key = craft.toLowerCase();
-  return CRAFT_EMOJIS[key] ?? CRAFT_EMOJIS[key.split(" ")[0]] ?? "🛠️";
+  return CRAFT_EMOJIS[key] ?? CRAFT_EMOJIS[key.split(" ")[0]] ?? craft;
 }
 
 export default function ArtisanCard({ artisan }: { artisan: ArtisanRead }) {
@@ -42,7 +42,7 @@ export default function ArtisanCard({ artisan }: { artisan: ArtisanRead }) {
       </p>
       {nearest ? (
         <p className="mt-3 inline-flex items-center gap-1 rounded-full bg-sea-foam/40 px-2.5 py-1 text-xs font-medium text-pine">
-          🚶 {nearest.walking_time_min} min · {nearest.station_name}
+          {nearest.walking_time_min} min · {nearest.station_name}
         </p>
       ) : (
         <p className="mt-3 text-xs text-moss">No nearby transit stop</p>

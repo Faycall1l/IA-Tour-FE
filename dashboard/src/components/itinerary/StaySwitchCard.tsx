@@ -30,7 +30,7 @@ export default function StaySwitchCard({
       {/* node marker — this is a sleeping stop on the trip */}
       <div className="flex flex-col items-center">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pine text-base shadow-sm">
-          🌙
+           
         </div>
         <div className="w-px flex-1 bg-gradient-to-b from-sea-foam to-champagne" />
       </div>
@@ -84,7 +84,7 @@ export default function StaySwitchCard({
                       }`}
                     >
                       {c.price_per_night_dzd.toLocaleString("en-US")} DZD/night
-                      {isChosen ? " · ✓ staying here" : ""}
+                       {isChosen ? " · staying here" : ""}
                     </span>
                   </button>
                 );

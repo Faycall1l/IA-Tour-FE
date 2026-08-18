@@ -136,8 +136,8 @@ export default function DatePickerPopover({
         aria-expanded={open}
         className="rounded-full border border-champagne bg-white px-3 py-1 text-[11px] font-normal text-moss shadow-sm transition hover:border-sea-foam hover:text-pine"
       >
-        📅 {label}
-        {value ? " ✎" : " +"}
+        {label}
+        {value ? " edit" : " add"}
       </button>
 
       {open && (

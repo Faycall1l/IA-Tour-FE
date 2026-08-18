@@ -125,7 +125,7 @@ export default function PlanSearch({
                   />
                 ) : (
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-champagne text-[10px] text-moss">
-                    {m.kind === "wilaya" ? "W" : m.kind === "poi" ? "📍" : "🎯"}
+                    {m.kind === "wilaya" ? "W" : m.kind === "poi" ? "POI" : "EXP"}
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
@@ -143,7 +143,7 @@ export default function PlanSearch({
                   )}
                 </div>
                 {already && (
-                  <span className="ml-auto shrink-0 text-xs font-semibold text-sea-foam">✓ added</span>
+                   <span className="ml-auto shrink-0 text-xs font-semibold text-sea-foam">added</span>
                 )}
               </button>
             );

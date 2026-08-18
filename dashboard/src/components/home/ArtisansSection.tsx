@@ -9,23 +9,8 @@ import AlgeriaMap from "@/components/AlgeriaMap";
 
 const ROTATION_MS = 20000;
 
-const CRAFT_EMOJIS: Record<string, string> = {
-  pottery: "🏺",
-  "leather crafts": "👜",
-  "carpets & textiles": "🧶",
-  "silver jewellery": "💍",
-  "coral & jewellery": "📿",
-  woodcraft: "🪵",
-  weaving: "🧵",
-  embroidery: "🪡",
-  calligraphy: "🖋️",
-  "metal work": "⚒️",
-  "glass work": "🫙",
-};
-
 function craftEmoji(craft: string): string {
-  const key = craft.toLowerCase();
-  return CRAFT_EMOJIS[key] ?? CRAFT_EMOJIS[key.split(" ")[0]] ?? "🛠️";
+  return craft;
 }
 
 function toCard(a: ArtisanRead): ArtisanCard {

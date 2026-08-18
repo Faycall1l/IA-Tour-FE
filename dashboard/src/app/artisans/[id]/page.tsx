@@ -44,20 +44,20 @@ interface RouteToArtisanResponse {
 }
 
 const CRAFT_EMOJIS: Record<string, string> = {
-  pottery: "🏺",
-  "leather_work": "👜",
-  textile: "🧶",
-  jewelry: "💍",
-  woodwork: "🪵",
-  metalwork: "⚒️",
-  glasswork: "🫙",
-  "carpet_weaving": "🧶",
-  stone_carving: "🗿",
+  pottery: "Pottery",
+  "leather_work": "Leather",
+  textile: "Textile",
+  jewelry: "Jewelry",
+  woodwork: "Woodwork",
+  metalwork: "Metalwork",
+  glasswork: "Glasswork",
+  "carpet_weaving": "Carpet",
+  stone_carving: "Stone",
 };
 
 function craftEmoji(craft: string): string {
   const key = craft.toLowerCase().replace(/[^a-z_]/g, "");
-  return CRAFT_EMOJIS[key] ?? "🛠️";
+  return CRAFT_EMOJIS[key] ?? craft;
 }
 
 function formatDistance(m: number): string {
@@ -394,11 +394,11 @@ function RoutePlanView({ plan }: { plan: NonNullable<RouteToArtisanResponse["pla
           {plan.total_estimated_minutes} min
         </span>
         <span className="rounded-full bg-white px-2.5 py-1 text-xs text-zinc-600">
-          🚶 {plan.total_walking_km} km walking
+          {plan.total_walking_km} km walking
         </span>
         {plan.total_transit_km ? (
           <span className="rounded-full bg-white px-2.5 py-1 text-xs text-zinc-600">
-            🚌 {plan.total_transit_km} km transit
+            {plan.total_transit_km} km transit
           </span>
         ) : null}
         {plan.total_transfers ? (

@@ -136,7 +136,7 @@ function SiteCard({
             : "border-champagne bg-white text-moss"
         }`}
       >
-        {selected ? "✓ Added" : "Click to add"}
+        {selected ? "Added" : "Click to add"}
       </div>
     </button>
   );

@@ -2,20 +2,20 @@ import Link from "next/link";
 import type { ExperienceRead } from "@/lib/types";
 
 const CATEGORY_EMOJIS: Record<string, string> = {
-  tour: "🧭",
-  tours: "🧭",
-  cultural: "🎭",
-  adventure: "🧗",
-  hiking: "🥾",
-  trekking: "🥾",
-  wellness: "🧘",
-  food: "🍲",
-  nature: "🌿",
-  desert: "🏜️",
+  tour: "Tour",
+  tours: "Tour",
+  cultural: "Cultural",
+  adventure: "Adventure",
+  hiking: "Hiking",
+  trekking: "Trekking",
+  wellness: "Wellness",
+  food: "Food",
+  nature: "Nature",
+  desert: "Desert",
 };
 
-export function categoryEmoji(category: string): string {
-  return CATEGORY_EMOJIS[category.toLowerCase()] ?? "🏜️";
+function categoryEmoji(category: string): string {
+  return CATEGORY_EMOJIS[category.toLowerCase()] ?? category;
 }
 
 export function formatDzd(amount: number | null): string {

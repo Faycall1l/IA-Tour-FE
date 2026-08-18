@@ -255,8 +255,8 @@ export default function StaysPage() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="flex h-40 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-4xl">
-                        🛏
+                      <div className="flex h-40 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-sm font-bold text-pine/40">
+                        No image
                       </div>
                     )}
                     <div className="flex flex-1 flex-col p-4">
@@ -305,7 +305,7 @@ export default function StaysPage() {
                             : "border-sea-foam bg-sea-foam/20 text-pine hover:bg-sea-foam"
                         }`}
                       >
-                        {isChosen ? "✓ Chosen — my stay" : "Choose this stay"}
+                        {isChosen ? "Chosen — my stay" : "Choose this stay"}
                       </button>
                     </div>
                   </article>

@@ -24,7 +24,7 @@ export default function StayCard({
         />
       ) : (
         <div className="flex h-40 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-4xl">
-          🛏
+           
         </div>
       )}
       <div className="flex flex-1 flex-col p-4">

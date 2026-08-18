@@ -151,7 +151,7 @@ export default function OfferDetailPage() {
                     <ul className="space-y-1.5">
                       {exp.included.map((item) => (
                         <li key={item} className="flex items-start gap-2 text-sm text-zinc-700">
-                          <span className="mt-0.5 text-emerald-600">✓</span>
+                          <span className="mt-0.5 text-emerald-600">-</span>
                           {item}
                         </li>
                       ))}

@@ -284,12 +284,63 @@ function provider(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const MOCK_EXPERIENCES: ExperienceRead[] = [
-  exp("exp-casbah-walk", "Casbah of Algiers walking tour", "Cultural", 16, 2500, 3, "A 3-hour guided stroll through the UNESCO-listed Casbah — palaces, mosques and sea views.", "Atlas Nomade"),
-  exp("exp-timgad-day", "Timgad — Rome in Africa", "Heritage", 19, 4500, 6, "Full-day excursion to the best-preserved Roman colony in North Africa, with guide and transport.", "Sahara Trails"),
-  exp("exp-santa-cruz-sunset", "Santa Cruz at sunset", "Heritage", 31, 1800, 2, "Climb the fort as the sun drops over the Bay of Oran, with a local storyteller.", "Atlas Nomade"),
-  exp("exp-hoggar-trek", "Hoggar 4x4 expedition", "Adventure", 11, 32000, 48, "Three nights under the stars: Assekrem sunrise, volcanic peaks and Tuareg camps.", "Sahara Trails"),
-  exp("exp-gouraya-day", "Gouraya mountain day", "Nature", 6, 2200, 6, "Hike the Gouraya National Park and the Pic des Singes with a Kabyle guide.", "Sahara Trails"),
-  exp("exp-mzab-overview", "M'zab valley overview", "Heritage", 47, 3900, 8, "A day across the pentapolis — Beni Isguen, the grand mosque and the palm grove.", "Atlas Nomade"),
+  exp("exp-casbah-walk", "Casbah of Algiers walking tour", "Cultural", 16, 2500, 3, "A 3-hour guided stroll through the UNESCO-listed Casbah — palaces, mosques and sea views.", "Atlas Nomade", [
+    "Meeting point at Bab El Oued gate",
+    "Walk through the narrow alleys of the Casbah",
+    "Visit the Ketchaoua Mosque",
+    "Explore the Dar Hassan Pacha palace",
+    "Tea break at a traditional café",
+    "Sea-view terrace stop above the harbour",
+    "End at the Great Post Office",
+  ]),
+  exp("exp-timgad-day", "Timgad — Rome in Africa", "Heritage", 19, 4500, 6, "Full-day excursion to the best-preserved Roman colony in North Africa, with guide and transport.", "Sahara Trails", [
+    "Pick-up from Sétif hotel at 07:00",
+    "Drive through the Aurès mountains",
+    "Guided tour of the triumphal arch of Trajan",
+    "Walk through the ancient library and forum",
+    "Visit the well-preserved Roman theatre",
+    "Picnic lunch among the ruins",
+    "Explore the Byzantine citadel",
+    "Return to Sétif by 18:00",
+  ]),
+  exp("exp-santa-cruz-sunset", "Santa Cruz at sunset", "Heritage", 31, 1800, 2, "Climb the fort as the sun drops over the Bay of Oran, with a local storyteller.", "Atlas Nomade", [
+    "Gather at the foot of the hill",
+    "Climb the stone path to the fort",
+    "Visit the chapel of Santa Cruz",
+    "Hear stories of Oran's Ottoman past",
+    "Watch the sunset over the Bay of Oran",
+    "Descend through the illuminated gardens",
+  ]),
+  exp("exp-hoggar-trek", "Hoggar 4x4 expedition", "Adventure", 11, 32000, 48, "Three nights under the stars: Assekrem sunrise, volcanic peaks and Tuareg camps.", "Sahara Trails", [
+    "Depart Tamanrasset in 4x4 convoy",
+    "Stop at the Tefedest mountain pass",
+    "Camp at Assekrem plateau",
+    "Wake for the legendary Assekrem sunrise",
+    "Drive to the Tahat summit viewpoint",
+    "Visit a Tuareg camp and share mint tea",
+    "Lunch in the shade of palm groves",
+    "Stargazing session with local guide",
+    "Return to Tamanrasset on day 3",
+  ]),
+  exp("exp-gouraya-day", "Gouraya mountain day", "Nature", 6, 2200, 6, "Hike the Gouraya National Park and the Pic des Singes with a Kabyle guide.", "Sahara Trails", [
+    "Meet guide at Gouraya park entrance",
+    "Hike through Mediterranean pine forest",
+    "Spot wild Barbary macaques at Pic des Singes",
+    "Climb to the summit viewpoint",
+    "Panoramic view over the Bay of Béjaïa",
+    "Lunch at a Kabyle village café",
+    "Visit the Yemma Gouraya shrine",
+  ]),
+  exp("exp-mzab-overview", "M'zab valley overview", "Heritage", 47, 3900, 8, "A day across the pentapolis — Beni Isguen, the grand mosque and the palm grove.", "Atlas Nomade", [
+    "Arrive in Ghardaïa and meet local guide",
+    "Walk through the streets of Beni Isguen",
+    "Visit the Friday mosque of Beni Isguen",
+    "Explore the old melah (Jewish quarter)",
+    "Drive to the M'zab palm grove",
+    "Lunch under the date palms",
+    "Visit the carpet market in Ghardaïa",
+    "Sunset view from the plateau",
+  ]),
 ];
 
 function exp(
@@ -301,6 +352,7 @@ function exp(
   duration_hours: number,
   description: string,
   provider_name: string,
+  included: string[],
 ): ExperienceRead {
   const c = coords(wilaya_id);
   return {
@@ -317,7 +369,7 @@ function exp(
     duration_hours,
     max_participants: 8,
     language: "French",
-    included: ["Local guide", "Transport", "Water"],
+    included,
     what_to_bring: ["Comfortable shoes", "Sun protection"],
     photos: [
       `https://picsum.photos/seed/${id}/800/500`,

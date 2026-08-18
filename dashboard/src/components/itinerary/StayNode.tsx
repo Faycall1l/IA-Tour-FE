@@ -29,7 +29,7 @@ export default function StayNode({ stay, wilayaName, onRemove }: Props) {
       {/* node marker */}
       <div className="flex flex-col items-center">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rustic-gold text-base shadow-sm">
-          🛏
+           
         </div>
         <div className="w-px flex-1 bg-gradient-to-b from-champagne to-sea-foam" />
       </div>
@@ -73,7 +73,7 @@ export default function StayNode({ stay, wilayaName, onRemove }: Props) {
                   rel="noopener noreferrer"
                   className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-normal text-rustic-gold underline-offset-2 transition hover:text-pine hover:underline"
                 >
-                  📍 Open in Maps
+                   Open in Maps
                 </a>
               </div>
 

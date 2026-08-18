@@ -1,7 +1,8 @@
 import HeroSection from "@/components/home/HeroSection";
 import TrendingDestinations from "@/components/home/TrendingDestinations";
 import ArtisansSection from "@/components/home/ArtisansSection";
-import BlogsSection from "@/components/home/BlogsSection";
+import ExperiencesSection from "@/components/home/ExperiencesSection";
+import EventsSection from "@/components/home/EventsSection";
 import ReviewsSection from "@/components/home/ReviewsSection";
 
 export const metadata = {
@@ -16,7 +17,8 @@ export default function HomePage() {
       <HeroSection />
       <TrendingDestinations />
       <ArtisansSection />
-      <BlogsSection />
+      <ExperiencesSection />
+      <EventsSection />
       <ReviewsSection />
     </main>
   );

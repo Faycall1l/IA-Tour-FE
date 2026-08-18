@@ -6,7 +6,8 @@ import { useState } from "react";
 const sectionLinks = [
   { href: "/#trending", label: "Trending" },
   { href: "/#artisans", label: "Artisans" },
-  { href: "/#blog", label: "Blog & vlogs" },
+  { href: "/#experiences", label: "Experiences & Tours" },
+  { href: "/#events", label: "Events" },
   { href: "/#reviews", label: "Reviews" },
 ];
 

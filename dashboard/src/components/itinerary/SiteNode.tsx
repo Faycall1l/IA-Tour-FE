@@ -121,7 +121,7 @@ export default function SiteNode({
                 {site.category}
               </p>
               <p className="text-[10px] text-moss">
-                📍 {site.wilaya_name}
+                 {site.wilaya_name}
               </p>
             </div>
 

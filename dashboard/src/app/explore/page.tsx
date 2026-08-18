@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { resolveMockPath } from "@/lib/mock-data";
 import { WILAYA_NAMES } from "@/lib/sample-data";
 import type {
@@ -67,8 +68,8 @@ export default function ExplorePage() {
 
   function surpriseMe() {
     if (categories.length === 0) return;
-    const pick = categories[Math.floor(Math.random() * categories.length)];
-    setSelected([pick]);
+    const shuffled = [...categories].sort(() => Math.random() - 0.5);
+    setSelected(shuffled.slice(0, Math.min(3, shuffled.length)));
   }
 
   function toggleCategory(c: string) {
@@ -131,6 +132,13 @@ export default function ExplorePage() {
         />
         </section>
       </div>
+
+      <Link
+        href="/plan"
+        className="fixed bottom-44 right-6 z-50 rounded-full border-2 border-pine bg-white/70 px-4 py-1.5 text-xs font-bold text-pine shadow-lg backdrop-blur-sm transition hover:border-rustic-gold hover:bg-white/70 hover:text-rustic-gold hover:shadow-xl"
+      >
+        Start planning your trip
+      </Link>
     </main>
   );
 }

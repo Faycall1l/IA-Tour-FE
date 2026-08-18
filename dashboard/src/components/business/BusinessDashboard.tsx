@@ -98,7 +98,7 @@ export default function BusinessDashboardPage() {
           {dash?.company_name ?? "Manage your provider listings in one place."}
           {dash?.is_verified && (
             <span className="ml-2 rounded-full bg-sea-foam/60 px-2 py-0.5 text-xs font-semibold text-pine">
-              ✓ Verified
+              Verified
             </span>
           )}
         </p>

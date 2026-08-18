@@ -49,7 +49,6 @@ export default function ActivityExplorer({
     <div>
       {items.length === 0 ? (
         <div className="rounded-3xl border border-champagne bg-champagne/30 p-10 text-center">
-          <p className="text-3xl">🗺</p>
           <p className="mt-2 text-sm font-bold text-pine">Nothing here yet</p>
           <p className="mt-1 text-xs text-moss">
             Try another category, or let the dice decide.
@@ -125,11 +124,11 @@ function ActivityCard({
   const location = wilayaNames[itemWilayaId(item)] ?? "";
 
   const facts: string[] = [];
-  if (location) facts.push(`📍 ${location}`);
+  if (location) facts.push(location);
   if (item.kind === "exp" && item.exp.duration_hours) {
-    facts.push(`🕒 ${item.exp.duration_hours}h`);
+    facts.push(`${item.exp.duration_hours}h`);
   }
-  facts.push("🎂 All ages");
+  facts.push("All ages");
 
   return (
     <button

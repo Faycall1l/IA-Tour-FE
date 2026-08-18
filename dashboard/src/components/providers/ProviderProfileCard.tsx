@@ -33,7 +33,7 @@ export default function ProviderProfileCard({
       value: `${p.price_range_min} – ${p.price_range_max ?? "—"} DZD`,
     });
   if (p.star_rating != null)
-    rows.push({ label: "Star rating", value: `${"★".repeat(p.star_rating)}` });
+    rows.push({ label: "Star rating", value: `${p.star_rating}/5` });
 
   const tags = [
     ...(p.specializations ?? []),

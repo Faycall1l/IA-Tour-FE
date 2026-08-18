@@ -20,7 +20,7 @@ export default function PoiDetailView({
 
       {poi.commune && (
         <p className="mt-4 text-sm text-moss">
-          📍 {poi.commune}
+          {poi.commune}
           {wilayaName ? ` — wilaya ${poi.wilaya_id} ${wilayaName}` : ` — wilaya ${poi.wilaya_id}`}
         </p>
       )}

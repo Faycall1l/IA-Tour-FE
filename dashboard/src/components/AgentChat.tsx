@@ -113,7 +113,7 @@ export default function AgentChat() {
                     {m.text}
                     {m.degraded && (
                       <span className="mt-1.5 block text-[11px] font-medium uppercase tracking-wide text-amber-600">
-                        ⚠ Offline answers (rule-based)
+                        Offline answers (rule-based)
                       </span>
                     )}
                   </div>

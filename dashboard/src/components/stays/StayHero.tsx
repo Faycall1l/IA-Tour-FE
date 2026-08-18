@@ -22,8 +22,8 @@ export default function StayHero({
           className="h-72 w-full object-cover sm:h-96"
         />
       ) : (
-        <div className="flex h-72 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-6xl sm:h-96">
-          🛏
+        <div className="flex h-72 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-sm font-bold text-pine/40 sm:h-96">
+          No image
         </div>
       )}
 
@@ -43,7 +43,7 @@ export default function StayHero({
         </h1>
 
         {stay.address && (
-          <p className="mt-2 text-sm text-moss">📍 {stay.address}</p>
+          <p className="mt-2 text-sm text-moss">{stay.address}</p>
         )}
 
         <div className="mt-4 flex items-baseline gap-1">

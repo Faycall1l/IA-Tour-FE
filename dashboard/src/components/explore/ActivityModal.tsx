@@ -69,7 +69,7 @@ export default function ActivityModal({
           aria-label="Close"
           className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-lg text-pine shadow transition hover:bg-champagne"
         >
-          ✕
+          X
         </button>
 
         <div className="grid sm:grid-cols-2">
@@ -128,14 +128,14 @@ export default function ActivityModal({
               </h2>
 
               <div className="mt-3 flex flex-wrap gap-1.5 text-[11px]">
-                <FactChip>📍 {location}</FactChip>
+                <FactChip>{location}</FactChip>
                 {item.kind === "exp" && item.exp.duration_hours ? (
-                  <FactChip>🕒 {item.exp.duration_hours}h</FactChip>
+                  <FactChip>{item.exp.duration_hours}h</FactChip>
                 ) : null}
                 {item.kind === "exp" && item.exp.season ? (
-                  <FactChip>🗓 {item.exp.season}</FactChip>
+                  <FactChip>{item.exp.season}</FactChip>
                 ) : null}
-                <FactChip>🎂 All ages</FactChip>
+                <FactChip>All ages</FactChip>
               </div>
 
               {desc && <p className="mt-4 text-sm leading-relaxed text-moss">{desc}</p>}
@@ -176,7 +176,7 @@ export default function ActivityModal({
 
               {item.kind === "poi" && item.poi.fun_fact && (
                 <p className="mt-4 rounded-2xl bg-champagne/40 p-3 text-xs italic text-moss">
-                  💡 {item.poi.fun_fact}
+                  Fun fact: {item.poi.fun_fact}
                 </p>
               )}
 

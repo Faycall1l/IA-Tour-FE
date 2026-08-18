@@ -42,12 +42,12 @@ export default function PoiFacts({ poi }: { poi: PoiRead }) {
         <div className="mt-4 flex flex-wrap gap-2">
           {poi.has_parking && (
             <span className="rounded-full bg-champagne/40 px-3 py-1 text-xs text-moss">
-              🅿 Parking available
+              Parking available
             </span>
           )}
           {poi.has_accessibility && (
             <span className="rounded-full bg-champagne/40 px-3 py-1 text-xs text-moss">
-              ♿ Accessibility
+              Accessibility
             </span>
           )}
         </div>

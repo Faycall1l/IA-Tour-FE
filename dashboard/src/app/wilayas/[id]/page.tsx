@@ -391,8 +391,8 @@ export default function WilayaDetailPage() {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="flex h-32 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-4xl">
-                          🛏
+                        <div className="flex h-32 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-sm font-bold text-pine/40">
+                          No image
                         </div>
                       )}
                       <div className="p-4">

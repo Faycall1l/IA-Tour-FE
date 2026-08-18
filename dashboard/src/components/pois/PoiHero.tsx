@@ -1,18 +1,18 @@
 import type { PoiRead } from "@/lib/types";
 
 const CATEGORY_EMOJIS: Record<string, string> = {
-  historical: "🏛",
-  cultural: "🎭",
-  museum: "🖼",
-  religious: "🕌",
-  natural: "🌿",
-  beach: "🏖",
-  mountain: "⛰",
-  park: "🌳",
-  market: "🛍",
-  restaurant: "🍽",
-  cafe: "☕",
-  other: "📍",
+  historical: "Historical",
+  cultural: "Cultural",
+  museum: "Museum",
+  religious: "Religious",
+  natural: "Natural",
+  beach: "Beach",
+  mountain: "Mountain",
+  park: "Park",
+  market: "Market",
+  restaurant: "Restaurant",
+  cafe: "Cafe",
+  other: "Other",
 };
 
 /**
@@ -35,8 +35,8 @@ export default function PoiHero({ poi }: { poi: PoiRead }) {
           className="h-72 w-full object-cover sm:h-96"
         />
       ) : (
-        <div className="flex h-72 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-6xl sm:h-96">
-          {CATEGORY_EMOJIS[poi.category] ?? "📍"}
+        <div className="flex h-72 w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-sm font-bold text-pine/40 sm:h-96">
+          {CATEGORY_EMOJIS[poi.category] ?? "Other"}
         </div>
       )}
 
@@ -52,7 +52,7 @@ export default function PoiHero({ poi }: { poi: PoiRead }) {
           )}
           {poi.is_featured && (
             <span className="rounded-full bg-rustic-gold px-2.5 py-1 text-xs font-semibold text-white">
-              ★ Featured
+              Featured
             </span>
           )}
           {poi.ranking_position != null && poi.ranking_total != null && (
