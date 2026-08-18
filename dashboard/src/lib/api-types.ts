@@ -224,6 +224,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/agent/chat/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Stream travel assistant chat (SSE)
+         * @description Server-sent events streaming version of /chat. Yields incremental text tokens as the agent generates them. Returns a `done` event with links on completion, or an `error` event on failure. Rate limited to 20/hour.
+         */
+        post: operations["post_agent_chat_stream"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/agent/plan-trip": {
         parameters: {
             query?: never;
@@ -525,7 +545,7 @@ export interface paths {
         };
         /**
          * Consolidated wilaya view
-         * @description All content for a wilaya in one payload: POIs (alphabetical), active experiences (with provider info), active stays (by price), and artisans.
+         * @description All content for a wilaya in one payload: POIs (featured first, then alphabetical), active experiences (with provider info), active stays (by price), and artisans.
          */
         get: operations["get_discover_wilayas_wilaya_id"];
         put?: never;
@@ -981,6 +1001,30 @@ export interface paths {
          * @description Update the authenticated user's provider profile (company name, website, experience, team size, etc.). The user must already have a provider role.
          */
         put: operations["put_users_me_profile"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/me/traveler-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get traveler profile
+         * @description Return the authenticated user's persistent traveler profile (budget, interests, home wilaya, style). This is what the agent pipeline mines from conversations and injects into prompts across sessions. Created empty on first access.
+         */
+        get: operations["get_users_me_traveler_profile"];
+        /**
+         * Update traveler profile
+         * @description Update the authenticated user's persistent traveler profile. Values set explicitly replace the mined values; omitted fields are left unchanged.
+         */
+        put: operations["put_users_me_traveler_profile"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1909,6 +1953,44 @@ export interface components {
              * @default false
              */
             degraded: boolean;
+            /**
+             * Links
+             * @description Deep links to in-app pages (POIs, stays, experiences, ...) referenced by the reply
+             */
+            links?: components["schemas"]["AgentLink"][];
+            /**
+             * Orchestrated
+             * @description True when the reply was composed from multiple specialist agents via the orchestrator
+             * @default false
+             */
+            orchestrated: boolean;
+            /**
+             * Intents
+             * @description Detected intent domains routed by the orchestrator
+             */
+            intents?: string[];
+        };
+        /**
+         * AgentLink
+         * @description A single deep link surfaced to the client alongside an agent reply.
+         */
+        AgentLink: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "poi" | "stay" | "experience" | "event" | "artisan" | "wilaya" | "transport";
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Url */
+            url: string;
+            /**
+             * Wilaya Id
+             * @description Related wilaya (entity location / transport origin)
+             */
+            wilaya_id?: number | null;
         };
         /** AgentObservabilityStats */
         AgentObservabilityStats: {
@@ -1981,6 +2063,11 @@ export interface components {
              * @default false
              */
             degraded: boolean;
+            /**
+             * Links
+             * @description Deep links to in-app pages (POIs, stays, experiences, ...) referenced by the reply
+             */
+            links?: components["schemas"]["AgentLink"][];
         };
         /** AgentTraceSummary */
         AgentTraceSummary: {
@@ -2482,6 +2569,11 @@ export interface components {
             longitude: number | null;
             /** Photo Url */
             photo_url: string | null;
+            /**
+             * Is Featured
+             * @default false
+             */
+            is_featured: boolean;
             /** Entry Fee Dzd */
             entry_fee_dzd: number | null;
         };
@@ -2491,6 +2583,13 @@ export interface components {
             wilaya_id: number;
             /** Wilaya Name */
             wilaya_name: string;
+            /** Description */
+            description?: string | null;
+            /**
+             * Tags
+             * @description TripAdvisor-style 'things to do' labels for the wilaya's dominant categories
+             */
+            tags?: string[];
             /** Pois */
             pois: components["schemas"]["DiscoverPOI"][];
             /** Experiences */
@@ -2938,6 +3037,8 @@ export interface components {
             wilaya_name: string;
             /** Description */
             description?: string | null;
+            /** Tags */
+            tags?: string[];
             /** Total Pois */
             total_pois: number;
             /** Total Featured */
@@ -4036,6 +4137,16 @@ export interface components {
             plan: string;
             /** Session Id */
             session_id?: string | null;
+            /**
+             * Links
+             * @description Deep links to in-app pages referenced by the plan
+             */
+            links?: components["schemas"]["AgentLink"][];
+            /**
+             * Verification
+             * @description Structured verification of the plan against real ATHAR data
+             */
+            verification?: unknown | null;
         };
         /** TripRead */
         TripRead: {
@@ -4147,6 +4258,57 @@ export interface components {
              */
             created_at: string;
         };
+        /**
+         * UserProfileRead
+         * @description Persistent traveler profile (cross-session agent context).
+         */
+        UserProfileRead: {
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+            /** Budget Level */
+            budget_level: string | null;
+            /** Interests */
+            interests: string[] | null;
+            /** Home Wilaya Id */
+            home_wilaya_id: number | null;
+            /** Home Wilaya Name */
+            home_wilaya_name?: string | null;
+            /** Travel Style */
+            travel_style: string | null;
+            /** Preferred Language */
+            preferred_language: string | null;
+            /** Notes */
+            notes: string | null;
+            /** Updated At */
+            updated_at: string | null;
+        };
+        /** UserProfileUpdate */
+        UserProfileUpdate: {
+            /**
+             * Budget Level
+             * @description Per-trip budget level
+             */
+            budget_level?: string | null;
+            /**
+             * Interests
+             * @description Travel interests (beach, history, nature, food, culture, adventure, relax, family)
+             */
+            interests?: string[] | null;
+            /** Home Wilaya Id */
+            home_wilaya_id?: number | null;
+            /**
+             * Travel Style
+             * @description Dominant travel style
+             */
+            travel_style?: string | null;
+            /** Preferred Language */
+            preferred_language?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
         /** UserRead */
         UserRead: {
             /**
@@ -4238,6 +4400,8 @@ export interface components {
             name: string;
             /** Description */
             description?: string | null;
+            /** Tags */
+            tags?: string[];
             /**
              * Total Pois
              * @default 0
@@ -4856,6 +5020,55 @@ export interface operations {
             };
             /** @description Agents not available — configure ATHAR_AGENT__VLLM */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    post_agent_chat_stream: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentChatRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Rate limit exceeded (20/hour) */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6947,6 +7160,84 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
+            };
+        };
+    };
+    get_users_me_traveler_profile: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserProfileRead"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_users_me_traveler_profile: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserProfileUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserProfileRead"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

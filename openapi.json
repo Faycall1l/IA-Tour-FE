@@ -768,6 +768,63 @@
         }
       }
     },
+    "/api/v1/agent/chat/stream": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Stream travel assistant chat (SSE)",
+        "description": "Server-sent events streaming version of /chat. Yields incremental text tokens as the agent generates them. Returns a `done` event with links on completion, or an `error` event on failure. Rate limited to 20/hour.",
+        "operationId": "post_agent_chat_stream",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentChatRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "429": {
+            "description": "Rate limit exceeded (20/hour)"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/agent/plan-trip": {
       "post": {
         "tags": [
@@ -1739,7 +1796,7 @@
           "Discover"
         ],
         "summary": "Consolidated wilaya view",
-        "description": "All content for a wilaya in one payload: POIs (alphabetical), active experiences (with provider info), active stays (by price), and artisans.",
+        "description": "All content for a wilaya in one payload: POIs (featured first, then alphabetical), active experiences (with provider info), active stays (by price), and artisans.",
         "operationId": "get_discover_wilayas_wilaya_id",
         "parameters": [
           {
@@ -3552,6 +3609,99 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/users/me/traveler-profile": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get traveler profile",
+        "description": "Return the authenticated user's persistent traveler profile (budget, interests, home wilaya, style). This is what the agent pipeline mines from conversations and injects into prompts across sessions. Created empty on first access.",
+        "operationId": "get_users_me_traveler_profile",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update traveler profile",
+        "description": "Update the authenticated user's persistent traveler profile. Values set explicitly replace the mined values; omitted fields are left unchanged.",
+        "operationId": "put_users_me_traveler_profile",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserProfileUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "422": {
+            "description": "Validation error"
           }
         }
       }
@@ -7037,6 +7187,28 @@
             "title": "Degraded",
             "description": "True when the reply came from the offline rule-based fallback",
             "default": false
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/AgentLink"
+            },
+            "type": "array",
+            "title": "Links",
+            "description": "Deep links to in-app pages (POIs, stays, experiences, ...) referenced by the reply"
+          },
+          "orchestrated": {
+            "type": "boolean",
+            "title": "Orchestrated",
+            "description": "True when the reply was composed from multiple specialist agents via the orchestrator",
+            "default": false
+          },
+          "intents": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Intents",
+            "description": "Detected intent domains routed by the orchestrator"
           }
         },
         "type": "object",
@@ -7044,6 +7216,56 @@
           "reply"
         ],
         "title": "AgentChatResponse"
+      },
+      "AgentLink": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "poi",
+              "stay",
+              "experience",
+              "event",
+              "artisan",
+              "wilaya",
+              "transport"
+            ],
+            "title": "Type"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "wilaya_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wilaya Id",
+            "description": "Related wilaya (entity location / transport origin)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "name",
+          "url"
+        ],
+        "title": "AgentLink",
+        "description": "A single deep link surfaced to the client alongside an agent reply."
       },
       "AgentObservabilityStats": {
         "properties": {
@@ -7162,6 +7384,14 @@
             "title": "Degraded",
             "description": "True when the reply came from the offline rule-based fallback",
             "default": false
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/AgentLink"
+            },
+            "type": "array",
+            "title": "Links",
+            "description": "Deep links to in-app pages (POIs, stays, experiences, ...) referenced by the reply"
           }
         },
         "type": "object",
@@ -8831,6 +9061,11 @@
             ],
             "title": "Photo Url"
           },
+          "is_featured": {
+            "type": "boolean",
+            "title": "Is Featured",
+            "default": false
+          },
           "entry_fee_dzd": {
             "anyOf": [
               {
@@ -8865,6 +9100,25 @@
           "wilaya_name": {
             "type": "string",
             "title": "Wilaya Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags",
+            "description": "TripAdvisor-style 'things to do' labels for the wilaya's dominant categories"
           },
           "pois": {
             "items": {
@@ -10611,6 +10865,13 @@
               }
             ],
             "title": "Description"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags"
           },
           "total_pois": {
             "type": "integer",
@@ -14690,6 +14951,24 @@
               }
             ],
             "title": "Session Id"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/AgentLink"
+            },
+            "type": "array",
+            "title": "Links",
+            "description": "Deep links to in-app pages referenced by the plan"
+          },
+          "verification": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification",
+            "description": "Structured verification of the plan against real ATHAR data"
           }
         },
         "type": "object",
@@ -15039,6 +15318,206 @@
         ],
         "title": "UserAdminRead"
       },
+      "UserProfileRead": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "budget_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Level"
+          },
+          "interests": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interests"
+          },
+          "home_wilaya_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Wilaya Id"
+          },
+          "home_wilaya_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Wilaya Name"
+          },
+          "travel_style": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Travel Style"
+          },
+          "preferred_language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Language"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "budget_level",
+          "interests",
+          "home_wilaya_id",
+          "travel_style",
+          "preferred_language",
+          "notes",
+          "updated_at"
+        ],
+        "title": "UserProfileRead",
+        "description": "Persistent traveler profile (cross-session agent context)."
+      },
+      "UserProfileUpdate": {
+        "properties": {
+          "budget_level": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(budget|mid-range|luxury)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Level",
+            "description": "Per-trip budget level"
+          },
+          "interests": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "maxItems": 6
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interests",
+            "description": "Travel interests (beach, history, nature, food, culture, adventure, relax, family)"
+          },
+          "home_wilaya_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 69.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Wilaya Id"
+          },
+          "travel_style": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(adventure|cultural|relax|family|food|nature|solo|business)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Travel Style",
+            "description": "Dominant travel style"
+          },
+          "preferred_language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Language"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "title": "UserProfileUpdate"
+      },
       "UserRead": {
         "properties": {
           "id": {
@@ -15355,6 +15834,13 @@
               }
             ],
             "title": "Description"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags"
           },
           "total_pois": {
             "type": "integer",
