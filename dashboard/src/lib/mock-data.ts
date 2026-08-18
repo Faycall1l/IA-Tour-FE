@@ -746,6 +746,7 @@ function mockDiscoverResponse(wilayaId: number): WilayaDetail {
       latitude: p.latitude ?? null,
       longitude: p.longitude ?? null,
       photo_url: p.photo_url ?? null,
+      is_featured: p.is_featured ?? false,
       entry_fee_dzd: null,
     })),
     experiences: experiences.map((e) => ({
