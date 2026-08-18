@@ -386,68 +386,73 @@ export interface SampleSite {
   category: string;
   description: string;
   photo: string;
+  commune?: string;
+  opening_hours?: string;
+  entry_fee_dzd?: number | null;
+  suggested_duration_min?: number | null;
+  neighborhood?: string;
 }
 
 export const SAMPLE_WILAYA_SITES: Record<number, SampleSite[]> = {
   16: [
-    { name: "The Casbah of Algiers", category: "heritage", description: "A UNESCO medina of whitewashed lanes, Ottoman palaces and sea views from the top of the old city.", photo: "https://picsum.photos/seed/casbah/800/500" },
-    { name: "Notre-Dame d'Afrique", category: "heritage", description: "The basilica perched above the bay, blending Moorish and Byzantine styles.", photo: "https://picsum.photos/seed/nd-afrique/800/500" },
-    { name: "Jardin d'Essai", category: "nature", description: "A century-old botanical garden with giant araucarias and a monkey enclosure.", photo: "https://picsum.photos/seed/jardin-essai/800/500" },
+    { name: "The Casbah of Algiers", category: "heritage", description: "A UNESCO medina of whitewashed lanes, Ottoman palaces and sea views from the top of the old city.", photo: "https://picsum.photos/seed/casbah/800/500", commune: "Algiers Centre", opening_hours: "Daily 8:00 - 17:00", entry_fee_dzd: 300, suggested_duration_min: 120, neighborhood: "Casbah" },
+    { name: "Notre-Dame d'Afrique", category: "heritage", description: "The basilica perched above the bay, blending Moorish and Byzantine styles.", photo: "https://picsum.photos/seed/nd-afrique/800/500", commune: "Bouzareah", opening_hours: "Tue-Sun 9:00 - 16:30", entry_fee_dzd: 200, suggested_duration_min: 60, neighborhood: "Bouzareah" },
+    { name: "Jardin d'Essai", category: "nature", description: "A century-old botanical garden with giant araucarias and a monkey enclosure.", photo: "https://picsum.photos/seed/jardin-essai/800/500", commune: "Sidi M'Hamed", opening_hours: "Daily 8:00 - 18:00", entry_fee_dzd: 100, suggested_duration_min: 90, neighborhood: "Hamma" },
   ],
   31: [
-    { name: "Fort Santa Cruz", category: "heritage", description: "Spanish fort on Mount Murdjadjo with sweeping views of Oran and the bay.", photo: "https://picsum.photos/seed/santa-cruz/800/500" },
-    { name: "Pasha's Mosque", category: "heritage", description: "Ottoman-era mosque with a restored minaret at the heart of Sidi El Houari.", photo: "https://picsum.photos/seed/pasha-mosque/800/500" },
-    { name: "Front de Mer", category: "culture", description: "The seafront esplanade where rai fills the air and the corniche wakes up at dusk.", photo: "https://picsum.photos/seed/front-de-mer/800/500" },
+    { name: "Fort Santa Cruz", category: "heritage", description: "Spanish fort on Mount Murdjadjo with sweeping views of Oran and the bay.", photo: "https://picsum.photos/seed/santa-cruz/800/500", commune: "Oran Centre", opening_hours: "Daily 9:00 - 17:00", entry_fee_dzd: 250, suggested_duration_min: 90, neighborhood: "Murdjadjo" },
+    { name: "Pasha's Mosque", category: "heritage", description: "Ottoman-era mosque with a restored minaret at the heart of Sidi El Houari.", photo: "https://picsum.photos/seed/pasha-mosque/800/500", commune: "Oran Centre", opening_hours: "Daily 9:00 - 12:00, 14:00 - 16:00", entry_fee_dzd: null, suggested_duration_min: 30, neighborhood: "Sidi El Houari" },
+    { name: "Front de Mer", category: "culture", description: "The seafront esplanade where rai fills the air and the corniche wakes up at dusk.", photo: "https://picsum.photos/seed/front-de-mer/800/500", commune: "Oran Centre", opening_hours: "Open 24h", entry_fee_dzd: null, suggested_duration_min: 60, neighborhood: "Front de Mer" },
   ],
   25: [
-    { name: "Sidi M'Cid Bridge", category: "heritage", description: "The 175-metre suspension bridge spanning the Rhumel gorge.", photo: "https://picsum.photos/seed/sidi-mcid/800/500" },
-    { name: "Palace of Ahmed Bey", category: "heritage", description: "A 19th-century Ottoman palace with courtyards and tilework from around the country.", photo: "https://picsum.photos/seed/ahmed-bey/800/500" },
-    { name: "Cirta Museum", category: "culture", description: "Roman mosaics and Punic artifacts from the ancient capital of Numidia.", photo: "https://picsum.photos/seed/cirta/800/500" },
+    { name: "Sidi M'Cid Bridge", category: "heritage", description: "The 175-metre suspension bridge spanning the Rhumel gorge.", photo: "https://picsum.photos/seed/sidi-mcid/800/500", commune: "Constantine Centre", opening_hours: "Daily 8:00 - 17:00", entry_fee_dzd: 150, suggested_duration_min: 45, neighborhood: "Rhumel" },
+    { name: "Palace of Ahmed Bey", category: "heritage", description: "A 19th-century Ottoman palace with courtyards and tilework from around the country.", photo: "https://picsum.photos/seed/ahmed-bey/800/500", commune: "Constantine Centre", opening_hours: "Wed-Mon 9:00 - 16:00", entry_fee_dzd: 200, suggested_duration_min: 60, neighborhood: "El Kantara" },
+    { name: "Cirta Museum", category: "culture", description: "Roman mosaics and Punic artifacts from the ancient capital of Numidia.", photo: "https://picsum.photos/seed/cirta/800/500", commune: "Constantine Centre", opening_hours: "Tue-Sun 9:00 - 16:30", entry_fee_dzd: 150, suggested_duration_min: 75, neighborhood: "El Kantara" },
   ],
   13: [
-    { name: "El Mechouar Palace", category: "heritage", description: "The Zayyanid royal palace, now a museum inside the old citadel of Tlemcen.", photo: "https://picsum.photos/seed/el-mechouar/800/500" },
-    { name: "Grand Mosque of Tlemcen", category: "heritage", description: "A 12th-century Almoravid mosque with a horseshoe-arch prayer hall.", photo: "https://picsum.photos/seed/tlemcen-mosque/800/500" },
-    { name: "Mansourah Ruins", category: "heritage", description: "The unfinished 14th-century minaret and ramparts of the Merinid settlement.", photo: "https://picsum.photos/seed/mansourah/800/500" },
+    { name: "El Mechouar Palace", category: "heritage", description: "The Zayyanid royal palace, now a museum inside the old citadel of Tlemcen.", photo: "https://picsum.photos/seed/el-mechouar/800/500", commune: "Tlemcen Centre", opening_hours: "Wed-Mon 9:00 - 16:00", entry_fee_dzd: 200, suggested_duration_min: 90, neighborhood: "El Mechouar" },
+    { name: "Grand Mosque of Tlemcen", category: "heritage", description: "A 12th-century Almoravid mosque with a horseshoe-arch prayer hall.", photo: "https://picsum.photos/seed/tlemcen-mosque/800/500", commune: "Tlemcen Centre", opening_hours: "Daily 8:00 - 12:00, 14:00 - 16:00", entry_fee_dzd: null, suggested_duration_min: 45, neighborhood: "El Mechouar" },
+    { name: "Mansourah Ruins", category: "heritage", description: "The unfinished 14th-century minaret and ramparts of the Merinid settlement.", photo: "https://picsum.photos/seed/mansourah/800/500", commune: "Tlemcen Centre", opening_hours: "Daily 8:00 - 17:00", entry_fee_dzd: 100, suggested_duration_min: 45, neighborhood: "Mansourah" },
   ],
   6: [
-    { name: "Gouraya National Park", category: "nature", description: "Lush slopes, cliffs and the Gouraya peak overlooking the Mediterranean.", photo: "https://picsum.photos/seed/gouraya/800/500" },
-    { name: "Pic des Singes", category: "nature", description: "A lookout where you may spot Barbary macaques above the bay of Béjaïa.", photo: "https://picsum.photos/seed/pic-singes/800/500" },
-    { name: "Cap Carbon", category: "nature", description: "The dramatic peninsula and lighthouse at the mouth of the bay.", photo: "https://picsum.photos/seed/cap-carbon/800/500" },
+    { name: "Gouraya National Park", category: "nature", description: "Lush slopes, cliffs and the Gouraya peak overlooking the Mediterranean.", photo: "https://picsum.photos/seed/gouraya/800/500", commune: "Bejaia Centre", opening_hours: "Daily 8:00 - 17:00", entry_fee_dzd: 200, suggested_duration_min: 180, neighborhood: "Gouraya" },
+    { name: "Pic des Singes", category: "nature", description: "A lookout where you may spot Barbary macaques above the bay of Bejaia.", photo: "https://picsum.photos/seed/pic-singes/800/500", commune: "Bejaia Centre", opening_hours: "Daily 8:00 - 16:00", entry_fee_dzd: 150, suggested_duration_min: 120, neighborhood: "Gouraya" },
+    { name: "Cap Carbon", category: "nature", description: "The dramatic peninsula and lighthouse at the mouth of the bay.", photo: "https://picsum.photos/seed/cap-carbon/800/500", commune: "Bejaia Centre", opening_hours: "Daily 8:00 - 17:00", entry_fee_dzd: 100, suggested_duration_min: 60, neighborhood: "Cap Carbon" },
   ],
   47: [
-    { name: "The M'zab Valley", category: "heritage", description: "Five fortified pentapole cities, a UNESCO oasis of white mosques and ksour.", photo: "https://picsum.photos/seed/mzab/800/500" },
-    { name: "Beni Isguen", category: "culture", description: "The best-preserved of the M'zab cities, with a weekly souk and strict traditions.", photo: "https://picsum.photos/seed/beni-isguen/800/500" },
-    { name: "Grand Mosque of Ghardaïa", category: "heritage", description: "The pyramidal 11th-century mosque crowned by its pointed minaret.", photo: "https://picsum.photos/seed/ghardaia-mosque/800/500" },
+    { name: "The M'zab Valley", category: "heritage", description: "Five fortified pentapole cities, a UNESCO oasis of white mosques and ksour.", photo: "https://picsum.photos/seed/mzab/800/500", commune: "Ghardaia Centre", opening_hours: "Daily 9:00 - 17:00", entry_fee_dzd: 300, suggested_duration_min: 240, neighborhood: "M'zab Valley" },
+    { name: "Beni Isguen", category: "culture", description: "The best-preserved of the M'zab cities, with a weekly souk and strict traditions.", photo: "https://picsum.photos/seed/beni-isguen/800/500", commune: "Ghardaia Centre", opening_hours: "Daily 9:00 - 16:00", entry_fee_dzd: 200, suggested_duration_min: 120, neighborhood: "Beni Isguen" },
+    { name: "Grand Mosque of Ghardaia", category: "heritage", description: "The pyramidal 11th-century mosque crowned by its pointed minaret.", photo: "https://picsum.photos/seed/ghardaia-mosque/800/500", commune: "Ghardaia Centre", opening_hours: "Daily 8:00 - 12:00, 14:00 - 16:00", entry_fee_dzd: null, suggested_duration_min: 30, neighborhood: "Ghardaia Centre" },
   ],
   11: [
-    { name: "Assekrem", category: "trekking", description: "The hermitage plateau at 2,700m with sunrise over the Hoggar's moonlike peaks.", photo: "https://picsum.photos/seed/assekrem/800/500" },
-    { name: "Hoggar Mountains", category: "trekking", description: "Volcanic massifs, gorges and the highest point of Algeria.", photo: "https://picsum.photos/seed/hoggar/800/500" },
-    { name: "Guelta of Silet", category: "nature", description: "A desert waterhole where rare life gathers between the dunes.", photo: "https://picsum.photos/seed/guelta-silet/800/500" },
+    { name: "Assekrem", category: "trekking", description: "The hermitage plateau at 2,700m with sunrise over the Hoggar's moonlike peaks.", photo: "https://picsum.photos/seed/assekrem/800/500", commune: "Tamanrasset Centre", opening_hours: "Open 24h", entry_fee_dzd: null, suggested_duration_min: 480, neighborhood: "Hoggar" },
+    { name: "Hoggar Mountains", category: "trekking", description: "Volcanic massifs, gorges and the highest point of Algeria.", photo: "https://picsum.photos/seed/hoggar/800/500", commune: "Tamanrasset Centre", opening_hours: "Open 24h", entry_fee_dzd: null, suggested_duration_min: 360, neighborhood: "Hoggar" },
+    { name: "Guelta of Silet", category: "nature", description: "A desert waterhole where rare life gathers between the dunes.", photo: "https://picsum.photos/seed/guelta-silet/800/500", commune: "Tamanrasset Centre", opening_hours: "Open 24h", entry_fee_dzd: null, suggested_duration_min: 120, neighborhood: "Tassili" },
   ],
   56: [
-    { name: "Tassili n'Ajjer", category: "heritage", description: "Neolithic rock art and stone forests on a vast UNESCO plateau.", photo: "https://picsum.photos/seed/tassili/800/500" },
-    { name: "Tadrart Dunes", category: "trekking", description: "Giant orange sand dunes and canyons that change colour at sunset.", photo: "https://picsum.photos/seed/tadrart/800/500" },
-    { name: "La Vache Qui Pleure", category: "trekking", description: "The landmark overhanging rock near the centre of the park.", photo: "https://picsum.photos/seed/vache-qui-pleure/800/500" },
+    { name: "Tassili n'Ajjer", category: "heritage", description: "Neolithic rock art and stone forests on a vast UNESCO plateau.", photo: "https://picsum.photos/seed/tassili/800/500", commune: "Djanet Centre", opening_hours: "Daily 7:00 - 17:00", entry_fee_dzd: 400, suggested_duration_min: 360, neighborhood: "Tassili" },
+    { name: "Tadrart Dunes", category: "trekking", description: "Giant orange sand dunes and canyons that change colour at sunset.", photo: "https://picsum.photos/seed/tadrart/800/500", commune: "Djanet Centre", opening_hours: "Open 24h", entry_fee_dzd: null, suggested_duration_min: 480, neighborhood: "Tadrart" },
+    { name: "La Vache Qui Pleure", category: "trekking", description: "The landmark overhanging rock near the centre of the park.", photo: "https://picsum.photos/seed/vache-qui-pleure/800/500", commune: "Djanet Centre", opening_hours: "Daily 7:00 - 17:00", entry_fee_dzd: null, suggested_duration_min: 30, neighborhood: "Tadrart" },
   ],
   19: [
-    { name: "Timgad", category: "heritage", description: "The 'Pompeii of Africa', a grid-planned Roman colony in the Aurès foothills.", photo: "https://picsum.photos/seed/timgad/800/500" },
-    { name: "Djémila", category: "heritage", description: "Mountain-top Roman ruins — temples, forum and mosaics — on the slopes of Sétif.", photo: "https://picsum.photos/seed/djemila/800/500" },
-    { name: "Bougaa Rock", category: "nature", description: "The sandstone needle rising from the high-plateau villages.", photo: "https://picsum.photos/seed/bougaa/800/500" },
+    { name: "Timgad", category: "heritage", description: "The 'Pompeii of Africa', a grid-planned Roman colony in the Aures foothills.", photo: "https://picsum.photos/seed/timgad/800/500", commune: "Batna Centre", opening_hours: "Daily 8:00 - 17:00", entry_fee_dzd: 300, suggested_duration_min: 180, neighborhood: "Timgad" },
+    { name: "Djemila", category: "heritage", description: "Mountain-top Roman ruins -- temples, forum and mosaics -- on the slopes of Setif.", photo: "https://picsum.photos/seed/djemila/800/500", commune: "Setif Centre", opening_hours: "Wed-Mon 9:00 - 16:00", entry_fee_dzd: 250, suggested_duration_min: 150, neighborhood: "Djemila" },
+    { name: "Bougaa Rock", category: "nature", description: "The sandstone needle rising from the high-plateau villages.", photo: "https://picsum.photos/seed/bougaa/800/500", commune: "Setif Centre", opening_hours: "Open 24h", entry_fee_dzd: null, suggested_duration_min: 60, neighborhood: "Bougaa" },
   ],
   23: [
-    { name: "Basilica of Saint Augustine", category: "heritage", description: "The imposing basilica overlooking the ruins of Hippone.", photo: "https://picsum.photos/seed/st-augustine/800/500" },
-    { name: "Hippone Ruins", category: "heritage", description: "Roman and early-Christian remains where Saint Augustine once preached.", photo: "https://picsum.photos/seed/hippone/800/500" },
-    { name: "Cap de Garde", category: "nature", description: "The headland and lighthouse between Annaba and the coast of Seraïdi.", photo: "https://picsum.photos/seed/cap-garde/800/500" },
+    { name: "Basilica of Saint Augustine", category: "heritage", description: "The imposing basilica overlooking the ruins of Hippone.", photo: "https://picsum.photos/seed/st-augustine/800/500", commune: "Annaba Centre", opening_hours: "Daily 9:00 - 17:00", entry_fee_dzd: 200, suggested_duration_min: 90, neighborhood: "Basilique" },
+    { name: "Hippone Ruins", category: "heritage", description: "Roman and early-Christian remains where Saint Augustine once preached.", photo: "https://picsum.photos/seed/hippone/800/500", commune: "Annaba Centre", opening_hours: "Wed-Mon 9:00 - 16:00", entry_fee_dzd: 200, suggested_duration_min: 90, neighborhood: "Hippone" },
+    { name: "Cap de Garde", category: "nature", description: "The headland and lighthouse between Annaba and the coast of Seraidi.", photo: "https://picsum.photos/seed/cap-garde/800/500", commune: "Annaba Centre", opening_hours: "Daily 8:00 - 17:00", entry_fee_dzd: null, suggested_duration_min: 60, neighborhood: "Cap de Garde" },
   ],
   49: [
-    { name: "The Red Ksour of Timimoun", category: "heritage", description: "Coral-red clay towns rising from the Gourara oasis.", photo: "https://picsum.photos/seed/timimoun-ksour/800/500" },
-    { name: "Palm Grove of Timimoun", category: "nature", description: "A vast foggara-irrigated palm forest by the salt flats.", photo: "https://picsum.photos/seed/timimoun-palms/800/500" },
-    { name: "Tamentit", category: "culture", description: "Ancient caravan ksar once on the Trans-Saharan route.", photo: "https://picsum.photos/seed/tamentit/800/500" },
+    { name: "The Red Ksour of Timimoun", category: "heritage", description: "Coral-red clay towns rising from the Gourara oasis.", photo: "https://picsum.photos/seed/timimoun-ksour/800/500", commune: "Timimoun Centre", opening_hours: "Daily 9:00 - 17:00", entry_fee_dzd: 200, suggested_duration_min: 120, neighborhood: "Timimoun Centre" },
+    { name: "Palm Grove of Timimoun", category: "nature", description: "A vast foggara-irrigated palm forest by the salt flats.", photo: "https://picsum.photos/seed/timimoun-palms/800/500", commune: "Timimoun Centre", opening_hours: "Open 24h", entry_fee_dzd: null, suggested_duration_min: 90, neighborhood: "Gourara" },
+    { name: "Tamentit", category: "culture", description: "Ancient caravan ksar once on the Trans-Saharan route.", photo: "https://picsum.photos/seed/tamentit/800/500", commune: "Timimoun Centre", opening_hours: "Daily 9:00 - 16:00", entry_fee_dzd: null, suggested_duration_min: 60, neighborhood: "Tamentit" },
   ],
   1: [
-    { name: "Ksar of Ouled Said", category: "heritage", description: "A dense maze of clay houses and granaries in the Gourara.", photo: "https://picsum.photos/seed/ouled-said/800/500" },
-    { name: "Grand Mosque of Adrar", category: "heritage", description: "A distinctive Saharan mosque at the heart of the ksar.", photo: "https://picsum.photos/seed/adrar-mosque/800/500" },
-    { name: "Erg Admer", category: "trekking", description: "High golden dunes on the road south of Adrar.", photo: "https://picsum.photos/seed/erg-admer/800/500" },
+    { name: "Ksar of Ouled Said", category: "heritage", description: "A dense maze of clay houses and granaries in the Gourara.", photo: "https://picsum.photos/seed/ouled-said/800/500", commune: "Adrar Centre", opening_hours: "Daily 9:00 - 17:00", entry_fee_dzd: 200, suggested_duration_min: 90, neighborhood: "Gourara" },
+    { name: "Grand Mosque of Adrar", category: "heritage", description: "A distinctive Saharan mosque at the heart of the ksar.", photo: "https://picsum.photos/seed/adrar-mosque/800/500", commune: "Adrar Centre", opening_hours: "Daily 8:00 - 12:00, 14:00 - 16:00", entry_fee_dzd: null, suggested_duration_min: 30, neighborhood: "Adrar Centre" },
+    { name: "Erg Admer", category: "trekking", description: "High golden dunes on the road south of Adrar.", photo: "https://picsum.photos/seed/erg-admer/800/500", commune: "Adrar Centre", opening_hours: "Open 24h", entry_fee_dzd: null, suggested_duration_min: 240, neighborhood: "Erg Admer" },
   ],
 };
 

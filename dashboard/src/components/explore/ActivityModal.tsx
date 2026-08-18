@@ -112,8 +112,8 @@ export default function ActivityModal({
                 )}
               </>
             ) : (
-              <div className="flex h-44 w-full items-center justify-center rounded-2xl bg-gradient-to-br from-pine to-sea-foam text-6xl">
-                {meta.emoji}
+              <div className="flex h-44 w-full items-center justify-center rounded-2xl bg-gradient-to-br from-pine to-sea-foam text-sm font-bold text-white/60">
+                No image
               </div>
             )}
           </div>
@@ -121,7 +121,7 @@ export default function ActivityModal({
           <div className="p-5 sm:p-6">
             <div className="rounded-3xl border-2 border-champagne bg-white p-5">
               <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-rustic-gold">
-                {meta.emoji} {meta.label}
+                {meta.label}
               </p>
               <h2 className="mt-1 text-2xl font-bold tracking-tight text-pine">
                 {name}

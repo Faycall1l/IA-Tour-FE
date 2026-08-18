@@ -135,7 +135,7 @@ export default function ExplorePage() {
 
       <Link
         href="/plan"
-        className="fixed bottom-44 right-6 z-50 rounded-full border-2 border-pine bg-white/70 px-4 py-1.5 text-xs font-bold text-pine shadow-lg backdrop-blur-sm transition hover:border-rustic-gold hover:bg-white/70 hover:text-rustic-gold hover:shadow-xl"
+        className="fixed bottom-44 right-6 z-50 rounded-lg border-2 border-pine bg-white/70 px-4 py-1.5 text-xs font-bold text-pine shadow-lg backdrop-blur-sm transition hover:border-rustic-gold hover:bg-white/70 hover:text-rustic-gold hover:shadow-xl"
       >
         Start planning your trip
       </Link>

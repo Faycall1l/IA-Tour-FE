@@ -87,14 +87,25 @@ export default function StayNode({ stay, wilayaName, onRemove }: Props) {
                     <span className="text-xs font-normal text-moss">DZD</span>
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={onRemove}
-                  aria-label="Remove stay"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-champagne bg-white text-xs text-moss transition hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
-                >
-                  ×
-                </button>
+                <div className="flex flex-col gap-1">
+                  <Link
+                    href="/stays"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-champagne bg-white text-xs text-moss transition hover:border-sea-foam hover:bg-sea-foam/20 hover:text-pine"
+                    title="Edit stay"
+                  >
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                    </svg>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={onRemove}
+                    aria-label="Remove stay"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-champagne bg-white text-xs text-moss transition hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
+                  >
+                    &times;
+                  </button>
+                </div>
               </div>
             </div>
           </article>

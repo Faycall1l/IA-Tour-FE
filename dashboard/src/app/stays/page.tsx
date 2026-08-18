@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { client, unwrap } from "@/lib/client";
+import { useMemo, useState } from "react";
+import { MOCK_STAYS, resolveMockPath } from "@/lib/mock-data";
+import { SAMPLE_WILAYAS } from "@/lib/sample-data";
 import type { StayRead, WilayaSummary } from "@/lib/types";
 import {
   loadChosenStay,
@@ -10,25 +11,65 @@ import {
   type PickedStay,
 } from "@/lib/itinerary";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 8;
 
-const PROPERTY_TYPES = ["hotel", "hostel", "guesthouse", "apartment", "riad", "resort", "camp_site"];
+const PROPERTY_TYPES = [
+  "hotel",
+  "hostel",
+  "guesthouse",
+  "apartment",
+  "riad",
+  "resort",
+  "camp_site",
+];
+
+const PRICE_RANGES = [
+  { label: "Any price", min: 0, max: Infinity },
+  { label: "Under 5,000 DZD", min: 0, max: 5000 },
+  { label: "5,000 - 8,000 DZD", min: 5000, max: 8000 },
+  { label: "8,000 - 12,000 DZD", min: 8000, max: 12000 },
+  { label: "Over 12,000 DZD", min: 12000, max: Infinity },
+];
+
+const GUEST_OPTIONS = [
+  { label: "Any size", value: 0 },
+  { label: "1-2 guests", value: 2 },
+  { label: "3-4 guests", value: 4 },
+  { label: "5+ guests", value: 5 },
+];
 
 export default function StaysPage() {
-  const [stays, setStays] = useState<StayRead[]>([]);
-  const [total, setTotal] = useState(0);
-  const [wilayas, setWilayas] = useState<WilayaSummary[]>([]);
-  const [status, setStatus] = useState<"loading" | "error" | "ready">("loading");
-  const [wilayaId, setWilayaId] = useState<number | undefined>();
-  const [propertyType, setPropertyType] = useState<string>("");
-  const [maxPrice, setMaxPrice] = useState<number | undefined>();
+  const [chosen, setChosen] = useState<PickedStay | null>(() => loadChosenStay());
+  const [wilayaId, setWilayaId] = useState<number | "">("");
+  const [propertyType, setPropertyType] = useState("");
+  const [priceRange, setPriceRange] = useState(0);
+  const [guests, setGuests] = useState(0);
   const [page, setPage] = useState(1);
-  const [retry, setRetry] = useState(0);
-  const [chosen, setChosen] = useState<PickedStay | null>(null);
 
-  useEffect(() => {
-    setChosen(loadChosenStay());
-  }, []);
+  const wilayas = useMemo(
+    () => resolveMockPath("/api/v1/discover/wilayas", new URLSearchParams()) as WilayaSummary[],
+    [],
+  );
+
+  const wilayaName = (id: number) =>
+    SAMPLE_WILAYAS.find((w) => w.id === id)?.name ?? `Wilaya ${id}`;
+
+  const filtered = useMemo(() => {
+    const range = PRICE_RANGES[priceRange];
+    return MOCK_STAYS.filter((s) => {
+      if (wilayaId !== "" && s.wilaya_id !== wilayaId) return false;
+      if (propertyType && s.property_type !== propertyType) return false;
+      if (s.price_per_night_dzd < range.min || s.price_per_night_dzd > range.max) return false;
+      if (guests > 0) {
+        if (guests >= 5 && (s.max_guests ?? 2) < 5) return false;
+        if (guests < 5 && (s.max_guests ?? 2) < guests) return false;
+      }
+      return true;
+    });
+  }, [wilayaId, propertyType, priceRange, guests]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const slice = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   function chooseStay(s: StayRead) {
     const picked: PickedStay = {
@@ -47,65 +88,14 @@ export default function StaysPage() {
     saveChosenStay(next);
   }
 
-  useEffect(() => {
-    let cancelled = false;
-    client
-      .GET("/api/v1/discover/wilayas")
-      .then((res) => {
-        if (!cancelled) setWilayas(unwrap(res) ?? []);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    setStatus("loading");
-    client
-      .GET("/api/v1/stays", {
-        params: {
-          query: {
-            wilaya_id: wilayaId,
-            property_type: propertyType || undefined,
-            max_price: maxPrice,
-            page,
-            page_size: PAGE_SIZE,
-          },
-        },
-      })
-      .then((res) => {
-        if (cancelled) return;
-        const feed = unwrap(res);
-        setStays(feed.items ?? []);
-        setTotal(feed.total ?? 0);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (!cancelled) setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [wilayaId, propertyType, maxPrice, page, retry]);
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const wilayaName = wilayas.find((w) => w.id === wilayaId)?.name;
-
-  function resetPage(fn: () => void) {
-    setPage(1);
-    fn();
-  }
-
   return (
     <main className="min-h-screen bg-white px-6 pb-16 pt-24">
       <div className="mx-auto max-w-7xl">
         <Link
-          href="/"
+          href="/itinerary"
           className="mb-6 inline-block text-sm font-normal text-moss hover:text-rustic-gold hover:underline"
         >
-          ← Home
+          &larr; Back to itinerary
         </Link>
 
         <header className="mb-8 text-center">
@@ -113,13 +103,10 @@ export default function StaysPage() {
             Pick a stay
           </h1>
           <p className="mt-1 text-sm text-moss">
-            {total > 0
-              ? `${total.toLocaleString("en-US")} real stays across Algeria — pick one and it becomes the start of your itinerary.`
-              : "Real hotels, hostels and guesthouses from the ATHAR database."}
+            {filtered.length} stays across Algeria — pick one for your trip.
           </p>
         </header>
 
-        {/* Chosen stay banner */}
         {chosen && (
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sea-foam bg-sea-foam/20 px-5 py-4">
             <div>
@@ -128,16 +115,16 @@ export default function StaysPage() {
               </p>
               <p className="text-lg font-bold text-pine">{chosen.name}</p>
               <p className="text-xs text-moss">
-                Wilaya {chosen.wilaya_id} ·{" "}
+                {wilayaName(chosen.wilaya_id)} ·{" "}
                 {chosen.price_per_night_dzd.toLocaleString("en-US")} DZD/night
               </p>
             </div>
             <div className="flex items-center gap-2">
               <Link
                 href="/itinerary"
-                className="rounded-full bg-pine px-5 py-2 text-xs font-normal text-white shadow-sm transition hover:bg-moss"
+                className="rounded-full bg-pine px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-rustic-gold"
               >
-                Go to itinerary →
+                Go to itinerary &rarr;
               </Link>
               <button
                 onClick={() => {
@@ -152,33 +139,34 @@ export default function StaysPage() {
           </div>
         )}
 
-        {/* Filters */}
-        <div className="mb-8 grid grid-cols-1 gap-3 rounded-2xl border border-champagne bg-white p-4 shadow-sm sm:grid-cols-3">
+        <div className="mb-8 grid grid-cols-2 gap-3 rounded-2xl border border-champagne bg-white p-4 shadow-sm sm:grid-cols-4">
           <select
-            value={wilayaId ?? ""}
-            onChange={(e) =>
-              resetPage(() =>
-                setWilayaId(e.target.value ? Number(e.target.value) : undefined),
-              )
-            }
-            aria-label="Filter by wilaya"
+            value={wilayaId}
+            onChange={(e) => {
+              setWilayaId(e.target.value ? Number(e.target.value) : "");
+              setPage(1);
+            }}
+            aria-label="Filter by place"
             className="rounded-lg border border-champagne bg-white px-3 py-2 text-sm text-pine focus:border-rustic-gold focus:outline-none"
           >
-            <option value="">All wilayas</option>
+            <option value="">All places</option>
             {wilayas.map((w) => (
               <option key={w.id} value={w.id}>
-                {w.id} — {w.name}
+                {w.name}
               </option>
             ))}
           </select>
 
           <select
             value={propertyType}
-            onChange={(e) => resetPage(() => setPropertyType(e.target.value))}
-            aria-label="Filter by property type"
+            onChange={(e) => {
+              setPropertyType(e.target.value);
+              setPage(1);
+            }}
+            aria-label="Filter by type"
             className="rounded-lg border border-champagne bg-white px-3 py-2 text-sm text-pine focus:border-rustic-gold focus:outline-none"
           >
-            <option value="">All property types</option>
+            <option value="">All types</option>
             {PROPERTY_TYPES.map((t) => (
               <option key={t} value={t}>
                 {t}
@@ -187,55 +175,48 @@ export default function StaysPage() {
           </select>
 
           <select
-            value={maxPrice ?? ""}
-            onChange={(e) =>
-              resetPage(() =>
-                setMaxPrice(e.target.value ? Number(e.target.value) : undefined),
-              )
-            }
-            aria-label="Max price per night"
+            value={priceRange}
+            onChange={(e) => {
+              setPriceRange(Number(e.target.value));
+              setPage(1);
+            }}
+            aria-label="Filter by price"
             className="rounded-lg border border-champagne bg-white px-3 py-2 text-sm text-pine focus:border-rustic-gold focus:outline-none"
           >
-            <option value="">Any price</option>
-            <option value={3000}>Under 3,000 DZD</option>
-            <option value={6000}>Under 6,000 DZD</option>
-            <option value={10000}>Under 10,000 DZD</option>
-            <option value={15000}>Under 15,000 DZD</option>
+            {PRICE_RANGES.map((r, i) => (
+              <option key={i} value={i}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={guests}
+            onChange={(e) => {
+              setGuests(Number(e.target.value));
+              setPage(1);
+            }}
+            aria-label="Filter by number of guests"
+            className="rounded-lg border border-champagne bg-white px-3 py-2 text-sm text-pine focus:border-rustic-gold focus:outline-none"
+          >
+            {GUEST_OPTIONS.map((g) => (
+              <option key={g.value} value={g.value}>
+                {g.label}
+              </option>
+            ))}
           </select>
         </div>
 
-        {status === "loading" && (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-72 animate-pulse rounded-2xl bg-champagne" />
-            ))}
-          </div>
-        )}
-
-        {status === "error" && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
-            <p className="text-sm text-amber-800">
-              Could not load stays — is the API running?
-            </p>
-            <button
-              onClick={() => setRetry((n) => n + 1)}
-              className="mt-3 rounded-full bg-amber-800 px-4 py-1.5 text-xs font-normal text-white"
-            >
-              Retry
-            </button>
-          </div>
-        )}
-
-        {status === "ready" && stays.length === 0 && (
+        {filtered.length === 0 && (
           <p className="rounded-2xl border border-dashed border-champagne bg-champagne/20 p-6 text-center text-sm text-moss">
             No stays match these filters.
           </p>
         )}
 
-        {status === "ready" && stays.length > 0 && (
+        {filtered.length > 0 && (
           <>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {stays.map((s) => {
+              {slice.map((s) => {
                 const isChosen = chosen?.id === s.id;
                 return (
                   <article
@@ -267,21 +248,27 @@ export default function StaysPage() {
                         </span>
                       </div>
                       <p className="mt-0.5 text-xs text-moss">
-                        Wilaya {s.wilaya_id}
-                        {wilayaName ? ` — ${wilayaName}` : ""}
+                        {wilayaName(s.wilaya_id)}
                       </p>
                       {s.description && (
                         <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-moss">
                           {s.description}
                         </p>
                       )}
-                      <p className="mt-3 font-semibold text-emerald-700">
-                        {s.price_per_night_dzd.toLocaleString("en-US")} DZD
-                        <span className="text-xs font-normal text-moss"> /night</span>
-                      </p>
+                      <div className="mt-3 flex items-center justify-between">
+                        <p className="font-semibold text-emerald-700">
+                          {s.price_per_night_dzd.toLocaleString("en-US")} DZD
+                          <span className="text-xs font-normal text-moss"> /night</span>
+                        </p>
+                        {s.max_guests && (
+                          <span className="text-[10px] text-moss">
+                            up to {s.max_guests} guests
+                          </span>
+                        )}
+                      </div>
                       {s.amenities && s.amenities.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
-                          {s.amenities.slice(0, 4).map((a) => (
+                          {s.amenities.slice(0, 3).map((a) => (
                             <span
                               key={a}
                               className="rounded-full bg-champagne/40 px-2 py-0.5 text-[10px] text-moss"
@@ -289,9 +276,9 @@ export default function StaysPage() {
                               {a}
                             </span>
                           ))}
-                          {s.amenities.length > 4 && (
+                          {s.amenities.length > 3 && (
                             <span className="rounded-full bg-champagne/40 px-2 py-0.5 text-[10px] text-moss">
-                              +{s.amenities.length - 4}
+                              +{s.amenities.length - 3}
                             </span>
                           )}
                         </div>
@@ -299,13 +286,13 @@ export default function StaysPage() {
                       <button
                         type="button"
                         onClick={() => chooseStay(s)}
-                        className={`mt-3 rounded-full border px-4 py-2 text-xs font-semibold transition ${
+                        className={`mt-3 rounded-full border px-4 py-2 text-xs font-bold transition ${
                           isChosen
                             ? "border-pine bg-pine text-white hover:bg-moss"
                             : "border-sea-foam bg-sea-foam/20 text-pine hover:bg-sea-foam"
                         }`}
                       >
-                        {isChosen ? "Chosen — my stay" : "Choose this stay"}
+                        {isChosen ? "Chosen" : "Choose this stay"}
                       </button>
                     </div>
                   </article>
@@ -318,21 +305,19 @@ export default function StaysPage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  aria-label="Previous page"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-sea-foam text-pine transition hover:bg-champagne disabled:cursor-not-allowed disabled:opacity-30"
+                  className="rounded-full bg-champagne px-4 py-1.5 text-xs font-semibold text-pine transition hover:bg-rustic-gold hover:text-white disabled:opacity-30"
                 >
-                  ←
+                  &larr; Prev
                 </button>
-                <span className="text-xs font-normal text-moss">
+                <span className="min-w-[48px] text-center text-[11px] text-moss">
                   {page} / {totalPages}
                 </span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  aria-label="Next page"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-sea-foam text-pine transition hover:bg-champagne disabled:cursor-not-allowed disabled:opacity-30"
+                  className="rounded-full bg-champagne px-4 py-1.5 text-xs font-semibold text-pine transition hover:bg-rustic-gold hover:text-white disabled:opacity-30"
                 >
-                  →
+                  Next &rarr;
                 </button>
               </div>
             )}

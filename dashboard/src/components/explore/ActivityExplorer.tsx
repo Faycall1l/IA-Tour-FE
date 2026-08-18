@@ -56,7 +56,7 @@ export default function ActivityExplorer({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
             {slice.map((it) => (
               <ActivityCard
                 key={it.kind + (it.kind === "poi" ? it.poi.id : it.exp.id)}
@@ -133,9 +133,9 @@ function ActivityCard({
   return (
     <button
       onClick={onClick}
-      className="group flex flex-col overflow-hidden rounded-3xl border border-champagne bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-champagne bg-white text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
     >
-      <div className="relative h-44 overflow-hidden">
+      <div className="relative h-20 overflow-hidden">
         {photos[0] ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -145,32 +145,32 @@ function ActivityCard({
             loading="lazy"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-4xl">
-            {meta.emoji}
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-champagne to-sea-foam/60 text-xs font-bold text-pine/40">
+            No image
           </div>
         )}
-        <span className="absolute left-3 top-3 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
-          {meta.emoji} {meta.label}
+        <span className="absolute left-2 top-2 rounded-full bg-black/45 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
+          {meta.label}
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
-        <h3 className="text-base font-bold leading-tight text-pine">{name}</h3>
-        <div className="mt-2 flex flex-wrap gap-1.5">
+      <div className="flex flex-1 flex-col p-2.5">
+        <h3 className="text-xs font-bold leading-tight text-pine">{name}</h3>
+        <div className="mt-1 flex flex-wrap gap-1">
           {facts.map((f) => (
             <span
               key={f}
-              className="rounded-full bg-champagne/70 px-2 py-0.5 text-[11px] font-medium text-moss"
+              className="rounded-full bg-champagne/70 px-1.5 py-0.5 text-[9px] font-medium text-moss"
             >
               {f}
             </span>
           ))}
         </div>
         {desc && (
-          <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-moss">{desc}</p>
+          <p className="mt-1 line-clamp-2 text-[10px] leading-relaxed text-moss">{desc}</p>
         )}
-        <span className="mt-auto pt-3 text-xs font-bold text-rustic-gold transition group-hover:text-pine">
-          More →
+        <span className="mt-auto pt-1.5 text-[10px] font-bold text-rustic-gold transition group-hover:text-pine">
+          More
         </span>
       </div>
     </button>

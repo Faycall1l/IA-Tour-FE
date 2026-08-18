@@ -28,7 +28,6 @@ export default function CategoryPicker({
                 : "border border-champagne bg-white text-moss hover:border-sea-foam hover:text-pine"
             }`}
           >
-            <span className="mr-1.5">{meta.emoji}</span>
             {meta.label}
           </button>
         );

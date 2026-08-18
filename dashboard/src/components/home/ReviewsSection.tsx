@@ -114,11 +114,11 @@ const REVIEWS: Review[] = [
 function Stars({ rating }: { rating: number }) {
   return (
     <span className="flex gap-0.5 text-[11px] text-rustic-gold">
-      {Array.from({ length: 5 }, (_, i) => (
-        <span key={i} className={i < rating ? "opacity-100" : "opacity-30"}>
-          *
-        </span>
-      ))}
+      {rating >= 1 ? <span className="opacity-100">*</span> : <span className="opacity-30">*</span>}
+      {rating >= 2 ? <span className="opacity-100">*</span> : <span className="opacity-30">*</span>}
+      {rating >= 3 ? <span className="opacity-100">*</span> : <span className="opacity-30">*</span>}
+      {rating >= 4 ? <span className="opacity-100">*</span> : <span className="opacity-30">*</span>}
+      {rating >= 5 ? <span className="opacity-100">*</span> : <span className="opacity-30">*</span>}
     </span>
   );
 }

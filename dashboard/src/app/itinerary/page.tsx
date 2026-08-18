@@ -12,11 +12,9 @@ import type {
   RouteResponse,
   RouteStatus,
 } from "@/components/itinerary/types";
-import { client, unwrap } from "@/lib/client";
 import type { ProviderUserRead, StayRead, WilayaSummary } from "@/lib/types";
 import {
   clearChosenStay,
-  clearSites,
   loadAlternateStays,
   loadChosenStay,
   loadItineraryDates,
@@ -29,7 +27,7 @@ import {
   type PickedSite,
   type PickedStay,
 } from "@/lib/itinerary";
-import { MOCK_STAYS } from "@/lib/mock-data";
+import { MOCK_STAYS, MOCK_POIS, resolveMockPath } from "@/lib/mock-data";
 import {
   MOCK_CHOSEN_TRANSPORTS,
   MOCK_ITINERARY_DATES,
@@ -154,37 +152,14 @@ export default function ItineraryPage() {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    client
-      .GET("/api/v1/discover/wilayas")
-      .then((res) => {
-        if (cancelled) return;
-        const list = unwrap(res);
-        const arr = Array.isArray(list) ? list : [];
-        setWilayaMap(new Map(arr.map((w) => [w.id, w])));
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
+    const list = resolveMockPath("/api/v1/discover/wilayas", new URLSearchParams()) as WilayaSummary[];
+    const arr = Array.isArray(list) ? list : [];
+    setWilayaMap(new Map(arr.map((w) => [w.id, w])));
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    client
-      .GET("/api/v1/users/providers", {
-        params: { query: { role: "guide", page_size: 50 } },
-      })
-      .then((res) => {
-        if (!cancelled) {
-          const list = unwrap(res);
-          setGuides(Array.isArray(list) ? list : []);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
+    const list = resolveMockPath("/api/v1/users/providers", new URLSearchParams()) as ProviderUserRead[];
+    setGuides(Array.isArray(list) ? list : []);
   }, []);
 
   const stayWilayaName = stay
@@ -274,28 +249,24 @@ export default function ItineraryPage() {
       if (inflight.current.has(edge.key)) continue;
       inflight.current.add(edge.key);
       setRoutes((prev) => ({ ...prev, [edge.key]: { status: "loading" } }));
-      client
-        .GET("/api/v1/transport/routes/{origin_wilaya_id}/{dest_wilaya_id}", {
-          params: {
-            path: {
-              origin_wilaya_id: edge.from_wilaya_id,
-              dest_wilaya_id: edge.to_wilaya_id,
-            },
-          },
-        })
-        .then((res) => {
-          const route = unwrap(res) as unknown as RouteResponse;
-          setRoutes((prev) => ({
-            ...prev,
-            [edge.key]: { status: "ready", route },
-          }));
-        })
-        .catch(() => {
-          setRoutes((prev) => ({
-            ...prev,
-            [edge.key]: { status: "error" },
-          }));
-        });
+      const params = new URLSearchParams();
+      params.set("origin_wilaya_id", String(edge.from_wilaya_id));
+      params.set("dest_wilaya_id", String(edge.to_wilaya_id));
+      const route = resolveMockPath(
+        `/api/v1/transport/routes/${edge.from_wilaya_id}/${edge.to_wilaya_id}`,
+        params,
+      ) as unknown as RouteResponse | undefined;
+      if (route) {
+        setRoutes((prev) => ({
+          ...prev,
+          [edge.key]: { status: "ready", route },
+        }));
+      } else {
+        setRoutes((prev) => ({
+          ...prev,
+          [edge.key]: { status: "error" },
+        }));
+      }
     }
   }, [dayEdges]);
 
@@ -320,15 +291,6 @@ export default function ItineraryPage() {
     }
     return map;
   }, [guides, sites]);
-
-  function clearAll() {
-    clearSites();
-    clearChosenStay();
-    setSites([]);
-    setStay(null);
-    setAlternateStays({});
-    saveAlternateStays({});
-  }
 
   function removeStay() {
     clearChosenStay();
@@ -396,29 +358,6 @@ export default function ItineraryPage() {
                   : `${sites.length} site${sites.length === 1 ? "" : "s"}${stay ? ` · sleeping at ${stay.name}` : ""}.`}
           </p>
         </header>
-
-        <div className="mb-8 flex flex-wrap justify-center gap-2">
-          <Link
-            href="/plan"
-            className="rounded-full bg-sea-foam px-4 py-1.5 text-xs font-normal text-pine shadow-sm transition hover:bg-champagne"
-          >
-            Optimize my itinerary
-          </Link>
-          <Link
-            href="/stays"
-            className="rounded-full border border-champagne bg-white px-4 py-1.5 text-xs font-normal text-moss transition hover:border-sea-foam hover:text-pine"
-          >
-            Choose my stay
-          </Link>
-          {(sites.length > 0 || stay) && (
-            <button
-              onClick={clearAll}
-              className="rounded-full border border-amber-200 bg-white px-4 py-1.5 text-xs font-normal text-amber-700 transition hover:bg-amber-50"
-            >
-              Clear selection
-            </button>
-          )}
-        </div>
 
         {empty && (
           <div className="rounded-2xl border border-dashed border-champagne bg-champagne/20 p-10 text-center">
@@ -534,6 +473,204 @@ export default function ItineraryPage() {
           </div>
         )}
 
+        {loaded && (sites.length > 0 || stay) && (
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => {
+                let dayNum = 0;
+                let totalEntry = 0;
+                let totalTransport = "";
+                let totalCost = 0;
+
+                const dayRows: string[] = [];
+                for (const stop of plan) {
+                  const region =
+                    wilayaMap.get(stop.base.wilaya_id)?.name ??
+                    `Wilaya ${stop.base.wilaya_id}`;
+                  for (const site of stop.sites) {
+                    dayNum++;
+                    const d = dates[site.id];
+                    const dateStr = d
+                      ? new Date(d).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : `Day ${dayNum}`;
+                    const fullPoi = MOCK_POIS.find((p) => p.id === site.id);
+                    const outKey = `${stop.base.id}->${site.id}`;
+                    const backKey = `${site.id}->${stop.base.id}`;
+                    const outEdge = routes[outKey];
+                    const outOpts = outEdge?.status === "ready"
+                      ? (outEdge.route?.options ?? [])
+                      : [];
+                    const chosenMode = chosenTransports[outKey] ?? "";
+                    let transportInfo = "";
+                    if (outOpts.length > 0) {
+                      transportInfo = outOpts.map((o) => {
+                        const isChosen = o.mode === chosenMode;
+                        const label = `${o.mode}${o.line_name ? ` (${o.line_name})` : ""}`;
+                        const details = [
+                          o.duration_min ? `~${o.duration_min}min` : "",
+                          o.cost_dzd ? `${o.cost_dzd}DZD` : "",
+                        ].filter(Boolean).join(", ");
+                        return `${isChosen ? "** " : ""}${label}${details ? " — " + details : ""}`;
+                      }).join(" | ");
+                    } else if (chosenMode) {
+                      transportInfo = chosenMode;
+                    }
+                    totalEntry += fullPoi?.entry_fee_dzd ?? 0;
+                    if (outOpts.length > 0) {
+                      const cheapest = outOpts.reduce((min, o) =>
+                        (o.cost_dzd ?? Infinity) < (min.cost_dzd ?? Infinity) ? o : min,
+                      );
+                      totalCost += cheapest.cost_dzd ?? 0;
+                    }
+                    dayRows.push(`
+                      <tr>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;font-weight:700;color:#0d3b2e;white-space:nowrap;">Day ${dayNum}</td>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;white-space:nowrap;">${dateStr}</td>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;font-weight:600;color:#0d3b2e;">${site.name}</td>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;">${region}</td>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;text-transform:capitalize;">${site.category}</td>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;">${fullPoi?.opening_hours ?? "—"}</td>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;">${fullPoi?.commune ?? "—"}</td>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#0d3b2e;font-weight:600;">${fullPoi?.entry_fee_dzd != null ? fullPoi.entry_fee_dzd + " DZD" : "Free"}</td>
+                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;font-size:11px;min-width:180px;">${transportInfo || "—"}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="9" style="padding:4px 12px 12px;border-bottom:2px solid #f7e7ce;color:#666;font-size:12px;font-style:italic;">${fullPoi?.description ?? ""}</td>
+                      </tr>`);
+                  }
+                }
+
+                const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ATHAR Trip Program</title>
+<style>
+  @page { margin: 20mm 15mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: #333; line-height: 1.5; padding: 0; }
+</style>
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+  <tr>
+    <td style="padding:24px 32px;background:#0d3b2e;color:white;">
+      <div style="font-size:28px;font-weight:900;letter-spacing:1px;">ATHAR</div>
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:0.7;margin-top:2px;">Agentic Travel Guide</div>
+    </td>
+    <td style="padding:24px 32px;background:#0d3b2e;color:white;text-align:right;">
+      <div style="font-size:12px;opacity:0.8;">Your Trip Program</div>
+      <div style="font-size:10px;opacity:0.6;margin-top:4px;">${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</div>
+    </td>
+  </tr>
+</table>
+
+${stay ? `
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;border:1px solid #f7e7ce;border-radius:8px;overflow:hidden;">
+  <tr>
+    <td style="padding:16px 20px;background:#f7e7ce;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#b08d2e;font-weight:700;">Your Base Stay</div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:16px 20px;">
+      <div style="font-size:18px;font-weight:700;color:#0d3b2e;">${stay.name}</div>
+      <div style="font-size:13px;color:#666;margin-top:4px;text-transform:capitalize;">${stay.property_type} &mdash; ${stay.address ?? (wilayaMap.get(stay.wilaya_id)?.name ?? `Wilaya ${stay.wilaya_id}`)}</div>
+      <div style="font-size:14px;color:#2e6b52;font-weight:600;margin-top:6px;">${stay.price_per_night_dzd.toLocaleString("en-US")} DZD / night</div>
+    </td>
+  </tr>
+</table>
+` : ""}
+
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+  <tr>
+    <td style="padding:0 0 12px;border-bottom:2px solid #0d3b2e;">
+      <span style="font-size:16px;font-weight:700;color:#0d3b2e;">Day-by-Day Program</span>
+    </td>
+  </tr>
+</table>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;border-collapse:collapse;">
+  <thead>
+    <tr style="background:#f7e7ce;">
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Day</th>
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Date</th>
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Site</th>
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Region</th>
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Type</th>
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Hours</th>
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Location</th>
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Entry</th>
+      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Transport</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${dayRows.join("")}
+  </tbody>
+</table>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;border:1px solid #e8e0d0;border-radius:8px;overflow:hidden;">
+  <tr>
+    <td style="padding:16px 20px;background:#f7e7ce;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#b08d2e;font-weight:700;">Cost Summary</div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:16px 20px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding:6px 0;color:#555;font-size:13px;">Total entry fees</td>
+          <td style="padding:6px 0;text-align:right;font-weight:700;color:#0d3b2e;font-size:13px;">${totalEntry.toLocaleString("en-US")} DZD</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#555;font-size:13px;">Estimated transport</td>
+          <td style="padding:6px 0;text-align:right;font-weight:700;color:#0d3b2e;font-size:13px;">${totalCost.toLocaleString("en-US")} DZD</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#555;font-size:13px;">Stay (${dayNum} nights)</td>
+          <td style="padding:6px 0;text-align:right;font-weight:700;color:#0d3b2e;font-size:13px;">${stay ? (stay.price_per_night_dzd * dayNum).toLocaleString("en-US") : "—"} DZD</td>
+        </tr>
+        <tr style="border-top:2px solid #0d3b2e;">
+          <td style="padding:10px 0 0;font-weight:700;font-size:15px;color:#0d3b2e;">Estimated total</td>
+          <td style="padding:10px 0 0;text-align:right;font-weight:700;font-size:15px;color:#b08d2e;">${(totalEntry + totalCost + (stay ? stay.price_per_night_dzd * dayNum : 0)).toLocaleString("en-US")} DZD</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:40px;">
+  <tr>
+    <td style="padding:16px 0;border-top:1px solid #e8e0d0;text-align:center;">
+      <div style="font-size:18px;font-weight:900;color:#0d3b2e;letter-spacing:1px;">ATHAR</div>
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#b08d2e;margin-top:2px;">Agentic Travel Guide</div>
+      <div style="font-size:11px;color:#999;margin-top:8px;">www.athar.dz &mdash; Your AI-powered travel companion for Algeria</div>
+      <div style="font-size:10px;color:#bbb;margin-top:4px;">This program was generated by ATHAR. Prices and availability may vary.</div>
+    </td>
+  </tr>
+</table>
+</body></html>`;
+
+                const w = window.open("", "_blank");
+                if (w) {
+                  w.document.write(html);
+                  w.document.close();
+                  w.focus();
+                  setTimeout(() => w.print(), 300);
+                }
+              }}
+              className="rounded-full bg-pine px-8 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-rustic-gold"
+            >
+              Get PDF of the program
+            </button>
+          </div>
+        )}
+
         {/* Real agent refinement */}
         <section id="refine" className="mt-12">
           <div className="mb-4 text-center">
@@ -548,6 +685,8 @@ export default function ItineraryPage() {
             <AgentChat />
           </div>
         </section>
+
+
       </div>
     </main>
   );

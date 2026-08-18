@@ -1,16 +1,16 @@
 import type { ExperienceRead, PoiRead, WilayaSummary } from "@/lib/types";
 
-export const CATEGORY_META: Record<string, { label: string; emoji: string }> = {
-  heritage: { label: "Heritage", emoji: "🏛" },
-  culture: { label: "Culture", emoji: "🎭" },
-  nature: { label: "Nature", emoji: "🌿" },
-  coast: { label: "Coast", emoji: "🌊" },
-  crafts: { label: "Crafts", emoji: "🧶" },
-  desert: { label: "Desert", emoji: "🏜" },
-  trekking: { label: "Trekking", emoji: "🥾" },
-  adventure: { label: "Adventure", emoji: "🧗" },
-  seafood: { label: "Seafood", emoji: "🐟" },
-  beach: { label: "Beach", emoji: "🏖" },
+export const CATEGORY_META: Record<string, { label: string }> = {
+  heritage: { label: "Heritage" },
+  culture: { label: "Culture" },
+  nature: { label: "Nature" },
+  coast: { label: "Coast" },
+  crafts: { label: "Crafts" },
+  desert: { label: "Desert" },
+  trekking: { label: "Trekking" },
+  adventure: { label: "Adventure" },
+  seafood: { label: "Seafood" },
+  beach: { label: "Beach" },
 };
 
 export function normalizeCategory(raw: string): string {
@@ -20,8 +20,8 @@ export function normalizeCategory(raw: string): string {
   return key;
 }
 
-export function categoryMeta(key: string): { label: string; emoji: string } {
-  return CATEGORY_META[key] ?? { label: key, emoji: "✨" };
+export function categoryMeta(key: string): { label: string } {
+  return CATEGORY_META[key] ?? { label: key };
 }
 
 export function buildCategories(

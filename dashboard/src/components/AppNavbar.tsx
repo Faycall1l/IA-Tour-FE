@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const flowLinks = [
-  { href: "/plan", label: "Choose destination" },
-  { href: "/stays", label: "Pick a stay" },
-  { href: "/itinerary", label: "Customize itinerary" },
+  { href: "/plan", label: "Choose Destination" },
+  { href: "/plan/picks", label: "Plan" },
+  { href: "/stays", label: "Pick a Stay" },
+  { href: "/itinerary", label: "Customize Itinerary" },
   { href: "/explore", label: "Explore" },
 ];
 
