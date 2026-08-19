@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { MOCK_STAYS, resolveMockPath } from "@/lib/mock-data";
-import { SAMPLE_WILAYAS } from "@/lib/sample-data";
+import { useEffect, useMemo, useState } from "react";
+import { client, unwrap } from "@/lib/client";
 import type { StayRead, WilayaSummary } from "@/lib/types";
 import {
   loadChosenStay,
@@ -46,30 +45,65 @@ export default function StaysPage() {
   const [guests, setGuests] = useState(0);
   const [page, setPage] = useState(1);
 
-  const wilayas = useMemo(
-    () => resolveMockPath("/api/v1/discover/wilayas", new URLSearchParams()) as WilayaSummary[],
-    [],
-  );
+  const [wilayas, setWilayas] = useState<WilayaSummary[]>([]);
+  const [allStays, setAllStays] = useState<StayRead[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const wRes = await client.GET("/api/v1/discover/wilayas");
+        if (cancelled) return;
+        setWilayas(unwrap(wRes));
+      } catch { /* ignore */ }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    async function load() {
+      try {
+        const params: Record<string, string | number> = { page, page_size: PAGE_SIZE };
+        if (wilayaId !== "") params.wilaya_id = wilayaId;
+        if (propertyType) params.property_type = propertyType;
+        const range = PRICE_RANGES[priceRange];
+        if (range.min > 0) params.min_price = range.min;
+        if (range.max < Infinity) params.max_price = range.max;
+        const res = await client.GET("/api/v1/stays", { params: { query: params } });
+        if (cancelled) return;
+        const data = unwrap(res);
+        let items = data.items;
+        if (guests > 0) {
+          items = items.filter((s: StayRead) => {
+            if (guests >= 5 && (s.max_guests ?? 2) < 5) return false;
+            if (guests < 5 && (s.max_guests ?? 2) < guests) return false;
+            return true;
+          });
+        }
+        setAllStays(items);
+        setTotalCount(data.total);
+      } catch {
+        if (!cancelled) {
+          setAllStays([]);
+          setTotalCount(0);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [wilayaId, propertyType, priceRange, guests, page]);
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const wilayaName = (id: number) =>
-    SAMPLE_WILAYAS.find((w) => w.id === id)?.name ?? `Wilaya ${id}`;
-
-  const filtered = useMemo(() => {
-    const range = PRICE_RANGES[priceRange];
-    return MOCK_STAYS.filter((s) => {
-      if (wilayaId !== "" && s.wilaya_id !== wilayaId) return false;
-      if (propertyType && s.property_type !== propertyType) return false;
-      if (s.price_per_night_dzd < range.min || s.price_per_night_dzd > range.max) return false;
-      if (guests > 0) {
-        if (guests >= 5 && (s.max_guests ?? 2) < 5) return false;
-        if (guests < 5 && (s.max_guests ?? 2) < guests) return false;
-      }
-      return true;
-    });
-  }, [wilayaId, propertyType, priceRange, guests]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const slice = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    wilayas.find((w) => w.id === id)?.name ?? `Wilaya ${id}`;
 
   function chooseStay(s: StayRead) {
     const picked: PickedStay = {
@@ -103,7 +137,7 @@ export default function StaysPage() {
             Pick a stay
           </h1>
           <p className="mt-1 text-sm text-moss">
-            {filtered.length} stays across Algeria — pick one for your trip.
+            {totalCount} stays across Algeria — pick one for your trip.
           </p>
         </header>
 
@@ -207,16 +241,22 @@ export default function StaysPage() {
           </select>
         </div>
 
-        {filtered.length === 0 && (
+        {loading && (
+          <p className="rounded-2xl border border-dashed border-champagne bg-champagne/20 p-6 text-center text-sm text-moss">
+            Loading stays…
+          </p>
+        )}
+
+        {!loading && allStays.length === 0 && (
           <p className="rounded-2xl border border-dashed border-champagne bg-champagne/20 p-6 text-center text-sm text-moss">
             No stays match these filters.
           </p>
         )}
 
-        {filtered.length > 0 && (
+        {!loading && allStays.length > 0 && (
           <>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {slice.map((s) => {
+              {allStays.map((s) => {
                 const isChosen = chosen?.id === s.id;
                 return (
                   <article

@@ -4,10 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { client, unwrap } from "@/lib/client";
 import type { WilayaSummary } from "@/lib/types";
-import { SAMPLE_WILAYAS } from "@/lib/sample-data";
-
 export default function DestinationsPage() {
-  const [wilayas, setWilayas] = useState<WilayaSummary[]>(SAMPLE_WILAYAS);
+  const [wilayas, setWilayas] = useState<WilayaSummary[]>([]);
   const [status, setStatus] = useState<"loading" | "error" | "ready">(
     "loading",
   );

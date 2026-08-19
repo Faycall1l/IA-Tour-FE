@@ -1,13 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { resolveMockPath } from "@/lib/mock-data";
+import { client, unwrap } from "@/lib/client";
 import { WILAYA_NAMES } from "@/lib/sample-data";
 import type {
-  ExperienceFeed,
   ExperienceRead,
-  PoiFeed,
   PoiRead,
   WilayaSummary,
 } from "@/lib/types";
@@ -17,33 +15,32 @@ import CategoryPicker from "@/components/explore/CategoryPicker";
 import ActivityExplorer from "@/components/explore/ActivityExplorer";
 import { buildCategories } from "@/components/explore/categories";
 
-/**
- * The explore page is currently served from the offline mock dataset so the
- * design can be reviewed without the backend. Swap these initializers back to
- * `client.GET` (see src/lib/client.ts) once the API contract for this page is
- * ready. This is scoped to this page only — it does not touch the global
- * NEXT_PUBLIC_USE_MOCK_API flag.
- */
-const mockExplorer = {
-  wilayas: resolveMockPath(
-    "/api/v1/discover/wilayas",
-    new URLSearchParams(),
-  ) as WilayaSummary[],
-  pois: (resolveMockPath(
-    "/api/v1/pois",
-    new URLSearchParams({ page_size: "100" }),
-  ) as PoiFeed).items,
-  experiences: (resolveMockPath(
-    "/api/v1/experiences",
-    new URLSearchParams({ page_size: "100" }),
-  ) as ExperienceFeed).items,
-};
-
 export default function ExplorePage() {
-  const [wilayas] = useState<WilayaSummary[]>(mockExplorer.wilayas);
-  const [pois] = useState<PoiRead[]>(mockExplorer.pois);
-  const [experiences] = useState<ExperienceRead[]>(mockExplorer.experiences);
+  const [wilayas, setWilayas] = useState<WilayaSummary[]>([]);
+  const [pois, setPois] = useState<PoiRead[]>([]);
+  const [experiences, setExperiences] = useState<ExperienceRead[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const [wRes, pRes, eRes] = await Promise.all([
+          client.GET("/api/v1/discover/wilayas"),
+          client.GET("/api/v1/pois", { params: { query: { page_size: 200 } } }),
+          client.GET("/api/v1/experiences", { params: { query: { page_size: 100 } } }),
+        ]);
+        if (cancelled) return;
+        setWilayas(unwrap(wRes));
+        setPois(unwrap(pRes).items);
+        setExperiences(unwrap(eRes).items);
+      } catch {
+        // silently leave arrays empty
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   const poisByWilaya = useMemo(() => {
     const map = new Map<number, PoiRead[]>();

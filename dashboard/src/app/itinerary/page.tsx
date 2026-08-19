@@ -12,7 +12,8 @@ import type {
   RouteResponse,
   RouteStatus,
 } from "@/components/itinerary/types";
-import type { ProviderUserRead, StayRead, WilayaSummary } from "@/lib/types";
+import type { PoiRead, ProviderUserRead, StayRead, WilayaSummary } from "@/lib/types";
+import { client, unwrap } from "@/lib/client";
 import {
   clearChosenStay,
   loadAlternateStays,
@@ -27,7 +28,6 @@ import {
   type PickedSite,
   type PickedStay,
 } from "@/lib/itinerary";
-import { MOCK_STAYS, MOCK_POIS, resolveMockPath } from "@/lib/mock-data";
 import {
   MOCK_CHOSEN_TRANSPORTS,
   MOCK_ITINERARY_DATES,
@@ -102,12 +102,6 @@ function needsFlight(route: RouteStatus | undefined): boolean {
   );
 }
 
-/** First mock stay near a wilaya, used as the default switch target. */
-function defaultNearbyStay(wilayaId: number): PickedStay | null {
-  const s = MOCK_STAYS.find((st) => st.wilaya_id === wilayaId);
-  return s ? pickStayFromRead(s) : null;
-}
-
 export default function ItineraryPage() {
   const [sites, setSites] = useState<PickedSite[]>([]);
   const [stay, setStay] = useState<PickedStay | null>(null);
@@ -116,6 +110,8 @@ export default function ItineraryPage() {
     new Map(),
   );
   const [guides, setGuides] = useState<ProviderUserRead[]>([]);
+  const [allStays, setAllStays] = useState<StayRead[]>([]);
+  const [allPois, setAllPois] = useState<PoiRead[]>([]);
   const [routes, setRoutes] = useState<Record<string, RouteStatus>>({});
   const [chosenTransports, setChosenTransports] = useState<Record<string, string>>(
     () => loadChosenTransports(),
@@ -129,13 +125,8 @@ export default function ItineraryPage() {
 
   const inflight = useRef(new Set<string>());
 
-  // True when the shown trip is filled in with sample data (partial or empty
-  // user selection) rather than the user's own complete picks.
   const [preview, setPreview] = useState(false);
 
-  // Always render a complete trip. A full saved selection (sites + stay) is
-  // used as-is; otherwise the gaps are filled with mock data so a realistic
-  // hub-and-spoke path (stay → site → back) is visible immediately.
   useEffect(() => {
     const savedSites = loadSavedSites();
     const savedStay = loadChosenStay();
@@ -152,23 +143,33 @@ export default function ItineraryPage() {
   }, []);
 
   useEffect(() => {
-    const list = resolveMockPath("/api/v1/discover/wilayas", new URLSearchParams()) as WilayaSummary[];
-    const arr = Array.isArray(list) ? list : [];
-    setWilayaMap(new Map(arr.map((w) => [w.id, w])));
-  }, []);
-
-  useEffect(() => {
-    const list = resolveMockPath("/api/v1/users/providers", new URLSearchParams()) as ProviderUserRead[];
-    setGuides(Array.isArray(list) ? list : []);
+    let cancelled = false;
+    async function load() {
+      try {
+        const [wRes, pRes, sRes, proRes] = await Promise.all([
+          client.GET("/api/v1/discover/wilayas"),
+          client.GET("/api/v1/pois", { params: { query: { page_size: 200 } } }),
+          client.GET("/api/v1/stays", { params: { query: { page_size: 200 } } }),
+          client.GET("/api/v1/users/providers"),
+        ]);
+        if (cancelled) return;
+        const w = unwrap(wRes);
+        setWilayaMap(new Map(w.map((wilaya) => [wilaya.id, wilaya])));
+        setAllPois(unwrap(pRes).items);
+        setAllStays(unwrap(sRes).items);
+        setGuides(unwrap(proRes));
+      } catch {
+        // silently leave empty
+      }
+    }
+    load();
+    return () => { cancelled = true; };
   }, []);
 
   const stayWilayaName = stay
     ? wilayaMap.get(stay.wilaya_id)?.name ?? undefined
     : undefined;
 
-  // Cluster sites into segments around base stays. Sites reached by flight
-  // from their base start a new segment whose stay is near the destination —
-  // you don't fly back to the same hotel every night.
   const segments = useMemo<ItinerarySegment[]>(() => {
     if (!stay || sites.length === 0) return [];
     const segs: ItinerarySegment[] = [];
@@ -179,7 +180,7 @@ export default function ItineraryPage() {
         if (group.length > 0) segs.push({ base, sites: group });
         base =
           alternateStays[site.wilaya_id] ??
-          defaultNearbyStay(site.wilaya_id) ??
+          pickAlternateStay(site.wilaya_id) ??
           base;
         group = [];
       }
@@ -187,11 +188,13 @@ export default function ItineraryPage() {
     }
     if (group.length > 0) segs.push({ base, sites: group });
     return segs;
-  }, [sites, stay, routes, alternateStays]);
+  }, [sites, stay, routes, alternateStays, allStays]);
 
-  // Ordered render plan: each stop is a base stay with its day trips, and a
-  // long-haul transfer (flight) into it when its stay differs from the one
-  // before it (e.g. fly Algiers → Tamanrasset, then stay there).
+  function pickAlternateStay(wilayaId: number): PickedStay | null {
+    const s = allStays.find((st) => st.wilaya_id === wilayaId);
+    return s ? pickStayFromRead(s) : null;
+  }
+
   const plan = useMemo<RenderStop[]>(() => {
     const stops: RenderStop[] = [];
     let prevBase: PickedStay | null = stay;
@@ -215,8 +218,6 @@ export default function ItineraryPage() {
     return stops;
   }, [segments, stay]);
 
-  // Every leg of the trip: the transfer into a base, then each site as a round
-  // trip from that base.
   const dayEdges = useMemo<EdgeDef[]>(() => {
     const list: EdgeDef[] = [];
     for (const stop of plan) {
@@ -243,30 +244,28 @@ export default function ItineraryPage() {
     return list;
   }, [plan]);
 
-  // Fetch transport options for every leg of the trip.
   useEffect(() => {
     for (const edge of dayEdges) {
       if (inflight.current.has(edge.key)) continue;
       inflight.current.add(edge.key);
       setRoutes((prev) => ({ ...prev, [edge.key]: { status: "loading" } }));
-      const params = new URLSearchParams();
-      params.set("origin_wilaya_id", String(edge.from_wilaya_id));
-      params.set("dest_wilaya_id", String(edge.to_wilaya_id));
-      const route = resolveMockPath(
-        `/api/v1/transport/routes/${edge.from_wilaya_id}/${edge.to_wilaya_id}`,
-        params,
-      ) as unknown as RouteResponse | undefined;
-      if (route) {
-        setRoutes((prev) => ({
-          ...prev,
-          [edge.key]: { status: "ready", route },
-        }));
-      } else {
-        setRoutes((prev) => ({
-          ...prev,
-          [edge.key]: { status: "error" },
-        }));
-      }
+      client
+        .GET("/api/v1/transport/routes/{origin_wilaya_id}/{dest_wilaya_id}", {
+          params: { path: { origin_wilaya_id: edge.from_wilaya_id, dest_wilaya_id: edge.to_wilaya_id } },
+        })
+        .then((res) => {
+          if (res.error) {
+            setRoutes((prev) => ({ ...prev, [edge.key]: { status: "error" } }));
+          } else {
+            setRoutes((prev) => ({
+              ...prev,
+              [edge.key]: { status: "ready", route: res.data as RouteResponse },
+            }));
+          }
+        })
+        .catch(() => {
+          setRoutes((prev) => ({ ...prev, [edge.key]: { status: "error" } }));
+        });
     }
   }, [dayEdges]);
 
@@ -418,9 +417,10 @@ export default function ItineraryPage() {
                           fromName={transfer.from.name}
                           fromWilayaName={fromRegion}
                           wilayaName={toRegion}
-                          candidates={MOCK_STAYS.filter(
-                            (s) => s.wilaya_id === stop.base.wilaya_id,
-                          ).map(pickStayFromRead)}
+                          candidates={allStays
+                            .filter((s) => s.wilaya_id === stop.base.wilaya_id)
+                            .slice(0, 10)
+                            .map(pickStayFromRead)}
                           chosen={stop.base}
                           onChoose={(s) =>
                             chooseAlternateStay(stop.base.wilaya_id, s)
@@ -498,7 +498,7 @@ export default function ItineraryPage() {
                           day: "numeric",
                         })
                       : `Day ${dayNum}`;
-                    const fullPoi = MOCK_POIS.find((p) => p.id === site.id);
+                    const fullPoi = allPois.find((p) => p.id === site.id);
                     const outKey = `${stop.base.id}->${site.id}`;
                     const backKey = `${site.id}->${stop.base.id}`;
                     const outEdge = routes[outKey];
@@ -671,7 +671,6 @@ ${stay ? `
           </div>
         )}
 
-        {/* Real agent refinement */}
         <section id="refine" className="mt-12">
           <div className="mb-4 text-center">
             <h2 className="text-xl font-bold text-pine">
