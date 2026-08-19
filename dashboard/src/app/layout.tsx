@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: "ATHAR — The agentic travel guide for Algeria",
   description:
     "Discover wilayas, plan optimized itineraries, find stays and get real transport options across Algeria.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

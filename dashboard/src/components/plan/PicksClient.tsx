@@ -123,16 +123,6 @@ function GalleryModal({
                 <p className="text-[11px] text-pine">{poi.opening_hours}</p>
               </div>
             )}
-            {poi.entry_fee_dzd != null && (
-              <div className="rounded-lg border border-champagne bg-champagne/20 px-2.5 py-1.5">
-                <p className="text-[9px] font-semibold uppercase tracking-wider text-rustic-gold">
-                  Fee
-                </p>
-                <p className="text-[11px] text-pine">
-                  {poi.entry_fee_dzd} DZD
-                </p>
-              </div>
-            )}
             {poi.commune && (
               <div className="rounded-lg border border-champagne bg-champagne/20 px-2.5 py-1.5">
                 <p className="text-[9px] font-semibold uppercase tracking-wider text-rustic-gold">

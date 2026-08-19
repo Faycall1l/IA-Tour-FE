@@ -158,9 +158,6 @@ export default function ActivityModal({
                   </>
                 ) : (
                   <>
-                    {item.poi.entry_fee_dzd != null && (
-                      <FactBox label="Entry fee" value={`${item.poi.entry_fee_dzd} DZD`} />
-                    )}
                     {item.poi.price_level && (
                       <FactBox label="Price level" value={item.poi.price_level} />
                     )}

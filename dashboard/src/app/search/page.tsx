@@ -187,9 +187,7 @@ function SearchPageInner() {
                       )}
                       <div className="mt-2 flex items-center justify-between gap-2">
                         <span className="text-xs font-medium text-emerald-700">
-                          {p.entry_fee_dzd
-                            ? `${p.entry_fee_dzd} DZD`
-                            : "Free"}
+                          {p.price_level ?? ""}
                         </span>
                         {p.wilaya_id && (
                           <a

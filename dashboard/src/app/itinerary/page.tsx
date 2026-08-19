@@ -478,7 +478,6 @@ export default function ItineraryPage() {
             <button
               onClick={() => {
                 let dayNum = 0;
-                let totalEntry = 0;
                 let totalTransport = "";
                 let totalCost = 0;
 
@@ -520,7 +519,6 @@ export default function ItineraryPage() {
                     } else if (chosenMode) {
                       transportInfo = chosenMode;
                     }
-                    totalEntry += fullPoi?.entry_fee_dzd ?? 0;
                     if (outOpts.length > 0) {
                       const cheapest = outOpts.reduce((min, o) =>
                         (o.cost_dzd ?? Infinity) < (min.cost_dzd ?? Infinity) ? o : min,
@@ -536,11 +534,10 @@ export default function ItineraryPage() {
                         <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;text-transform:capitalize;">${site.category}</td>
                         <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;">${fullPoi?.opening_hours ?? "—"}</td>
                         <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;">${fullPoi?.commune ?? "—"}</td>
-                        <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#0d3b2e;font-weight:600;">${fullPoi?.entry_fee_dzd != null ? fullPoi.entry_fee_dzd + " DZD" : "Free"}</td>
                         <td style="padding:10px 12px;border-bottom:1px solid #e8e0d0;color:#555;font-size:11px;min-width:180px;">${transportInfo || "—"}</td>
                       </tr>
                       <tr>
-                        <td colspan="9" style="padding:4px 12px 12px;border-bottom:2px solid #f7e7ce;color:#666;font-size:12px;font-style:italic;">${fullPoi?.description ?? ""}</td>
+                        <td colspan="8" style="padding:4px 12px 12px;border-bottom:2px solid #f7e7ce;color:#666;font-size:12px;font-style:italic;">${fullPoi?.description ?? ""}</td>
                       </tr>`);
                   }
                 }
@@ -605,7 +602,6 @@ ${stay ? `
       <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Type</th>
       <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Hours</th>
       <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Location</th>
-      <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Entry</th>
       <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b08d2e;font-weight:700;">Transport</th>
     </tr>
   </thead>
@@ -624,10 +620,6 @@ ${stay ? `
     <td style="padding:16px 20px;">
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
-          <td style="padding:6px 0;color:#555;font-size:13px;">Total entry fees</td>
-          <td style="padding:6px 0;text-align:right;font-weight:700;color:#0d3b2e;font-size:13px;">${totalEntry.toLocaleString("en-US")} DZD</td>
-        </tr>
-        <tr>
           <td style="padding:6px 0;color:#555;font-size:13px;">Estimated transport</td>
           <td style="padding:6px 0;text-align:right;font-weight:700;color:#0d3b2e;font-size:13px;">${totalCost.toLocaleString("en-US")} DZD</td>
         </tr>
@@ -637,7 +629,7 @@ ${stay ? `
         </tr>
         <tr style="border-top:2px solid #0d3b2e;">
           <td style="padding:10px 0 0;font-weight:700;font-size:15px;color:#0d3b2e;">Estimated total</td>
-          <td style="padding:10px 0 0;text-align:right;font-weight:700;font-size:15px;color:#b08d2e;">${(totalEntry + totalCost + (stay ? stay.price_per_night_dzd * dayNum : 0)).toLocaleString("en-US")} DZD</td>
+          <td style="padding:10px 0 0;text-align:right;font-weight:700;font-size:15px;color:#b08d2e;">${(totalCost + (stay ? stay.price_per_night_dzd * dayNum : 0)).toLocaleString("en-US")} DZD</td>
         </tr>
       </table>
     </td>

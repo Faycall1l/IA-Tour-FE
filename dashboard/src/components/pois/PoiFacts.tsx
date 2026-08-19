@@ -7,10 +7,6 @@ import type { PoiRead } from "@/lib/types";
 export default function PoiFacts({ poi }: { poi: PoiRead }) {
   const rows: { label: string; value: string }[] = [];
   rows.push({
-    label: "Entry fee",
-    value: poi.entry_fee_dzd ? `${poi.entry_fee_dzd} DZD` : "Free",
-  });
-  rows.push({
     label: "Suggested visit",
     value: poi.suggested_duration_min ? `${poi.suggested_duration_min} min` : "—",
   });

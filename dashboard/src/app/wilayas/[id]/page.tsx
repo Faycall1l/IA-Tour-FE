@@ -105,11 +105,6 @@ export default function WilayaDetailPage() {
       : pois.filter((p) => (p.name ?? p.category).toLowerCase().includes(query));
   const poisSorted = [...poisFiltered].sort((a, b) => {
     if (sort === "name") return (a.name ?? "").localeCompare(b.name ?? "");
-    if (sort === "free") {
-      const feeA = a.entry_fee_dzd ?? 0;
-      const feeB = b.entry_fee_dzd ?? 0;
-      return feeA - feeB;
-    }
     return 0;
   });
   const categoryCounts = detail
@@ -323,11 +318,6 @@ export default function WilayaDetailPage() {
                             {p.description}
                           </p>
                         )}
-                        <p className="mt-2 text-xs font-semibold text-rustic-gold">
-                          {p.entry_fee_dzd
-                            ? `${p.entry_fee_dzd} DZD`
-                            : "Free"}
-                        </p>
                       </div>
                     </Link>
                   ))}
