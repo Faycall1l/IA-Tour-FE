@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { MOCK_POIS } from "@/lib/mock-data";
+import { client, unwrap } from "@/lib/client";
 import type { PoiRead } from "@/lib/types";
 
 const PER_PAGE = 8;
@@ -171,16 +171,50 @@ export default function PicksClient({
   }, [searchParams]);
 
   useEffect(() => {
-    setSelected(MOCK_POIS.filter((p) => siteIds.includes(p.id)));
+    if (siteIds.length === 0) {
+      setSelected([]);
+      return;
+    }
+    let cancelled = false;
+    Promise.all(
+      siteIds.map((id) =>
+        client
+          .GET("/api/v1/pois/{poi_id}", { params: { path: { poi_id: id } } })
+          .then((res) => unwrap(res))
+          .catch(() => null),
+      ),
+    ).then((results) => {
+      if (!cancelled) setSelected(results.filter(Boolean) as PoiRead[]);
+    });
+    return () => { cancelled = true; };
   }, [siteIds]);
 
-  const otherPois = useMemo(() => {
-    if (wilayaIds.length === 0) return [];
-    return MOCK_POIS.filter(
-      (p) =>
-        wilayaIds.includes(p.wilaya_id) &&
-        !selected.some((s) => s.id === p.id),
-    );
+  const [otherPois, setOtherPois] = useState<PoiRead[]>([]);
+
+  useEffect(() => {
+    if (wilayaIds.length === 0) {
+      setOtherPois([]);
+      return;
+    }
+    let cancelled = false;
+    Promise.all(
+      wilayaIds.map((id) =>
+        client
+          .GET("/api/v1/pois", {
+            params: { query: { wilaya_id: id, page_size: 50 } },
+          })
+          .then((res) => unwrap(res).items)
+          .catch(() => []),
+      ),
+    ).then((results) => {
+      if (!cancelled) {
+        const all = results.flat() as PoiRead[];
+        setOtherPois(
+          all.filter((p) => !selected.some((s) => s.id === p.id)),
+        );
+      }
+    });
+    return () => { cancelled = true; };
   }, [wilayaIds, selected]);
 
   const totalPages = Math.ceil(otherPois.length / PER_PAGE);
