@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { MOCK_POIS, resolveMockPath } from "@/lib/mock-data";
+import { client, unwrap } from "@/lib/client";
 import type { PoiRead, WilayaSummary } from "@/lib/types";
 import { WILAYA_COORDS } from "@/lib/sample-data";
 
@@ -45,25 +45,42 @@ export default function PlanPageClient() {
   const [open, setOpen] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const [siteResults, setSiteResults] = useState<PoiRead[]>([]);
 
   useEffect(() => {
-    const w = resolveMockPath(
-      "/api/v1/discover/wilayas",
-      new URLSearchParams(),
-    ) as WilayaSummary[];
-    setWilayas(w);
+    let cancelled = false;
+    client
+      .GET("/api/v1/discover/wilayas")
+      .then((res) => {
+        if (!cancelled) setWilayas(unwrap(res));
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const wilayaById = new Map(wilayas.map((w) => [w.id, w]));
-
-  const siteResults =
-    query.trim().length > 0
-      ? MOCK_POIS.filter(
-          (p) =>
-            (p.name ?? "").toLowerCase().includes(query.toLowerCase()) ||
-            (p.description ?? "").toLowerCase().includes(query.toLowerCase()),
-        ).slice(0, 8)
-      : [];
+  useEffect(() => {
+    if (query.trim().length < 2) {
+      setSiteResults([]);
+      return;
+    }
+    const timer = setTimeout(() => {
+      let cancelled = false;
+      client
+        .GET("/api/v1/pois/search", {
+          params: { query: { q: query, limit: 8 } },
+        })
+        .then((res) => {
+          if (!cancelled) setSiteResults(unwrap(res).items);
+        })
+        .catch(() => {});
+      return () => {
+        cancelled = true;
+      };
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const wilayaResults =
     query.trim().length > 0
@@ -76,6 +93,8 @@ export default function PlanPageClient() {
     ...wilayaResults.map((w) => ({ kind: "wilaya" as const, wilaya: w })),
     ...siteResults.map((p) => ({ kind: "poi" as const, poi: p })),
   ];
+
+  const wilayaById = new Map(wilayas.map((w) => [w.id, w]));
 
   function toggleWilaya(w: PickedWilaya) {
     setPicked((prev) =>
